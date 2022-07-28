@@ -1,0 +1,331 @@
+<xs:schema
+        xmlns="pyroll.gui.process_data"
+        targetNamespace="pyroll.gui.process_data"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+    <xs:complexType name="groove">
+        <xs:choice>
+            <xs:element name="box">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="ground_width" type="xs:double"/>
+                                <xs:choice>
+                                    <xs:element name="usable_width" type="xs:double"/>
+                                    <xs:element name="flank_angle" type="xs:double"/>
+                                </xs:choice>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="usable_width" type="xs:double"/>
+                                <xs:element name="flank_angle" type="xs:double"/>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="constricted_box">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="r4" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:element name="indent" type="xs:double"/>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="ground_width" type="xs:double"/>
+                                <xs:choice>
+                                    <xs:element name="usable_width" type="xs:double"/>
+                                    <xs:element name="flank_angle" type="xs:double"/>
+                                </xs:choice>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="usable_width" type="xs:double"/>
+                                <xs:element name="flank_angle" type="xs:double"/>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="circular_oval">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="flat_oval">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:element name="usable_width" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="swedish_oval">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="ground_width" type="xs:double"/>
+                                <xs:choice>
+                                    <xs:element name="usable_width" type="xs:double"/>
+                                    <xs:element name="flank_angle" type="xs:double"/>
+                                </xs:choice>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="usable_width" type="xs:double"/>
+                                <xs:element name="flank_angle" type="xs:double"/>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="constricted_swedish_oval">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="r4" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:element name="indent" type="xs:double"/>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="ground_width" type="xs:double"/>
+                                <xs:choice>
+                                    <xs:element name="usable_width" type="xs:double"/>
+                                    <xs:element name="flank_angle" type="xs:double"/>
+                                </xs:choice>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="usable_width" type="xs:double"/>
+                                <xs:element name="flank_angle" type="xs:double"/>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="round">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="false_round">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:element name="flank_angle" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="oval3">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="r3" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:element name="usable_width" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="oval3flanked">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="r3" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:element name="usable_width" type="xs:double"/>
+                        <xs:element name="flank_angle" type="xs:double"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="square">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="ground_width" type="xs:double"/>
+                                <xs:choice>
+                                    <xs:element name="tip_depth" type="xs:double"/>
+                                    <xs:element name="tip_angle" type="xs:double"/>
+                                </xs:choice>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="tip_depth" type="xs:double"/>
+                                <xs:element name="tip_angle" type="xs:double"/>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="diamond">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="r1" type="xs:double"/>
+                        <xs:element name="r2" type="xs:double"/>
+                        <xs:element name="depth" type="xs:double"/>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="ground_width" type="xs:double"/>
+                                <xs:choice>
+                                    <xs:element name="tip_depth" type="xs:double"/>
+                                    <xs:element name="tip_angle" type="xs:double"/>
+                                </xs:choice>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="tip_depth" type="xs:double"/>
+                                <xs:element name="tip_angle" type="xs:double"/>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="pass">
+        <xs:sequence>
+            <xs:element name="groove" type="groove"/>
+            <xs:element name="gap" type="xs:double"/>
+            <xs:element name="roll_radius" type="xs:double"/>
+            <xs:element name="in_rotation" type="xs:int" minOccurs="0"/>
+            <xs:choice>
+                <xs:element name="roll_rotation_frequency" type="xs:double"/>
+                <xs:element name="velocity" type="xs:double"/>
+            </xs:choice>
+            <xs:element name="roll_temperature" type="xs:double" minOccurs="0"/>
+            <xs:element name="transport_duration" type="xs:double"/>
+            <xs:element name="atmosphere_temperature" type="xs:double" minOccurs="0"/>
+            <xs:element name="water_temperature" type="xs:double" minOccurs="0"/>
+            <xs:element name="contact_heat_transfer_coefficient" type="xs:double" minOccurs="0"/>
+            <xs:element name="convection_heat_transfer_coefficient" type="xs:double" minOccurs="0"/>
+            <xs:element name="cooling_heat_transfer_coefficient" type="xs:double" minOccurs="0"/>
+            <xs:element name="relative_radiation_coefficient" type="xs:double" minOccurs="0"/>
+            <xs:element name="wusatowski_material_coefficient" type="xs:double" minOccurs="0"/>
+            <xs:element name="wusatowski_temperature_coefficient" type="xs:double" minOccurs="0"/>
+            <xs:element name="wusatowski_friction_coefficient" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="freibergFlowStressCoefficients">
+        <xs:sequence>
+            <xs:element name="a" type="xs:double"/>
+            <xs:element name="m1" type="xs:double"/>
+            <xs:element name="m2" type="xs:double"/>
+            <xs:element name="m3" type="xs:double"/>
+            <xs:element name="m4" type="xs:double"/>
+            <xs:element name="m5" type="xs:double"/>
+            <xs:element name="m6" type="xs:double"/>
+            <xs:element name="m7" type="xs:double"/>
+            <xs:element name="m8" type="xs:double"/>
+            <xs:element name="m9" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="profile">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="box">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="height" type="xs:double"/>
+                            <xs:element name="width" type="xs:double"/>
+                            <xs:element name="corner_radius" type="xs:double"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="diamond">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="height" type="xs:double"/>
+                            <xs:element name="width" type="xs:double"/>
+                            <xs:element name="corner_radius" type="xs:double"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="square">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:choice>
+                                <xs:element name="side" type="xs:double"/>
+                                <xs:element name="diagonal" type="xs:double"/>
+                            </xs:choice>
+                            <xs:element name="corner_radius" type="xs:double"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="round">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:choice>
+                                <xs:element name="radius" type="xs:double"/>
+                                <xs:element name="diameter" type="xs:double"/>
+                            </xs:choice>
+                            <xs:element name="corner_radius" type="xs:double"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="material" type="xs:token"/>
+            <xs:element name="strain" type="xs:double"/>
+            <xs:element name="temperature" type="xs:double"/>
+            <xs:choice>
+                <xs:element name="flow_stress" type="xs:double"/>
+                <xs:element name="flow_stress_coefficients" type="freibergFlowStressCoefficients"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="process_data">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="in_profile" type="profile"/>
+                <xs:element name="pass_defaults">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="roll_temperature" type="xs:double"/>
+                            <xs:element name="atmosphere_temperature" type="xs:double"/>
+                            <xs:element name="water_temperature" type="xs:double"/>
+                            <xs:element name="contact_heat_transfer_coefficient" type="xs:double"/>
+                            <xs:element name="convection_heat_transfer_coefficient" type="xs:double"/>
+                            <xs:element name="cooling_heat_transfer_coefficient" type="xs:double"/>
+                            <xs:element name="relative_radiation_coefficient" type="xs:double"/>
+                            <xs:element name="wusatowski_material_coefficient" type="xs:double"/>
+                            <xs:element name="wusatowski_temperature_coefficient" type="xs:double"/>
+                            <xs:element name="wusatowski_friction_coefficient" type="xs:double"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="pass_sequence">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="pass" type="pass" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
