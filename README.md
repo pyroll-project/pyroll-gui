@@ -2,21 +2,22 @@
 
 ## Requirements for GUI
 
-- save and load of XML or JSON files (only values of input fields)
+- save and load of XML files acc. to `process_data.xsd`
+- create inputs for all elements in XSD
 - button to fire solution procedure `pyroll.core.solve()`
 
-### Initial Profile
+### Initial Profile `<in_profile>`
 
-- quare, box, diamond, round
+- square, box, diamond, round
 - input boxes for each parameter
 
-### Pass Sequence
+### Pass Sequence `<pass_sequence>`
 
 - tabular layout
 - plot of roll pass contour lines with ideal in profile (updated with unit selection and change of properties)
 - assume one transport after each roll pass for better layout of table (set time to 0 if not present or similar)
 
-### Parameters equal for all units
+### Parameters equal for all units `<pass_defaults>`
 
 - such as heat transfer coefficients
-- may include column to override
+- include column to override for each pass
