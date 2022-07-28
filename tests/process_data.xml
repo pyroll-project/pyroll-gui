@@ -1,4 +1,4 @@
-<pd:process_data xmlns:pd="pyroll.gui.process_data">
+<pd:process_data xmlns:pd="/home/maxwe/Git/pyroll/pyroll-gui/pyroll/ui/gui/process_data.xsd">
     <in_profile>
         <square>
             <diagonal>45</diagonal>
