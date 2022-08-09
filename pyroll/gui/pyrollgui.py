@@ -9,9 +9,9 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # Set columns of self.ui.rollPassTable to "groove", "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"
-        self.ui.rollPassTable.setColumnCount(9)
-        self.ui.rollPassTable.setHorizontalHeaderLabels(["groove", "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"])
+        # Set columns of self.ui.rollPassTable to "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"
+        self.ui.rollPassTable.setColumnCount(8)
+        self.ui.rollPassTable.setHorizontalHeaderLabels(["gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"])
         # Equally space the columns
         self.ui.rollPassTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
