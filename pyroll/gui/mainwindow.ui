@@ -19,7 +19,7 @@
      <rect>
       <x>60</x>
       <y>20</y>
-      <width>1001</width>
+      <width>1171</width>
       <height>581</height>
      </rect>
     </property>
@@ -56,7 +56,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="solveButton">
        <property name="text">
         <string>Solve</string>
        </property>

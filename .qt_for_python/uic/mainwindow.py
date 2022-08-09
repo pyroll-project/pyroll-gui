@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayoutWidget = QWidget(self.centralwidget)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(60, 20, 1001, 581))
+        self.verticalLayoutWidget.setGeometry(QRect(60, 20, 1171, 581))
         self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -65,10 +65,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.pushButton = QPushButton(self.verticalLayoutWidget)
-        self.pushButton.setObjectName(u"pushButton")
+        self.solveButton = QPushButton(self.verticalLayoutWidget)
+        self.solveButton.setObjectName(u"solveButton")
 
-        self.verticalLayout.addWidget(self.pushButton)
+        self.verticalLayout.addWidget(self.solveButton)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -87,6 +87,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Groove", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Solve", None))
+        self.solveButton.setText(QCoreApplication.translate("MainWindow", u"Solve", None))
     # retranslateUi
 

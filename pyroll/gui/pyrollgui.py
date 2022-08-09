@@ -53,6 +53,30 @@ class MainWindow(QMainWindow):
         # Connect the signal of self.ui.inputProfileBox to the slot createInputProfileOptions
         self.ui.inputProfileBox.currentIndexChanged.connect(self.createInputProfileOptions)
 
+        # Connect the signal of the solve button to the slot solve
+        self.ui.solveButton.clicked.connect(self.solve)
+        self.addTestRow()
+
+    def addTestRow(self):
+        """<gap>1</gap>
+            <roll_radius>180</roll_radius>
+            <in_rotation>1</in_rotation>
+            <velocity>1</velocity>
+            <roll_temperature>20</roll_temperature>
+            <transport_duration>1</transport_duration>
+            <atmosphere_temperature>20</atmosphere_temperature>"""
+        self.ui.rollPassTable.insertRow(0)
+        self.ui.rollPassTable.setItem(0, 0, QTableWidgetItem("1"))
+        self.ui.rollPassTable.setItem(0, 1, QTableWidgetItem("180"))
+        self.ui.rollPassTable.setItem(0, 2, QTableWidgetItem("1"))
+        self.ui.rollPassTable.setItem(0, 3, QTableWidgetItem("1"))
+        self.ui.rollPassTable.setItem(0, 4, QTableWidgetItem("20"))
+        self.ui.rollPassTable.setItem(0, 5, QTableWidgetItem("1"))
+        self.ui.rollPassTable.setItem(0, 6, QTableWidgetItem("20"))
+        self.ui.rollPassTable.setItem(0, 7, QTableWidgetItem("1"))
+
+
+
     @Slot()
     def createInputProfileGUI(self):
         self.ui.inputProfileGrid.setRowMinimumHeight(3, 100)
@@ -80,12 +104,10 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileGrid.addLayout(self.ui.inputItemOptions, 3, 0)
 
 
-
     def createInputProfileOptions(self):
         """Depending on the selected combo box item, create different input profile options"""
         # get the selected item from self.ui.inputProfileBox
         selectedItem = self.ui.inputProfileBox.currentText()
-        #TODO: Finish
             
         # Delete all rows from self.ui.inputItemOptions QFormLayout
         clearLayout(self.ui.inputItemOptions)
@@ -94,6 +116,13 @@ class MainWindow(QMainWindow):
         if selectedItem == "Square":
             self.ui.inputItemOptions.addRow(QLabel("Diagonal"), QLineEdit())
             self.ui.inputItemOptions.addRow(QLabel("Corner radius"), QLineEdit())
+
+    # Solve function
+    @Slot()
+    def solve(self):
+        print("Solve button clicked")
+        pass
+
 
 
 if __name__ == "__main__":
