@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QFormLayout,
     QLineEdit,
+    QTableWidget,
 )
 from PySide6.QtCore import QFile, QSize, Slot
 from ui_mainwindow import Ui_MainWindow
@@ -47,6 +48,10 @@ class MainWindow(QMainWindow):
         self.ui.rollPassTable.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
         )
+        # Only let one row be selected at a time
+        self.ui.rollPassTable.setSelectionMode(QTableWidget.SingleSelection)
+
+        self.ui.rollPassTable.selectionModel().selectionChanged.connect(self.selectedRowChanged)
 
         # Add a row to self.ui.rollPassTable
         self.ui.rollPassTable.insertRow(0)
@@ -67,9 +72,11 @@ class MainWindow(QMainWindow):
         self.ui.solveButton.clicked.connect(self.solve)
         self.addTestRow()
 
-        self.lastSelectedRow = 0
+        self.currentRow = 0
 
-        # Add an list that represents the grooves for each table row
+        # This represents the grooveOptionsGrids, one per row in the table
+        self.grooveOptionsGrids = []
+
         self.grooves = []
 
     def addTestRow(self):
@@ -91,67 +98,65 @@ class MainWindow(QMainWindow):
         self.ui.rollPassTable.setItem(0, 7, QTableWidgetItem("1"))
 
     @Slot()
+    def selectedRowChanged(self):
+        # Get selectionmodel from self.ui.rollPassTable
+        selectionModel = self.ui.rollPassTable.selectionModel()
+        # Get the current selected row
+        self.currentRow = selectionModel.currentIndex().row()
+        print("row changed to:", self.currentRow)
+
+    @Slot()
     def createInputProfileGUI(self):
         self.ui.inputProfileGrid.setRowMinimumHeight(3, 100)
 
-        # Create inputProfileLable
         self.ui.inputProfileLabel = QLabel("Input profile")
-        # Label "Input profile"
+
         self.ui.inputProfileGrid.addWidget(self.ui.inputProfileLabel, 0, 0)
-        # Create inputProfileBox
+
         self.ui.inputProfileBox = QComboBox()
         # Combo box with items "Square", "Box", "Diamond", "Round"
         self.ui.inputProfileBox.addItems(["Square", "Box", "Diamond", "Round"])
 
-        # Combo box "Input profile"
         self.ui.inputProfileGrid.addWidget(self.ui.inputProfileBox, 1, 0)
-        # Create inputItemOptions label
+
         self.ui.inputItemOptionsLabel = QLabel("Input item options")
-        # Label "Input profile options"
+
         self.ui.inputProfileGrid.addWidget(self.ui.inputItemOptionsLabel, 2, 0)
-        # Create inputItemOptions form layout
+
         self.ui.inputItemOptions = QFormLayout()
-        # Set minimum height for inputItemOptions form layout
-        # Form layout "Input profile options"
+
         self.ui.inputProfileGrid.addLayout(self.ui.inputItemOptions, 3, 0)
 
     @Slot()
     def createGrooveOptionsGUI(self):
-        
 
         self.ui.grooveOptionsGrid.setRowMinimumHeight(3, 100)
 
-        #
-        ## Create grooveOptionsLabel
         self.ui.grooveOptionsLabel = QLabel("Groove options")
-        ## Label "Groove options"
+
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsLabel, 0, 0)
 
-        # Add Combo box with the Options "Round", "Circular Oval", "Flat Oval"
         self.ui.grooveOptionsBox = QComboBox()
         self.ui.grooveOptionsBox.addItems(["Round", "Circular Oval", "Flat Oval"])
 
-        # Add combo box to grooveOptionsGrid
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsBox, 1, 0)
 
         self.ui.grooveOptionsLabel = QLabel("Groove options")
-        # Label "Input profile options"
+
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsLabel, 2, 0)
-        # Create grooveOptionsFormLayout
+
         self.ui.grooveOptions = QFormLayout()
-        # Form layout "Groove options"
+
         self.ui.grooveOptionsGrid.addLayout(self.ui.grooveOptions, 3, 0)
 
     @Slot()
     def createInputProfileOptions(self):
         """Depending on the selected combo box item, create different input profile options"""
-        # get the selected item from self.ui.inputProfileBox
+
         selectedItem = self.ui.inputProfileBox.currentText()
 
-        # Delete all rows from self.ui.inputItemOptions QFormLayout
         clearLayout(self.ui.inputItemOptions)
 
-        # if the selected item is "Square", add to self.ui.inputItemOptions the labels "Diagonal" and "Corner radius" with corresponding line edits
         if selectedItem == "Square":
             self.ui.inputItemOptions.addRow(QLabel("Diagonal"), QLineEdit())
             self.ui.inputItemOptions.addRow(QLabel("Corner radius"), QLineEdit())
