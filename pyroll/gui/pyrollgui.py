@@ -48,14 +48,23 @@ class MainWindow(QMainWindow):
         # Add a row to self.ui.rollPassTable
         self.ui.rollPassTable.insertRow(0)
         self.createInputProfileGUI()
+        self.createGrooveOptionsGUI()
+
         self.createInputProfileOptions()
+        self.createGrooveOptions()
 
         # Connect the signal of self.ui.inputProfileBox to the slot createInputProfileOptions
         self.ui.inputProfileBox.currentIndexChanged.connect(self.createInputProfileOptions)
+        # Connect the signal of self.ui.grooveOptions to the slot createGrooveOptions
+        self.ui.grooveOptionsBox.currentIndexChanged.connect(self.createGrooveOptions)
 
         # Connect the signal of the solve button to the slot solve
         self.ui.solveButton.clicked.connect(self.solve)
         self.addTestRow()
+        
+
+        # Add an list that represents the grooves for each table row
+        self.grooves = []
 
     def addTestRow(self):
         """<gap>1</gap>
@@ -103,7 +112,7 @@ class MainWindow(QMainWindow):
         # Form layout "Input profile options"
         self.ui.inputProfileGrid.addLayout(self.ui.inputItemOptions, 3, 0)
 
-
+    @Slot()
     def createInputProfileOptions(self):
         """Depending on the selected combo box item, create different input profile options"""
         # get the selected item from self.ui.inputProfileBox
@@ -116,6 +125,45 @@ class MainWindow(QMainWindow):
         if selectedItem == "Square":
             self.ui.inputItemOptions.addRow(QLabel("Diagonal"), QLineEdit())
             self.ui.inputItemOptions.addRow(QLabel("Corner radius"), QLineEdit())
+
+    @Slot()
+    def createGrooveOptions(self):
+        """Depending on the selected combo box item, create different groove options"""
+        # get the selected item from self.ui.grooveBox
+        selectedItem = self.ui.grooveOptionsBox.currentText()
+            
+        # Delete all rows from self.ui.grooveOptions QFormLayout
+        clearLayout(self.ui.grooveOptions)
+
+        # if the selected item is "Square", add to self.ui.grooveOptions the labels "Diagonal" and "Corner radius" with corresponding line edits
+        if selectedItem == "Round":
+            self.ui.grooveOptions.addRow(QLabel("r1"), QLineEdit())
+            self.ui.grooveOptions.addRow(QLabel("r2"), QLineEdit())
+            self.ui.grooveOptions.addRow(QLabel("depth"), QLineEdit())
+
+
+    @Slot()
+    def createGrooveOptionsGUI(self):
+        self.ui.grooveOptionsGrid.setRowMinimumHeight(3, 100)
+        # Add items to grooveOptionsGrid (Horizontally):
+        #
+        ## Create grooveOptionsLabel
+        self.ui.grooveOptionsLabel = QLabel("Groove options")
+        ## Label "Groove options"
+        self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsLabel, 0, 0)
+
+        # Add Combo box with the Options "Round", "Circular Oval", "Flat Oval"
+        self.ui.grooveOptionsBox = QComboBox()
+        self.ui.grooveOptionsBox.addItems(["Round", "Circular Oval", "Flat Oval"])
+
+        # Add combo box to grooveOptionsGrid
+        self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsBox, 2, 0)
+
+        # Create grooveOptionsFormLayout
+        self.ui.grooveOptions= QFormLayout()
+        # Form layout "Groove options"
+        self.ui.grooveOptionsGrid.addLayout(self.ui.grooveOptions, 3, 0)
+
 
     # Solve function
     @Slot()

@@ -16,9 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QHeaderView,
-    QLabel, QMainWindow, QMenuBar, QPushButton,
-    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+    QMainWindow, QMenuBar, QPushButton, QSizePolicy,
+    QStatusBar, QTableWidget, QTableWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -42,25 +42,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.inputProfileGrid = QGridLayout()
         self.inputProfileGrid.setObjectName(u"inputProfileGrid")
-        self.inputProfileGrid.setHorizontalSpacing(5)
 
         self.horizontalLayout_2.addLayout(self.inputProfileGrid)
 
-        self.verticalLayout_3 = QVBoxLayout()
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.label = QLabel(self.verticalLayoutWidget)
-        self.label.setObjectName(u"label")
-        self.label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.grooveOptionsGrid = QGridLayout()
+        self.grooveOptionsGrid.setObjectName(u"grooveOptionsGrid")
 
-        self.verticalLayout_3.addWidget(self.label)
-
-        self.grooveEditWidget = QWidget(self.verticalLayoutWidget)
-        self.grooveEditWidget.setObjectName(u"grooveEditWidget")
-
-        self.verticalLayout_3.addWidget(self.grooveEditWidget)
-
-
-        self.horizontalLayout_2.addLayout(self.verticalLayout_3)
+        self.horizontalLayout_2.addLayout(self.grooveOptionsGrid)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -86,7 +74,6 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Groove", None))
         self.solveButton.setText(QCoreApplication.translate("MainWindow", u"Solve", None))
     # retranslateUi
 

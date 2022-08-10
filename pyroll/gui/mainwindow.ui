@@ -30,28 +30,10 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <layout class="QGridLayout" name="inputProfileGrid">
-         <property name="horizontalSpacing">
-          <number>5</number>
-         </property>
-        </layout>
+        <layout class="QGridLayout" name="inputProfileGrid"/>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Groove</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="grooveEditWidget" native="true"/>
-         </item>
-        </layout>
+        <layout class="QGridLayout" name="grooveOptionsGrid"/>
        </item>
       </layout>
      </item>
