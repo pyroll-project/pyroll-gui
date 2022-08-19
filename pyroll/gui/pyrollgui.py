@@ -9,10 +9,22 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QLineEdit,
     QTableWidget,
+    QGridLayout,
 )
 from PySide6.QtCore import QFile, QSize, Slot
 from ui_mainwindow import Ui_MainWindow
 
+GROOVE_OPTIONS = ["Round", "Circular Oval", "Flat Oval"]
+
+class SelectedGrooveOption:
+    # Has 2 properties: the selected groove option and a list of property values
+    def __init__(self, groove_option: str, groove_option_values: list):
+        # Assert
+        assert groove_option in GROOVE_OPTIONS
+        self.groove_option = groove_option
+        self.groove_option_values = groove_option_values
+
+selected_groove_options = dict[int, SelectedGrooveOption]
 
 def clearLayout(layout):
     if layout is not None:
@@ -22,7 +34,6 @@ def clearLayout(layout):
                 child.widget().deleteLater()
             elif child.layout() is not None:
                 clearLayout(child.layout())
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -51,7 +62,9 @@ class MainWindow(QMainWindow):
         # Only let one row be selected at a time
         self.ui.rollPassTable.setSelectionMode(QTableWidget.SingleSelection)
 
-        self.ui.rollPassTable.selectionModel().selectionChanged.connect(self.selectedRowChanged)
+        self.ui.rollPassTable.selectionModel().selectionChanged.connect(
+            self.selectedRowChanged
+        )
 
         # Add a row to self.ui.rollPassTable
         self.ui.rollPassTable.insertRow(0)
@@ -75,8 +88,7 @@ class MainWindow(QMainWindow):
         self.currentRow = 0
 
         # This represents the grooveOptionsGrids, one per row in the table
-        self.grooveOptionsGrids = []
-
+        self.ui.grooveOptionsGrid = QGridLayout()
         self.grooves = []
 
     def addTestRow(self):
@@ -128,7 +140,7 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileGrid.addLayout(self.ui.inputItemOptions, 3, 0)
 
     @Slot()
-    def createGrooveOptionsGUI(self):
+    def createGrooveOptionsGUI(self, selectedGrooveOption: SelectedGrooveOption = None):
 
         self.ui.grooveOptionsGrid.setRowMinimumHeight(3, 100)
 
@@ -137,7 +149,14 @@ class MainWindow(QMainWindow):
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsLabel, 0, 0)
 
         self.ui.grooveOptionsBox = QComboBox()
-        self.ui.grooveOptionsBox.addItems(["Round", "Circular Oval", "Flat Oval"])
+        self.ui.grooveOptionsBox.addItems(GROOVE_OPTIONS)
+
+        # If a selectedGrooveOption is given, set the grooveOptionsBox to the selectedGrooveOption
+        if selectedGrooveOption is not None:
+            self.ui.grooveOptionsBox.setCurrentIndex(
+                GROOVE_OPTIONS.index(selectedGrooveOption.groove_option)
+            )
+
 
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsBox, 1, 0)
 
@@ -163,7 +182,8 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def createGrooveOptions(self):
-        """Depending on the selected combo box item, create different groove options"""
+        """Depending on the selected combo box item, create different groove options. This deletes all data in the form, 
+        so it should only be called when the combo box is changed"""
         # get the selected item from self.ui.grooveBox
         selectedItem = self.ui.grooveOptionsBox.currentText()
 
