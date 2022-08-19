@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtCore import QFile, QSize, Slot
-from ui_mainwindow import Ui_MainWindow
+from .ui_mainwindow import Ui_MainWindow
 
 GROOVE_OPTIONS = ["Round", "Circular Oval", "Flat Oval"]
 
@@ -203,7 +203,7 @@ class MainWindow(QMainWindow):
         pass
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
