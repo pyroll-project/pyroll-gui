@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+from typing import Optional, Union
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -244,11 +244,11 @@ class MainWindow(QMainWindow):
             if grooveOptionValues is not None:
                 self.ui.grooveOptions.itemAt(5).widget().setText(optionValueList[2])
 
-    def getTableData(self) -> list[dict[str, Optional[str]]]:
+    def getTableData(self) -> list[dict[str, Union[str,list[str], None]]]:
         # Gets the data from the rollpasstable in the form of a list of dictionaries
         # The dictionary keys are the HORIZONTAL_HEADER_LABELS
         # The dictionary values are the values in the table
-        tableData: list[dict[str, Optional[str]]] = []
+        tableData: list[dict[str, Optional[Union[str,list[str]]]]] = []
         for row in range(self.ui.rollPassTable.rowCount()):
             tableData.append({})
             for column in range(self.ui.rollPassTable.columnCount()):
@@ -256,9 +256,11 @@ class MainWindow(QMainWindow):
                     tableData[row][HORIZONTAL_HEADER_LABELS[column]] = self.ui.rollPassTable.item(row, column).text()
                 else:
                     tableData[row][HORIZONTAL_HEADER_LABELS[column]] = None
-                #tableData[row][
-                #    HORIZONTAL_HEADER_LABELS[column]
-                #] = self.ui.rollPassTable.item(row, column).text()
+                
+                # add data from selected_groove_options to tableData
+                tableData[row]["groove_option"] = selected_groove_options[row].groove_option
+                tableData[row]["groove_option_values"] = selected_groove_options[row].groove_option_values
+
         return tableData
 
     # Solve function
@@ -283,10 +285,18 @@ class MainWindow(QMainWindow):
         input_constr = getattr(Profile, selectedInputProfile.lower())
         input = input_constr(**inputItemOptionsDict)
 
-        print(self.getTableData())
+        rollpass_dicts = self.getTableData()
         # Now get the info from the table
 
-        sequence = [RollPass()]
+        sequence: list[Union[RollPass, Transport]] = []
+
+        for i, rollpass_dict in enumerate(rollpass_dicts):
+            # Construct a RollPass object from the data in the table
+
+            #rp = RollPass()
+
+
+
 
 
 def main():
