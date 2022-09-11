@@ -1,5 +1,5 @@
-from msilib.schema import ComboBox
 import sys
+from typing import Optional
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -14,10 +14,32 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QFile, QSize, Slot
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
+from pyroll.core import (
+    Profile,
+    RollPass,
+    Transport,
+    Roll,
+    DiamondGroove,
+    SquareGroove,
+    RoundGroove,
+    BoxGroove,
+)
+
 
 GROOVE_OPTIONS = ["Round", "Circular Oval", "Flat Oval"]
 
 INPUT_PROFILES = ["Square", "Box", "Diamond", "Round"]
+
+HORIZONTAL_HEADER_LABELS = [
+    "gap",
+    "roll_radius",
+    "in_rotation",
+    "velocity",
+    "roll_temperature",
+    "transport_duration",
+    "atmosphere_temperature",
+    "roll_rotation_frequency",
+]
 
 
 class SelectedGrooveOption:
@@ -54,18 +76,7 @@ class MainWindow(QMainWindow):
 
         # Set columns of self.ui.rollPassTable to "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"
         self.ui.rollPassTable.setColumnCount(8)
-        self.ui.rollPassTable.setHorizontalHeaderLabels(
-            [
-                "gap",
-                "roll_radius",
-                "in_rotation",
-                "velocity",
-                "roll_temperature",
-                "transport_duration",
-                "atmosphere_temperature",
-                "roll_rotation_frequency",
-            ]
-        )
+        self.ui.rollPassTable.setHorizontalHeaderLabels(HORIZONTAL_HEADER_LABELS)
         # Equally space the columns
         self.ui.rollPassTable.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
@@ -233,23 +244,49 @@ class MainWindow(QMainWindow):
             if grooveOptionValues is not None:
                 self.ui.grooveOptions.itemAt(5).widget().setText(optionValueList[2])
 
+    def getTableData(self) -> list[dict[str, Optional[str]]]:
+        # Gets the data from the rollpasstable in the form of a list of dictionaries
+        # The dictionary keys are the HORIZONTAL_HEADER_LABELS
+        # The dictionary values are the values in the table
+        tableData: list[dict[str, Optional[str]]] = []
+        for row in range(self.ui.rollPassTable.rowCount()):
+            tableData.append({})
+            for column in range(self.ui.rollPassTable.columnCount()):
+                if self.ui.rollPassTable.item(row, column) is not None:
+                    tableData[row][HORIZONTAL_HEADER_LABELS[column]] = self.ui.rollPassTable.item(row, column).text()
+                else:
+                    tableData[row][HORIZONTAL_HEADER_LABELS[column]] = None
+                #tableData[row][
+                #    HORIZONTAL_HEADER_LABELS[column]
+                #] = self.ui.rollPassTable.item(row, column).text()
+        return tableData
+
     # Solve function
     @Slot()
     def solve(self):
         print("Solve button clicked")
 
         # Get the selected item from self.ui.inputProfileBox
-        selectedInputProfile = self.ui.inputProfileBox.currentText()
+        selectedInputProfile: str = self.ui.inputProfileBox.currentText()
         print(selectedInputProfile)
-        # Get each row of the input item options as tuples (label, value)
-        inputItemOptions = [
-            (
-                self.ui.inputItemOptions.itemAt(i).widget().text(),
-                self.ui.inputItemOptions.itemAt(i + 1).widget().text(),
-            )
-            for i in range(0, self.ui.inputItemOptions.count(), 2)
-        ]
-        print(inputItemOptions)
+        inputItemOptionsDict: dict[str, str] = {}
+
+        for i in range(0, self.ui.inputItemOptions.count(), 2):
+            label: str = self.ui.inputItemOptions.itemAt(i).widget().text()
+            # Convert label to lowercase and replace spaces with underscores
+            label = label.lower().replace(" ", "_")
+            lineEdit = self.ui.inputItemOptions.itemAt(i + 1).widget()
+            inputItemOptionsDict[label] = float(lineEdit.text())
+
+        print(inputItemOptionsDict)
+
+        input_constr = getattr(Profile, selectedInputProfile.lower())
+        input = input_constr(**inputItemOptionsDict)
+
+        print(self.getTableData())
+        # Now get the info from the table
+
+        sequence = [RollPass()]
 
 
 def main():
