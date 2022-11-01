@@ -15,7 +15,6 @@ DEFAULT_GROOVE_OPTIONS = [
     GrooveOption("Circular Oval", ["r1", "r2", "depth"]),
     GrooveOption("False Round", ["r1", "r2", "depth", "flank_angle"]),
     GrooveOption("Square", ["r1", "r2", "depth"]),
-
 ]
 
 class SelectedGrooveOption:

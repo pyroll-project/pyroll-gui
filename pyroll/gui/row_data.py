@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from pyroll.gui.grooveOptions import SelectedGrooveOption
+from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 
 @dataclass
 class RowData:
@@ -16,8 +16,8 @@ class RowData:
 
 
 def get_test_rowdata_list():
-    list = [RowData(0, SelectedGrooveOption("Round", {"r1": 10, "r2": 20, "depth": 14})),
-            RowData(1, SelectedGrooveOption("False Round", {"r1": 10, "r2": 44}))]
+    list = [RowData(0, SelectedGrooveOption(DEFAULT_GROOVE_OPTIONS[0], {"r1": 10, "r2": 20, "depth": 14})),
+            RowData(1, SelectedGrooveOption(DEFAULT_GROOVE_OPTIONS[1], {"r1": 8, "r2": 44, "depth": 9}))]
 
 #class RowDataManager:
 #    row_data_list: list[RowData]
