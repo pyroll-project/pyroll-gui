@@ -42,6 +42,7 @@ HORIZONTAL_HEADER_LABELS = [
 ]
 
 
+
 class SelectedGrooveOption:
     # Has 2 properties: the selected groove option and a list of property values
     def __init__(self, groove_option: str, groove_option_values: list):
@@ -293,10 +294,8 @@ class MainWindow(QMainWindow):
         for i, rollpass_dict in enumerate(rollpass_dicts):
             # Construct a RollPass object from the data in the table
 
-            #rp = RollPass()
-
-
-
+            rp = RollPass()
+            
 
 
 def main():

@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "module": "pyroll.gui",
+            "module": "pyroll.gui.pyrollgui.main",
             "args": []
         }
     ]
