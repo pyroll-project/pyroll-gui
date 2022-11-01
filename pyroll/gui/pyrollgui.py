@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtCore import QFile, QSize, Slot
+from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
+from pyroll.gui.row_data import get_test_rowdata_list
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.core import (
     Profile,
@@ -26,7 +28,7 @@ from pyroll.core import (
 )
 
 
-GROOVE_OPTIONS = ["Round", "Circular Oval", "Flat Oval"]
+# GROOVE_OPTIONS = ["Round", "Circular Oval", "Flat Oval"]
 
 INPUT_PROFILES = ["Square", "Box", "Diamond", "Round"]
 
@@ -42,21 +44,20 @@ HORIZONTAL_HEADER_LABELS = [
 ]
 
 
-
-class SelectedGrooveOption:
-    # Has 2 properties: the selected groove option and a list of property values
-    def __init__(self, groove_option: str, groove_option_values: list):
-        # Assert
-        assert groove_option in GROOVE_OPTIONS
-        self.groove_option = groove_option
-        self.groove_option_values = groove_option_values
+# class SelectedGrooveOption:
+#    # Has 2 properties: the selected groove option and a list of property values
+#    def __init__(self, groove_option: str, groove_option_values: list):
+#        # Assert
+#        assert groove_option in GROOVE_OPTIONS
+#        self.groove_option = groove_option
+#        self.groove_option_values = groove_option_values
 
 
 # TODO: The dictionary might not be necessary here
-selected_groove_options: dict[int, SelectedGrooveOption] = {
-    0: SelectedGrooveOption(GROOVE_OPTIONS[0], ["10", "20", "14"]),
-    1: SelectedGrooveOption(GROOVE_OPTIONS[1], ["10", "44"]),
-}
+# selected_groove_options: dict[int, SelectedGrooveOption] = {
+#    0: SelectedGrooveOption(GROOVE_OPTIONS[0], ["10", "20", "14"]),
+#    1: SelectedGrooveOption(GROOVE_OPTIONS[1], ["10", "44"]),
+# }
 
 
 def clearLayout(layout):
@@ -74,6 +75,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.row_data = get_test_rowdata_list()
 
         # Set columns of self.ui.rollPassTable to "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"
         self.ui.rollPassTable.setColumnCount(8)
@@ -140,14 +143,25 @@ class MainWindow(QMainWindow):
         self.ui.rollPassTable.setItem(0, 7, QTableWidgetItem("1"))
 
     @Slot()
-    def grooveOptionBoxChanged(self):
+    def grooveOptionBoxChanged(self) -> None:
         # Get the groove option selected
         groove_option = self.ui.grooveOptionsBox.currentText()
 
-        selected_groove_options[self.currentRow].groove_option = groove_option
+        print(groove_option)
+        # Print current groove option
+        current_gr_op = self.row_data[self.currentRow].selected_groove_option
+        print(current_gr_op.selectedValues)
+        if current_gr_op.grooveOption.name != groove_option:
+            self.row_data[
+                self.currentRow
+            ].selected_groove_option = SelectedGrooveOption(DEFAULT_GROOVE_OPTIONS.get_groove_option(
+                groove_option
+            ), {})
+
+        # selected_groove_options[self.currentRow].groove_option = groove_option
 
     @Slot()
-    def selectedRowChanged(self):
+    def selectedRowChanged(self) -> None:
         # Get selectionmodel from self.ui.rollPassTable
         selectionModel = self.ui.rollPassTable.selectionModel()
         # Get the current selected row
@@ -177,9 +191,11 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileGrid.addLayout(self.ui.inputItemOptions, 3, 0)
 
     @Slot()
-    def createGrooveOptionsGUI(self):
+    def createGrooveOptionsGUI(self) -> None:
 
-        comboBoxValue = selected_groove_options[self.currentRow].groove_option
+        comboBoxValue = self.row_data[
+            self.currentRow
+        ].selected_groove_option.grooveOption.name
 
         self.ui.grooveOptionsGrid.setRowMinimumHeight(3, 100)
 
@@ -188,7 +204,9 @@ class MainWindow(QMainWindow):
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsLabel, 0, 0)
 
         self.ui.grooveOptionsBox = QComboBox()
-        self.ui.grooveOptionsBox.addItems(GROOVE_OPTIONS)
+        self.ui.grooveOptionsBox.addItems(
+            DEFAULT_GROOVE_OPTIONS.get_groove_option_names()
+        )
 
         # If a selectedGrooveOption is given, set the grooveOptionsBox to the selectedGrooveOption
         self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
@@ -219,48 +237,76 @@ class MainWindow(QMainWindow):
     def createGrooveOptions(self):
         """Depending on the selected combo box item, create different groove options."""
 
-        comboBoxValue = selected_groove_options[self.currentRow].groove_option
+        grooveOption = self.row_data[
+            self.currentRow
+        ].selected_groove_option.grooveOption
+
+        comboBoxValue = grooveOption.name
+
         self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
 
-        grooveOptionValues = selected_groove_options[self.currentRow]
+        # grooveOptionValues = selected_groove_options[self.currentRow]
+        #
+        # optionValueList = grooveOptionValues.groove_option_values
 
-        optionValueList = grooveOptionValues.groove_option_values
+        optionValueList = grooveOption.settingFields
 
         # get the selected item from self.ui.grooveBox
-        selectedItem = self.ui.grooveOptionsBox.currentText()
+        # selectedItem = self.ui.grooveOptionsBox.currentText()
 
         # Delete all rows from self.ui.grooveOptions QFormLayout
         clearLayout(self.ui.grooveOptions)
 
-        # if the selected item is "Square", add to self.ui.grooveOptions the labels "Diagonal" and "Corner radius" with corresponding line edits
-        if selectedItem == "Round":
-            self.ui.grooveOptions.addRow(QLabel("r1"), QLineEdit())
-            # Set grooveoptions lineedit to the value of the selected grooveOptionValues
-            if grooveOptionValues is not None:
-                self.ui.grooveOptions.itemAt(1).widget().setText(optionValueList[0])
-            self.ui.grooveOptions.addRow(QLabel("r2"), QLineEdit())
-            if grooveOptionValues is not None:
-                self.ui.grooveOptions.itemAt(3).widget().setText(optionValueList[1])
-            self.ui.grooveOptions.addRow(QLabel("depth"), QLineEdit())
-            if grooveOptionValues is not None:
-                self.ui.grooveOptions.itemAt(5).widget().setText(optionValueList[2])
+        for i, grooveOptionValue in enumerate(optionValueList):
+            # Create a new row in the grooveOptions QFormLayout
+            itemAtIndex = (i + 1) * 2 - 1
+            self.ui.grooveOptions.addRow(QLabel(grooveOptionValue), QLineEdit())
+            if (
+                grooveOptionValue
+                in self.row_data[self.currentRow].selected_groove_option.selectedValues
+            ):
+                # self.ui.grooveOptions.itemAt(1).widget().setText(optionValueList[0])
+                self.ui.grooveOptions.itemAt(itemAtIndex).widget().setText(
+                    f"""{self.row_data[
+                        self.currentRow
+                    ].selected_groove_option.selectedValues[grooveOptionValue]}"""
+                )
 
-    def getTableData(self) -> list[dict[str, Union[str,list[str], None]]]:
+        # if the selected item is "Square", add to self.ui.grooveOptions the labels "Diagonal" and "Corner radius" with corresponding line edits
+        # if selectedItem == "Round":
+        #    self.ui.grooveOptions.addRow(QLabel("r1"), QLineEdit())
+        #    # Set grooveoptions lineedit to the value of the selected grooveOptionValues
+        #    if grooveOptionValues is not None:
+        #        self.ui.grooveOptions.itemAt(1).widget().setText(optionValueList[0])
+        #    self.ui.grooveOptions.addRow(QLabel("r2"), QLineEdit())
+        #    if grooveOptionValues is not None:
+        #        self.ui.grooveOptions.itemAt(3).widget().setText(optionValueList[1])
+        #    self.ui.grooveOptions.addRow(QLabel("depth"), QLineEdit())
+        #    if grooveOptionValues is not None:
+        #        self.ui.grooveOptions.itemAt(5).widget().setText(optionValueList[2])
+
+    def getTableData(self) -> list[dict[str, Union[str, list[str], None]]]:
         # Gets the data from the rollpasstable in the form of a list of dictionaries
         # The dictionary keys are the HORIZONTAL_HEADER_LABELS
         # The dictionary values are the values in the table
-        tableData: list[dict[str, Optional[Union[str,list[str]]]]] = []
+        tableData: list[dict[str, Optional[Union[str, list[str]]]]] = []
         for row in range(self.ui.rollPassTable.rowCount()):
             tableData.append({})
             for column in range(self.ui.rollPassTable.columnCount()):
                 if self.ui.rollPassTable.item(row, column) is not None:
-                    tableData[row][HORIZONTAL_HEADER_LABELS[column]] = self.ui.rollPassTable.item(row, column).text()
+                    tableData[row][
+                        HORIZONTAL_HEADER_LABELS[column]
+                    ] = self.ui.rollPassTable.item(row, column).text()
                 else:
                     tableData[row][HORIZONTAL_HEADER_LABELS[column]] = None
-                
+
                 # add data from selected_groove_options to tableData
-                tableData[row]["groove_option"] = selected_groove_options[row].groove_option
-                tableData[row]["groove_option_values"] = selected_groove_options[row].groove_option_values
+                # tableData[row]["groove_option"] = selected_groove_options[
+                #    row
+                # ].groove_option
+                # tableData[row]["groove_option_values"] = selected_groove_options[
+                #    row
+                # ].groove_option_values
 
         return tableData
 
@@ -295,7 +341,6 @@ class MainWindow(QMainWindow):
             # Construct a RollPass object from the data in the table
 
             rp = RollPass()
-            
 
 
 def main():

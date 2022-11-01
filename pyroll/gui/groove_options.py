@@ -1,5 +1,3 @@
-
-
 from dataclasses import dataclass
 
 
@@ -9,13 +7,30 @@ class GrooveOption:
     settingFields: list[str]
 
 
-DEFAULT_GROOVE_OPTIONS = [
-    # TODO: Generate this through inflection?
-    GrooveOption("Round", ["r1", "r2", "depth"]),
-    GrooveOption("Circular Oval", ["r1", "r2", "depth"]),
-    GrooveOption("False Round", ["r1", "r2", "depth", "flank_angle"]),
-    GrooveOption("Square", ["r1", "r2", "depth"]),
-]
+class DefaultGrooveOptions:
+
+    DEFAULT_GROOVE_OPTION_DICT = [
+        # TODO: Generate this through inflection?
+        GrooveOption("Round", ["r1", "r2", "depth"]),
+        GrooveOption("Circular Oval", ["r1", "r2", "depth"]),
+        GrooveOption("False Round", ["r1", "r2", "depth", "flank_angle"]),
+        GrooveOption("Square", ["r1", "r2", "depth"]),
+    ]
+
+    #def __init__(self):
+    #    self._groove_options = self.DEFAULT_GROOVE_OPTION_DICT
+
+    def get_groove_options(self) -> list[GrooveOption]:
+        return self.DEFAULT_GROOVE_OPTION_DICT
+
+    def get_groove_option(self, name: str):
+        for option in self.DEFAULT_GROOVE_OPTION_DICT:
+            if option.name == name:
+                return option
+
+    def get_groove_option_names(self):
+        return [option.name for option in self.DEFAULT_GROOVE_OPTION_DICT]
+
 
 class SelectedGrooveOption:
     grooveOption: GrooveOption
@@ -29,3 +44,6 @@ class SelectedGrooveOption:
         if not all([field in grooveOption.settingFields for field in selectedValues]):
             raise ValueError("Invalid fields in selectedValues")
         self.selectedValues = selectedValues
+
+
+DEFAULT_GROOVE_OPTIONS = DefaultGrooveOptions()
