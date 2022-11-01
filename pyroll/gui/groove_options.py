@@ -4,7 +4,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class GrooveOption:
     name: str
-    settingFields: list[str]
+    setting_fields: list[str]
 
 
 class DefaultGrooveOptions:
@@ -41,7 +41,7 @@ class SelectedGrooveOption:
         # Assert that all the fields are present -> TODO: Is this necessary?
         # assert all([field in selectedValues for field in grooveOption.settingFields])
         # Assert that all the fields in the selectedValues are in the grooveOption
-        if not all([field in grooveOption.settingFields for field in selectedValues]):
+        if not all([field in grooveOption.setting_fields for field in selectedValues]):
             raise ValueError("Invalid fields in selectedValues")
         self.selectedValues = selectedValues
 
