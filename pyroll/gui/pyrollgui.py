@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QFile, QSize, Slot
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
+from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES, get_test_input_profile
 from pyroll.gui.row_data import get_test_rowdata_list
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.core import (
@@ -26,8 +27,6 @@ from pyroll.core import (
     RoundGroove,
     BoxGroove,
 )
-
-INPUT_PROFILES = ["Square", "Box", "Diamond", "Round"]
 
 HORIZONTAL_HEADER_LABELS = [
     "gap",
@@ -58,6 +57,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.row_data = get_test_rowdata_list()
+        self.input_profile = get_test_input_profile()
 
         # Set columns of self.ui.rollPassTable to "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"
         self.ui.rollPassTable.setColumnCount(8)
@@ -135,9 +135,9 @@ class MainWindow(QMainWindow):
         if current_gr_op.grooveOption.name != groove_option:
             self.row_data[
                 self.currentRow
-            ].selected_groove_option = SelectedGrooveOption(DEFAULT_GROOVE_OPTIONS.get_groove_option(
-                groove_option
-            ), {})
+            ].selected_groove_option = SelectedGrooveOption(
+                DEFAULT_GROOVE_OPTIONS.get_groove_option(groove_option), {}
+            )
 
         # selected_groove_options[self.currentRow].groove_option = groove_option
 
@@ -159,7 +159,10 @@ class MainWindow(QMainWindow):
 
         self.ui.inputProfileBox = QComboBox()
         # Combo box with items "Square", "Box", "Diamond", "Round"
-        self.ui.inputProfileBox.addItems(["Square", "Box", "Diamond", "Round"])
+        # self.ui.inputProfileBox.addItems(["Square", "Box", "Diamond", "Round"])
+        self.ui.inputProfileBox.addItems(
+            DEFAULT_INPUT_PROFILES.get_input_profile_names()
+        )
 
         self.ui.inputProfileGrid.addWidget(self.ui.inputProfileBox, 1, 0)
 
@@ -203,18 +206,6 @@ class MainWindow(QMainWindow):
         self.ui.grooveOptionsGrid.addLayout(self.ui.grooveOptions, 3, 0)
 
     @Slot()
-    def createInputProfileOptions(self):
-        """Depending on the selected combo box item, create different input profile options"""
-
-        selectedItem = self.ui.inputProfileBox.currentText()
-
-        clearLayout(self.ui.inputItemOptions)
-
-        if selectedItem == "Square":
-            self.ui.inputItemOptions.addRow(QLabel("Diagonal"), QLineEdit())
-            self.ui.inputItemOptions.addRow(QLabel("Corner radius"), QLineEdit())
-
-    @Slot()
     def createGrooveOptions(self):
         """Depending on the selected combo box item, create different groove options."""
 
@@ -253,6 +244,18 @@ class MainWindow(QMainWindow):
                     ].selected_groove_option.selectedValues[grooveOptionValue]}"""
                 )
 
+    @Slot()
+    def createInputProfileOptions(self):
+        """Depending on the selected combo box item, create different input profile options"""
+
+        selectedItem = self.ui.inputProfileBox.currentText()
+
+        clearLayout(self.ui.inputItemOptions)
+
+        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(selectedItem)
+
+        for inputProfileValue in inputProfile.setting_fields:
+            self.ui.inputItemOptions.addRow(QLabel(inputProfileValue), QLineEdit())
 
     def getTableData(self) -> list[dict[str, Union[str, list[str], None]]]:
         # Gets the data from the rollpasstable in the form of a list of dictionaries
