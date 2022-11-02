@@ -17,9 +17,6 @@ class DefaultGrooveOptions:
         GrooveOption("Square", ["r1", "r2", "depth"]),
     ]
 
-    #def __init__(self):
-    #    self._groove_options = self.DEFAULT_GROOVE_OPTION_DICT
-
     def get_groove_options(self) -> list[GrooveOption]:
         return self.DEFAULT_GROOVE_OPTION_DICT
 
