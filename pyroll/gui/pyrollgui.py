@@ -282,6 +282,18 @@ class MainWindow(QMainWindow):
 
         return tableData
 
+    #def getInputItemData(self) -> dict[str, Optional[Union[str, list[str]]]]:
+    #    # Gets the data from the inputItemOptions in the form of a dictionary
+    #    # The dictionary keys are the inputItemOptions labels
+    #    # The dictionary values are the values in the inputItemOptions
+    #    inputItemData: dict[str, Optional[Union[str, list[str]]]] = {}
+    #    for i in range(self.ui.inputItemOptions.count()):
+    #        label = self.ui.inputItemOptions.itemAt(i, QFormLayout.LabelRole).widget()
+    #        value = self.ui.inputItemOptions.itemAt(i, QFormLayout.FieldRole).widget()
+    #        inputItemData[label.text()] = value.text()
+#
+    #    return inputItemData
+
     # Solve function
     @Slot()
     def solve(self) -> None:
@@ -304,15 +316,18 @@ class MainWindow(QMainWindow):
         input_constr = getattr(Profile, selectedInputProfile.lower())
         input = input_constr(**inputItemOptionsDict)
 
+        
+
         rollpass_dicts = self.getTableData()
         # Now get the info from the table
 
         sequence: list[Union[RollPass, Transport]] = []
+        default_transport = Transport(duration=2)
 
         for i, rollpass_dict in enumerate(rollpass_dicts):
             # Construct a RollPass object from the data in the table
 
-            rp = RollPass()
+            rp = RollPass(**rollpass_dict, roll=Roll())
 
 
 def main():

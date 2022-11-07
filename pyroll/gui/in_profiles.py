@@ -23,7 +23,7 @@ class SelectedInputProfile:
 
 class DefaultInputProfiles:
     DEFAULT_INPUT_PROFILE_DICT = [
-        InputProfile("Square", ["Diagonal", "Corner Radius"]),
+        InputProfile("Square", ["Side", "Corner Radius", "Temperature", "Flow Stress", "Strain"]),
         InputProfile("Round", ["Radius"]),
         InputProfile("Box", ["Diagonal", "Radius"]),
     ]
@@ -44,8 +44,13 @@ class DefaultInputProfiles:
 DEFAULT_INPUT_PROFILES = DefaultInputProfiles()
 
 
+#in_profile = Profile.square(
+#    side=45e-3, corner_radius=3e-3,
+#    temperature=1200 + 273.15, flow_stress=100e6, strain=0,
+#)
+
 def get_test_input_profile() -> SelectedInputProfile:
     return SelectedInputProfile(
         DEFAULT_INPUT_PROFILES.get_input_profile("Square"),
-        {"Diagonal": 10, "Corner Radius": 1},
+        {"Side": 45e-3, "Corner Radius": 3e-3, "Temperature": 1200 + 273.15, "Flow Stress": 100e6, "Strain": 0},
     )
