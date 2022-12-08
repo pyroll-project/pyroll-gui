@@ -30,18 +30,6 @@ from pyroll.core import (
     BoxGroove,
 )
 
-HORIZONTAL_HEADER_LABELS = [
-    "gap",
-    "roll_radius",
-    "in_rotation",
-    "velocity",
-    "roll_temperature",
-    "transport_duration",
-    "atmosphere_temperature",
-    "roll_rotation_frequency",
-]
-
-
 def clearLayout(layout):
     if layout is not None:
         while layout.count():
@@ -50,7 +38,6 @@ def clearLayout(layout):
                 child.widget().deleteLater()
             elif child.layout() is not None:
                 clearLayout(child.layout())
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -155,6 +142,7 @@ class MainWindow(QMainWindow):
                 ] = parameter_value.widget().text()
 
     def persistInputProfile(self) -> None:
+        self.input_profile.input_profile
         for i in range(0, self.ui.inputItemOptions.count(), 2):
             parameter_name = self.ui.inputItemOptions.itemAt(i)
             parameter_value = self.ui.inputItemOptions.itemAt(i + 1)
@@ -184,7 +172,7 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileBox = QComboBox()
 
         self.ui.inputProfileBox.addItems(
-            DEFAULT_INPUT_PROFILES.get_input_profile_names()
+            DEFAULT_INPUT_PROFILES.get_input_profile_names_pretty()
         )
 
         self.ui.inputProfileGrid.addWidget(self.ui.inputProfileBox, 1, 0)
@@ -212,7 +200,7 @@ class MainWindow(QMainWindow):
 
         self.ui.grooveOptionsBox = QComboBox()
         self.ui.grooveOptionsBox.addItems(
-            DEFAULT_GROOVE_OPTIONS.get_groove_option_names()
+            DEFAULT_GROOVE_OPTIONS.get_groove_option_names_pretty()
         )
 
         # If a selectedGrooveOption is given, set the grooveOptionsBox to the selectedGrooveOption
@@ -267,10 +255,10 @@ class MainWindow(QMainWindow):
 
         clearLayout(self.ui.inputItemOptions)
 
-        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(selectedItem)
+        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(unprettify(selectedItem))
 
-        for inputProfileValue in inputProfile.setting_fields:
-            self.ui.inputItemOptions.addRow(QLabel(prettify(inputProfileValue)), QLineEdit())
+        for inputProfileSetting in inputProfile.setting_fields:
+            self.ui.inputItemOptions.addRow(QLabel(prettify(inputProfileSetting)), QLineEdit())
 
     def getTableData(self) -> list[TableRow]:
         """Get the data from the table and return it as a list of TableRow objects"""
@@ -292,7 +280,6 @@ class MainWindow(QMainWindow):
         # Get the selected item from self.ui.inputProfileBox
         selectedInputProfile: str = self.ui.inputProfileBox.currentText()
         print(selectedInputProfile)
-        inputItemOptionsDict: dict[str, float] = {}
         self.persistInputProfile()
         print(self.input_profile.selected_values)
         # TODO: Uncomment
@@ -308,7 +295,7 @@ class MainWindow(QMainWindow):
         print(self.getTableData())
 
         input_constr = getattr(Profile, selectedInputProfile.lower())
-        input = input_constr(**inputItemOptionsDict)
+        #input = input_constr(**inputItemOptionsDict)
 
         rollpass_dicts = self.getTableData()
         # Now get the info from the table

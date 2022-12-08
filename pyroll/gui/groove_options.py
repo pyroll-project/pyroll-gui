@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from text_processing import prettify
 
 
 @dataclass(frozen=True)
@@ -11,10 +12,10 @@ class DefaultGrooveOptions:
 
     DEFAULT_GROOVE_OPTION_DICT = [
         # TODO: Generate this through inflection?
-        GrooveOption("Round", ["r1", "r2", "depth"]),
-        GrooveOption("Circular Oval", ["r1", "r2", "depth"]),
-        GrooveOption("False Round", ["r1", "r2", "depth", "flank_angle"]),
-        GrooveOption("Square", ["r1", "r2", "depth"]),
+        GrooveOption("round", ["r1", "r2", "depth"]),
+        GrooveOption("circular_oval", ["r1", "r2", "depth"]),
+        GrooveOption("false_round", ["r1", "r2", "depth", "flank_angle"]),
+        GrooveOption("square", ["r1", "r2", "depth"]),
     ]
 
     def get_groove_options(self) -> list[GrooveOption]:
@@ -27,6 +28,8 @@ class DefaultGrooveOptions:
 
     def get_groove_option_names(self):
         return [option.name for option in self.DEFAULT_GROOVE_OPTION_DICT]
+    def get_groove_option_names_pretty(self):
+        return [prettify(option.name) for option in self.DEFAULT_GROOVE_OPTION_DICT]
 
 
 class SelectedGrooveOption:

@@ -1,11 +1,10 @@
 from dataclasses import dataclass
-
+from text_processing import prettify
 
 @dataclass
 class InputProfile:
     name: str
     setting_fields: list[str]
-
 
 class SelectedInputProfile:
     input_profile: InputProfile
@@ -24,9 +23,9 @@ class SelectedInputProfile:
 
 class DefaultInputProfiles:
     DEFAULT_INPUT_PROFILE_DICT = [
-        InputProfile("Square", ["Side", "Corner Radius", "Temperature", "Flow Stress", "Strain"]),
-        InputProfile("Round", ["Radius"]),
-        InputProfile("Box", ["Diagonal", "Radius"]),
+        InputProfile("square", ["side", "corner_radius", "temperature", "flow_stress", "strain"]),
+        InputProfile("round", ["radius"]),
+        InputProfile("box", ["diagonal", "radius"]),
     ]
 
     def get_input_profiles(self) -> list[InputProfile]:
@@ -40,6 +39,8 @@ class DefaultInputProfiles:
 
     def get_input_profile_names(self):
         return [option.name for option in self.DEFAULT_INPUT_PROFILE_DICT]
+    def get_input_profile_names_pretty(self):
+        return [prettify(option.name) for option in self.DEFAULT_INPUT_PROFILE_DICT]
 
 
 DEFAULT_INPUT_PROFILES = DefaultInputProfiles()
@@ -52,6 +53,6 @@ DEFAULT_INPUT_PROFILES = DefaultInputProfiles()
 
 def get_test_input_profile() -> SelectedInputProfile:
     return SelectedInputProfile(
-        DEFAULT_INPUT_PROFILES.get_input_profile("Square"),
-        {"Side": 45e-3, "Corner Radius": 3e-3, "Temperature": 1200 + 273.15, "Flow Stress": 100e6, "Strain": 0},
+        DEFAULT_INPUT_PROFILES.get_input_profile("square"),
+        {"side": 45e-3, "corner_radius": 3e-3, "temperature": 1200 + 273.15, "flow_stress": 100e6, "strain": 0},
     )
