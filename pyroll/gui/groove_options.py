@@ -30,17 +30,17 @@ class DefaultGrooveOptions:
 
 
 class SelectedGrooveOption:
-    grooveOption: GrooveOption
-    selectedValues: dict[str, float]
+    groove_option: GrooveOption
+    selected_values: dict[str, float]
 
     def __init__(self, grooveOption: GrooveOption, selectedValues: dict[str, float]):
-        self.grooveOption = grooveOption
+        self.groove_option = grooveOption
         # Assert that all the fields are present -> TODO: Is this necessary?
         # assert all([field in selectedValues for field in grooveOption.settingFields])
         # Assert that all the fields in the selectedValues are in the grooveOption
         if not all([field in grooveOption.setting_fields for field in selectedValues]):
             raise ValueError("Invalid fields in selectedValues")
-        self.selectedValues = selectedValues
+        self.selected_values = selectedValues
 
 
 DEFAULT_GROOVE_OPTIONS = DefaultGrooveOptions()

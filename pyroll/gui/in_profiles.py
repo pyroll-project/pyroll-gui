@@ -21,6 +21,7 @@ class SelectedInputProfile:
         self.selected_values = selected_values
 
 
+
 class DefaultInputProfiles:
     DEFAULT_INPUT_PROFILE_DICT = [
         InputProfile("Square", ["Side", "Corner Radius", "Temperature", "Flow Stress", "Strain"]),

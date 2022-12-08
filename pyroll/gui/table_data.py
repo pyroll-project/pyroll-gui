@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from pyroll.gui.text_processing import prettify
+
 
 @dataclass
 class TableRow:
@@ -28,5 +30,5 @@ class TableRow:
     def get_column_data_names_pretty():
         """Returns the names of the columns (prettier version) in the class"""
         return [
-            name.replace("_", " ").title() for name in TableRow.__dataclass_fields__
+            prettify(name) for name in TableRow.__dataclass_fields__
         ]

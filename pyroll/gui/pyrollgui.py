@@ -17,6 +17,7 @@ from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOpti
 from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES, get_test_input_profile
 from pyroll.gui.row_data import get_test_rowdata_list
 from pyroll.gui.table_data import TableRow
+from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.core import (
     Profile,
@@ -81,6 +82,7 @@ class MainWindow(QMainWindow):
         )
 
         self.currentRow = 0
+        self.ui.grooveOptions: QFormLayout
 
         # Add a row to self.ui.rollPassTable
         self.ui.rollPassTable.insertRow(0)
@@ -128,27 +130,48 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def grooveOptionBoxChanged(self) -> None:
-        # Get the groove option selected
         groove_option = self.ui.grooveOptionsBox.currentText()
 
         print(groove_option)
         # Print current groove option
         current_gr_op = self.row_data[self.currentRow].selected_groove_option
-        print(current_gr_op.selectedValues)
-        if current_gr_op.grooveOption.name != groove_option:
+        print(current_gr_op.selected_values)
+
+        # This deletes the currently entered values if the groove option combobox is changed
+        if current_gr_op.groove_option.name != groove_option:
             self.row_data[
                 self.currentRow
             ].selected_groove_option = SelectedGrooveOption(
                 DEFAULT_GROOVE_OPTIONS.get_groove_option(groove_option), {}
             )
 
+    def persistGrooveOptions(self) -> None:
+        for i in range(0, self.ui.grooveOptions.count(), 2):
+            parameter_name = self.ui.grooveOptions.itemAt(i)
+            parameter_value = self.ui.grooveOptions.itemAt(i + 1)
+            if parameter_name is not None and parameter_value is not None:
+                self.row_data[self.currentRow].selected_groove_option.selected_values[
+                    unprettify(parameter_name.widget().text())
+                ] = parameter_value.widget().text()
+
+    def persistInputProfile(self) -> None:
+        for i in range(0, self.ui.inputItemOptions.count(), 2):
+            parameter_name = self.ui.inputItemOptions.itemAt(i)
+            parameter_value = self.ui.inputItemOptions.itemAt(i + 1)
+            if parameter_name is not None and parameter_value is not None:
+                self.input_profile.selected_values[
+                    unprettify(parameter_name.widget().text())
+                ] = parameter_value.widget().text()
+
     @Slot()
     def selectedRowChanged(self) -> None:
         # Get selectionmodel from self.ui.rollPassTable
+        self.persistGrooveOptions()
         selectionModel = self.ui.rollPassTable.selectionModel()
         # Get the current selected row
         self.currentRow = selectionModel.currentIndex().row()
         print("row changed to:", self.currentRow)
+
 
     @Slot()
     def createInputProfileGUI(self):
@@ -179,7 +202,7 @@ class MainWindow(QMainWindow):
 
         comboBoxValue = self.row_data[
             self.currentRow
-        ].selected_groove_option.grooveOption.name
+        ].selected_groove_option.groove_option.name
 
         self.ui.grooveOptionsGrid.setRowMinimumHeight(3, 100)
 
@@ -211,7 +234,7 @@ class MainWindow(QMainWindow):
 
         grooveOption = self.row_data[
             self.currentRow
-        ].selected_groove_option.grooveOption
+        ].selected_groove_option.groove_option
 
         comboBoxValue = grooveOption.name
 
@@ -228,12 +251,12 @@ class MainWindow(QMainWindow):
             self.ui.grooveOptions.addRow(QLabel(grooveOptionValue), QLineEdit())
             if (
                 grooveOptionValue
-                in self.row_data[self.currentRow].selected_groove_option.selectedValues
+                in self.row_data[self.currentRow].selected_groove_option.selected_values
             ):
                 self.ui.grooveOptions.itemAt(itemAtIndex).widget().setText(
                     f"""{self.row_data[
                         self.currentRow
-                    ].selected_groove_option.selectedValues[grooveOptionValue]}"""
+                    ].selected_groove_option.selected_values[grooveOptionValue]}"""
                 )
 
     @Slot()
@@ -247,7 +270,7 @@ class MainWindow(QMainWindow):
         inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(selectedItem)
 
         for inputProfileValue in inputProfile.setting_fields:
-            self.ui.inputItemOptions.addRow(QLabel(inputProfileValue), QLineEdit())
+            self.ui.inputItemOptions.addRow(QLabel(prettify(inputProfileValue)), QLineEdit())
 
     def getTableData(self) -> list[TableRow]:
         """Get the data from the table and return it as a list of TableRow objects"""
@@ -270,7 +293,8 @@ class MainWindow(QMainWindow):
         selectedInputProfile: str = self.ui.inputProfileBox.currentText()
         print(selectedInputProfile)
         inputItemOptionsDict: dict[str, float] = {}
-
+        self.persistInputProfile()
+        print(self.input_profile.selected_values)
         # TODO: Uncomment
         # for i in range(0, self.ui.inputItemOptions.count(), 2):
         #    label: str = self.ui.inputItemOptions.itemAt(i).widget().text()
