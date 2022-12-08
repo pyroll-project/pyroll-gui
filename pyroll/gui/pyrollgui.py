@@ -13,8 +13,16 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtCore import QFile, QSize, Slot
-from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
-from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES, get_test_input_profile
+from pyroll.gui.groove_options import (
+    DEFAULT_GROOVE_OPTIONS,
+    DefaultGrooveOptions,
+    SelectedGrooveOption,
+)
+from pyroll.gui.in_profiles import (
+    DEFAULT_INPUT_PROFILES,
+    DefaultInputProfiles,
+    get_test_input_profile,
+)
 from pyroll.gui.row_data import get_test_rowdata_list
 from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
@@ -30,6 +38,8 @@ from pyroll.core import (
     BoxGroove,
 )
 
+from xml_processing import XmlProcessing
+
 def clearLayout(layout):
     if layout is not None:
         while layout.count():
@@ -38,6 +48,7 @@ def clearLayout(layout):
                 child.widget().deleteLater()
             elif child.layout() is not None:
                 clearLayout(child.layout())
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -129,10 +140,15 @@ class MainWindow(QMainWindow):
             self.row_data[
                 self.currentRow
             ].selected_groove_option = SelectedGrooveOption(
-                DEFAULT_GROOVE_OPTIONS.get_groove_option(groove_option), {}
+                DEFAULT_GROOVE_OPTIONS.get_groove_option(unprettify(groove_option)), {}
             )
 
     def persistGrooveOptions(self) -> None:
+        self.row_data[
+            self.currentRow
+        ].selected_groove_option.groove_option = DefaultGrooveOptions.get_groove_option(
+            unprettify(self.ui.grooveOptionsBox.currentText())
+        )
         for i in range(0, self.ui.grooveOptions.count(), 2):
             parameter_name = self.ui.grooveOptions.itemAt(i)
             parameter_value = self.ui.grooveOptions.itemAt(i + 1)
@@ -142,7 +158,9 @@ class MainWindow(QMainWindow):
                 ] = parameter_value.widget().text()
 
     def persistInputProfile(self) -> None:
-        self.input_profile.input_profile
+        self.input_profile.input_profile = DefaultInputProfiles.get_input_profile(
+            unprettify(self.ui.inputProfileBox.currentText())
+        )
         for i in range(0, self.ui.inputItemOptions.count(), 2):
             parameter_name = self.ui.inputItemOptions.itemAt(i)
             parameter_value = self.ui.inputItemOptions.itemAt(i + 1)
@@ -159,7 +177,6 @@ class MainWindow(QMainWindow):
         # Get the current selected row
         self.currentRow = selectionModel.currentIndex().row()
         print("row changed to:", self.currentRow)
-
 
     @Slot()
     def createInputProfileGUI(self):
@@ -255,10 +272,14 @@ class MainWindow(QMainWindow):
 
         clearLayout(self.ui.inputItemOptions)
 
-        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(unprettify(selectedItem))
+        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(
+            unprettify(selectedItem)
+        )
 
         for inputProfileSetting in inputProfile.setting_fields:
-            self.ui.inputItemOptions.addRow(QLabel(prettify(inputProfileSetting)), QLineEdit())
+            self.ui.inputItemOptions.addRow(
+                QLabel(prettify(inputProfileSetting)), QLineEdit()
+            )
 
     def getTableData(self) -> list[TableRow]:
         """Get the data from the table and return it as a list of TableRow objects"""
@@ -277,11 +298,17 @@ class MainWindow(QMainWindow):
     def solve(self) -> None:
         print("Solve button clicked")
 
-        # Get the selected item from self.ui.inputProfileBox
-        selectedInputProfile: str = self.ui.inputProfileBox.currentText()
-        print(selectedInputProfile)
         self.persistInputProfile()
+        self.persistGrooveOptions()
+        print(self.input_profile.input_profile.name)
         print(self.input_profile.selected_values)
+        print(self.row_data)
+
+        xmlproc = XmlProcessing()
+        xmlproc.save_pyroll_xml(self.row_data, self.getTableData(), self.input_profile, "test.xml")
+
+        return
+
         # TODO: Uncomment
         # for i in range(0, self.ui.inputItemOptions.count(), 2):
         #    label: str = self.ui.inputItemOptions.itemAt(i).widget().text()
@@ -295,7 +322,7 @@ class MainWindow(QMainWindow):
         print(self.getTableData())
 
         input_constr = getattr(Profile, selectedInputProfile.lower())
-        #input = input_constr(**inputItemOptionsDict)
+        # input = input_constr(**inputItemOptionsDict)
 
         rollpass_dicts = self.getTableData()
         # Now get the info from the table

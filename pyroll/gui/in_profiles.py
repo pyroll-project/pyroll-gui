@@ -31,8 +31,9 @@ class DefaultInputProfiles:
     def get_input_profiles(self) -> list[InputProfile]:
         return self.DEFAULT_INPUT_PROFILE_DICT
 
-    def get_input_profile(self, name: str) -> InputProfile:
-        for option in self.DEFAULT_INPUT_PROFILE_DICT:
+    @staticmethod
+    def get_input_profile( name: str) -> InputProfile:
+        for option in DefaultInputProfiles.DEFAULT_INPUT_PROFILE_DICT:
             if option.name == name:
                 return option
         raise ValueError("Invalid input profile name")
@@ -41,7 +42,6 @@ class DefaultInputProfiles:
         return [option.name for option in self.DEFAULT_INPUT_PROFILE_DICT]
     def get_input_profile_names_pretty(self):
         return [prettify(option.name) for option in self.DEFAULT_INPUT_PROFILE_DICT]
-
 
 DEFAULT_INPUT_PROFILES = DefaultInputProfiles()
 

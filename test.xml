@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process_data>
+	<row_data>
+		<round>
+			<r1>4</r1>
+			<r2>4</r2>
+			<depth>4</depth>
+		</round>
+	</row_data>
+	<row_data>
+		<round>
+			<r1>8</r1>
+			<r2>44</r2>
+			<depth>9</depth>
+		</round>
+	</row_data>
+	<table_row>
+		<gap>1</gap>
+		<rool_radius>180</rool_radius>
+		<in_rotation>1</in_rotation>
+		<velocity>1</velocity>
+		<roll_temperature>20</roll_temperature>
+		<transport_duration>1</transport_duration>
+		<atmosphere_temperature>20</atmosphere_temperature>
+		<roll_rotation_frequency>1</roll_rotation_frequency>
+	</table_row>
+	<table_row>
+		<gap></gap>
+		<rool_radius></rool_radius>
+		<in_rotation></in_rotation>
+		<velocity></velocity>
+		<roll_temperature></roll_temperature>
+		<transport_duration></transport_duration>
+		<atmosphere_temperature></atmosphere_temperature>
+		<roll_rotation_frequency></roll_rotation_frequency>
+	</table_row>
+	<square>
+		<side>24</side>
+		<corner_radius>44444234</corner_radius>
+		<temperature>234</temperature>
+		<flow_stress>3424</flow_stress>
+		<strain>432</strain>
+	</square>
+</process_data>
