@@ -16,6 +16,7 @@ from PySide6.QtCore import QFile, QSize, Slot
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES, get_test_input_profile
 from pyroll.gui.row_data import get_test_rowdata_list
+from pyroll.gui.table_data import TableRow
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.core import (
     Profile,
@@ -59,10 +60,12 @@ class MainWindow(QMainWindow):
         self.row_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
 
-        # Set columns of self.ui.rollPassTable to "gap", "roll_radius", "in_rotation", "velocity", "roll_temperature", "transport_duration", "atmosphere_temperature", "roll_rotation_frequency"
         self.ui.rollPassTable.setColumnCount(8)
-        self.ui.rollPassTable.setHorizontalHeaderLabels(HORIZONTAL_HEADER_LABELS)
-        # Equally space the columns
+
+        self.ui.rollPassTable.setHorizontalHeaderLabels(
+            TableRow().get_column_data_names_pretty()
+        )
+
         self.ui.rollPassTable.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
         )
@@ -139,8 +142,6 @@ class MainWindow(QMainWindow):
                 DEFAULT_GROOVE_OPTIONS.get_groove_option(groove_option), {}
             )
 
-        # selected_groove_options[self.currentRow].groove_option = groove_option
-
     @Slot()
     def selectedRowChanged(self) -> None:
         # Get selectionmodel from self.ui.rollPassTable
@@ -158,8 +159,7 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileGrid.addWidget(self.ui.inputProfileLabel, 0, 0)
 
         self.ui.inputProfileBox = QComboBox()
-        # Combo box with items "Square", "Box", "Diamond", "Round"
-        # self.ui.inputProfileBox.addItems(["Square", "Box", "Diamond", "Round"])
+
         self.ui.inputProfileBox.addItems(
             DEFAULT_INPUT_PROFILES.get_input_profile_names()
         )
@@ -217,14 +217,7 @@ class MainWindow(QMainWindow):
 
         self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
 
-        # grooveOptionValues = selected_groove_options[self.currentRow]
-        #
-        # optionValueList = grooveOptionValues.groove_option_values
-
         optionValueList = grooveOption.setting_fields
-
-        # get the selected item from self.ui.grooveBox
-        # selectedItem = self.ui.grooveOptionsBox.currentText()
 
         # Delete all rows from self.ui.grooveOptions QFormLayout
         clearLayout(self.ui.grooveOptions)
@@ -237,7 +230,6 @@ class MainWindow(QMainWindow):
                 grooveOptionValue
                 in self.row_data[self.currentRow].selected_groove_option.selectedValues
             ):
-                # self.ui.grooveOptions.itemAt(1).widget().setText(optionValueList[0])
                 self.ui.grooveOptions.itemAt(itemAtIndex).widget().setText(
                     f"""{self.row_data[
                         self.currentRow
@@ -257,44 +249,19 @@ class MainWindow(QMainWindow):
         for inputProfileValue in inputProfile.setting_fields:
             self.ui.inputItemOptions.addRow(QLabel(inputProfileValue), QLineEdit())
 
-    def getTableData(self) -> list[dict[str, Union[str, list[str], None]]]:
-        # Gets the data from the rollpasstable in the form of a list of dictionaries
-        # The dictionary keys are the HORIZONTAL_HEADER_LABELS
-        # The dictionary values are the values in the table
-        tableData: list[dict[str, Optional[Union[str, list[str]]]]] = []
+    def getTableData(self) -> list[TableRow]:
+        """Get the data from the table and return it as a list of TableRow objects"""
+        table_data: list[TableRow] = []
         for row in range(self.ui.rollPassTable.rowCount()):
-            tableData.append({})
+            current_row = TableRow()
             for column in range(self.ui.rollPassTable.columnCount()):
                 if self.ui.rollPassTable.item(row, column) is not None:
-                    tableData[row][
-                        HORIZONTAL_HEADER_LABELS[column]
-                    ] = self.ui.rollPassTable.item(row, column).text()
-                else:
-                    tableData[row][HORIZONTAL_HEADER_LABELS[column]] = None
+                    item_value = self.ui.rollPassTable.item(row, column).text()
+                    current_row.set_column_by_index(column, item_value)
 
-                # add data from selected_groove_options to tableData
-                # tableData[row]["groove_option"] = selected_groove_options[
-                #    row
-                # ].groove_option
-                # tableData[row]["groove_option_values"] = selected_groove_options[
-                #    row
-                # ].groove_option_values
+            table_data.append(current_row)
+        return table_data
 
-        return tableData
-
-    #def getInputItemData(self) -> dict[str, Optional[Union[str, list[str]]]]:
-    #    # Gets the data from the inputItemOptions in the form of a dictionary
-    #    # The dictionary keys are the inputItemOptions labels
-    #    # The dictionary values are the values in the inputItemOptions
-    #    inputItemData: dict[str, Optional[Union[str, list[str]]]] = {}
-    #    for i in range(self.ui.inputItemOptions.count()):
-    #        label = self.ui.inputItemOptions.itemAt(i, QFormLayout.LabelRole).widget()
-    #        value = self.ui.inputItemOptions.itemAt(i, QFormLayout.FieldRole).widget()
-    #        inputItemData[label.text()] = value.text()
-#
-    #    return inputItemData
-
-    # Solve function
     @Slot()
     def solve(self) -> None:
         print("Solve button clicked")
@@ -304,19 +271,20 @@ class MainWindow(QMainWindow):
         print(selectedInputProfile)
         inputItemOptionsDict: dict[str, float] = {}
 
-        for i in range(0, self.ui.inputItemOptions.count(), 2):
-            label: str = self.ui.inputItemOptions.itemAt(i).widget().text()
-            # Convert label to lowercase and replace spaces with underscores
-            label = label.lower().replace(" ", "_")
-            lineEdit = self.ui.inputItemOptions.itemAt(i + 1).widget()
-            inputItemOptionsDict[label] = float(lineEdit.text())
+        # TODO: Uncomment
+        # for i in range(0, self.ui.inputItemOptions.count(), 2):
+        #    label: str = self.ui.inputItemOptions.itemAt(i).widget().text()
+        #    # Convert label to lowercase and replace spaces with underscores
+        #    label = label.lower().replace(" ", "_")
+        #    lineEdit = self.ui.inputItemOptions.itemAt(i + 1).widget()
+        #    inputItemOptionsDict[label] = float(lineEdit.text())
 
-        print(inputItemOptionsDict)
+        # print(inputItemOptionsDict)
+        print("Proper table data")
+        print(self.getTableData())
 
         input_constr = getattr(Profile, selectedInputProfile.lower())
         input = input_constr(**inputItemOptionsDict)
-
-        
 
         rollpass_dicts = self.getTableData()
         # Now get the info from the table
@@ -324,10 +292,10 @@ class MainWindow(QMainWindow):
         sequence: list[Union[RollPass, Transport]] = []
         default_transport = Transport(duration=2)
 
-        for i, rollpass_dict in enumerate(rollpass_dicts):
+        for i, rollpass_tablerow in enumerate(rollpass_dicts):
             # Construct a RollPass object from the data in the table
 
-            rp = RollPass(**rollpass_dict, roll=Roll())
+            rp = RollPass(**rollpass_tablerow.__dict__, roll=Roll())
 
 
 def main():

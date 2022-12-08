@@ -50,7 +50,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addLayout(self.grooveOptionsGrid)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.solveButton = QPushButton(self.verticalLayoutWidget)
