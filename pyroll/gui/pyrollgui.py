@@ -309,15 +309,6 @@ class MainWindow(QMainWindow):
 
         return
 
-        # TODO: Uncomment
-        # for i in range(0, self.ui.inputItemOptions.count(), 2):
-        #    label: str = self.ui.inputItemOptions.itemAt(i).widget().text()
-        #    # Convert label to lowercase and replace spaces with underscores
-        #    label = label.lower().replace(" ", "_")
-        #    lineEdit = self.ui.inputItemOptions.itemAt(i + 1).widget()
-        #    inputItemOptionsDict[label] = float(lineEdit.text())
-
-        # print(inputItemOptionsDict)
         print("Proper table data")
         print(self.getTableData())
 
