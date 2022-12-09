@@ -1,20 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
 <process_data>
   <input_profile>
-    <side>423</side>
-    <corner_radius>44</corner_radius>
-    <temperature>23</temperature>
-    <flow_stress>4</flow_stress>
-    <strain>2</strain>
+    <side>24</side>
+    <corner_radius>34</corner_radius>
+    <temperature>4</temperature>
+    <flow_stress>1</flow_stress>
+    <strain>42343</strain>
   </input_profile>
   <pass_sequence>
     <pass>
       <groove>
-        <r1>10</r1>
-        <r2>20</r2>
-        <depth>14</depth>
+        <round>
+          <r1>10</r1>
+          <r2>20</r2>
+          <depth>14</depth>
+        </round>
       </groove>
-      <gap>2</gap>
+      <gap>1</gap>
       <rool_radius>180</rool_radius>
       <in_rotation>1</in_rotation>
       <velocity>1</velocity>
@@ -25,17 +27,19 @@
     </pass>
     <pass>
       <groove>
-        <r1>8</r1>
-        <r2>44</r2>
-        <depth>9</depth>
+        <round>
+          <r1>8</r1>
+          <r2>44</r2>
+          <depth>9</depth>
+        </round>
       </groove>
-      <gap>2</gap>
-      <rool_radius>24</rool_radius>
-      <in_rotation>4</in_rotation>
-      <velocity>4234</velocity>
-      <roll_temperature>4</roll_temperature>
-      <transport_duration>4</transport_duration>
-      <atmosphere_temperature>4</atmosphere_temperature>
+      <gap>None</gap>
+      <rool_radius>13</rool_radius>
+      <in_rotation>12</in_rotation>
+      <velocity>3</velocity>
+      <roll_temperature>None</roll_temperature>
+      <transport_duration>None</transport_duration>
+      <atmosphere_temperature>None</atmosphere_temperature>
       <roll_rotation_frequency>None</roll_rotation_frequency>
     </pass>
   </pass_sequence>

@@ -36,7 +36,7 @@ class XmlProcessing:
 
         # Now we do the same, but only with the xml package
         root = ElementTree.Element("process_data")
-        input_profile_element = ElementTree.SubElement(root, "input_profile")
+        input_profile_element = ElementTree.SubElement(root, "in_profile")
         for key, value in input_profile.selected_values.items():
             # Create subelements, not attributes
             ElementTree.SubElement(input_profile_element, key).text = str(value)
@@ -45,9 +45,10 @@ class XmlProcessing:
             pass_element = ElementTree.SubElement(pass_sequence_element, "pass")
 
             groove_element = ElementTree.SubElement(pass_element, "groove")
+            groove_name_element = ElementTree.SubElement(groove_element, row.selected_groove_option.groove_option.name)
             # Create subelement for each key, value pair in the selected_values dict
             for key, value in row.selected_groove_option.selected_values.items():
-                ElementTree.SubElement(groove_element, key).text = str(value)
+                ElementTree.SubElement(groove_name_element, key).text = str(value)
 
             for key, value in table_row.__dict__.items():
                 ElementTree.SubElement(pass_element, key).text = str(value)

@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QGridLayout,
 )
+from PySide6 import QtGui
 from PySide6.QtCore import QFile, QSize, Slot
 from pyroll.gui.groove_options import (
     DEFAULT_GROOVE_OPTIONS,
@@ -56,6 +57,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon("img/pyroll_icon.png"))
+        self.setWindowTitle("PyRoll")
 
         self.row_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
