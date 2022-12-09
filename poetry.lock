@@ -718,18 +718,10 @@ codegen = ["elementpath (>=3.0.0,<4.0.0)", "jinja2"]
 dev = ["Sphinx", "coverage", "elementpath (>=3.0.0,<4.0.0)", "flake8", "jinja2", "lxml", "lxml-stubs", "memory-profiler", "mypy", "sphinx-rtd-theme", "tox"]
 docs = ["Sphinx", "elementpath (>=3.0.0,<4.0.0)", "jinja2", "sphinx-rtd-theme"]
 
-[[package]]
-name = "xmltodict"
-version = "0.13.0"
-description = "Makes working with XML feel like you are working with JSON"
-category = "main"
-optional = false
-python-versions = ">=3.4"
-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9, <3.11"
-content-hash = "8a93035e8cbaf0874ae9f886433a12a35c559d1875cb4a140651427651ce8d0f"
+content-hash = "fa817efec068f0c370305f27404563b1bee113ca2e78ef37ea3bcfed7b8b15d9"
 
 [metadata.files]
 altgraph = [
@@ -1504,8 +1496,4 @@ typing-extensions = [
 xmlschema = [
     {file = "xmlschema-2.1.1-py3-none-any.whl", hash = "sha256:5717a8a239637a9ad7d7563ce676dddf0a8989644c833f96bfc6d157c3cb3750"},
     {file = "xmlschema-2.1.1.tar.gz", hash = "sha256:5ca34ff15dd3276cfb2e3e7b4c8dde4b7d4d27080f333a93b6c3f817e90abddf"},
-]
-xmltodict = [
-    {file = "xmltodict-0.13.0-py2.py3-none-any.whl", hash = "sha256:aa89e8fd76320154a40d19a0df04a4695fb9dc5ba977cbb68ab3e4eb225e7852"},
-    {file = "xmltodict-0.13.0.tar.gz", hash = "sha256:341595a488e3e01a85a9d8911d8912fd922ede5fecc4dce437eb4b6c8d037e56"},
 ]

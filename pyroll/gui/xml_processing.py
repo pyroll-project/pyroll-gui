@@ -3,9 +3,9 @@ from pprint import pprint
 from pyroll.gui.in_profiles import InputProfile, SelectedInputProfile
 from pyroll.gui.row_data import RowData
 from pyroll.gui.table_data import TableRow
-# We need the xml package because duplicate keys are not allowed in dicts -> Can not 
+
+# We need the xml package because duplicate keys are not allowed in dicts -> Can not
 from xml.etree import ElementTree
-import xmltodict
 
 
 class XmlProcessing:
@@ -33,49 +33,23 @@ class XmlProcessing:
             raise ValueError(
                 "The number of rows in the table is not the same as the number of rows in the row_data"
             )
-        #pass_sequence_list = []
-        ## Iterate parallely over the row_data and the table_rows
-        #for row, table_row in zip(row_data, table_rows):
-        #    pass_sequence_list.append(
-        #        {
-        #            "pass": {
-        #                "row_id": row.rowId,
-        #                "groove": {
-        #                    row.selected_groove_option.groove_option.name: row.selected_groove_option.selected_values
-        #                },
-        #            }
-        #            | table_row.__dict__
-        #        }
-        #    )
-#
-        #data = {
-        #    "process_data": {
-        #        "input_profile": {
-        #            input_profile.input_profile.name: input_profile.selected_values
-        #        },
-        #        "pass_sequence": pass_sequence_list,
-        #    }
-        #}
 
         # Now we do the same, but only with the xml package
         root = ElementTree.Element("process_data")
         input_profile_element = ElementTree.SubElement(root, "input_profile")
         for key, value in input_profile.selected_values.items():
-            #input_profile_element.set(key, str(value))
             # Create subelements, not attributes
             ElementTree.SubElement(input_profile_element, key).text = str(value)
         pass_sequence_element = ElementTree.SubElement(root, "pass_sequence")
         for row, table_row in zip(row_data, table_rows):
             pass_element = ElementTree.SubElement(pass_sequence_element, "pass")
-            
+
             groove_element = ElementTree.SubElement(pass_element, "groove")
             # Create subelement for each key, value pair in the selected_values dict
             for key, value in row.selected_groove_option.selected_values.items():
-                #groove_element.set(key, str(value))
                 ElementTree.SubElement(groove_element, key).text = str(value)
-            
+
             for key, value in table_row.__dict__.items():
-                #pass_element.set(key, str(value))
                 ElementTree.SubElement(pass_element, key).text = str(value)
 
         # Print to file
@@ -84,12 +58,6 @@ class XmlProcessing:
 
         # Write with indent 4
         tree.write(file_path, encoding="utf-8", xml_declaration=True)
-
-         
-
-        #xml = xmltodict.unparse(data, pretty=True)
-        #with open(file_path, "w", encoding="utf-8") as f:
-        #    f.write(xml)
 
 
 if __name__ == "__main__":

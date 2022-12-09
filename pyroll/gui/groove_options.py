@@ -17,7 +17,7 @@ class DefaultGrooveOptions:
         GrooveOption("false_round", ["r1", "r2", "depth", "flank_angle"]),
         GrooveOption("square", ["r1", "r2", "depth"]),
     ]
-    
+
     def get_groove_options(self) -> list[GrooveOption]:
         return self.DEFAULT_GROOVE_OPTION_DICT
 
@@ -30,6 +30,7 @@ class DefaultGrooveOptions:
 
     def get_groove_option_names(self):
         return [option.name for option in self.DEFAULT_GROOVE_OPTION_DICT]
+
     def get_groove_option_names_pretty(self):
         return [prettify(option.name) for option in self.DEFAULT_GROOVE_OPTION_DICT]
 

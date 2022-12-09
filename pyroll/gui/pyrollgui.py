@@ -40,6 +40,7 @@ from pyroll.core import (
 
 from xml_processing import XmlProcessing
 
+
 def clearLayout(layout):
     if layout is not None:
         while layout.count():
@@ -305,7 +306,9 @@ class MainWindow(QMainWindow):
         print(self.row_data)
 
         xmlproc = XmlProcessing()
-        xmlproc.save_pyroll_xml(self.row_data, self.getTableData(), self.input_profile, "test.xml")
+        xmlproc.save_pyroll_xml(
+            self.row_data, self.getTableData(), self.input_profile, "test.xml"
+        )
 
         return
 
