@@ -5,7 +5,7 @@ from pyroll.gui.groove_options import SelectedGrooveOption, DEFAULT_GROOVE_OPTIO
 
 @dataclass
 class RowData:
-    """Dataclass for storing data connected to the row of the table. Currently it stores the row id and the selected groove options"""
+    """Dataclass for storing data associated with a row of the table (But not the table itself). Currently it stores the row id and the selected groove options"""
 
     rowId: int
     selected_groove_option: SelectedGrooveOption

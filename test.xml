@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <process_data>
-  <input_profile>
-    <side>24</side>
-    <corner_radius>34</corner_radius>
-    <temperature>4</temperature>
-    <flow_stress>1</flow_stress>
-    <strain>42343</strain>
-  </input_profile>
+  <in_profile>
+    <side>324</side>
+    <corner_radius>44</corner_radius>
+    <temperature>22</temperature>
+    <flow_stress>13</flow_stress>
+    <strain>5543</strain>
+  </in_profile>
   <pass_sequence>
     <pass>
       <groove>
@@ -33,12 +33,12 @@
           <depth>9</depth>
         </round>
       </groove>
-      <gap>None</gap>
-      <rool_radius>13</rool_radius>
-      <in_rotation>12</in_rotation>
-      <velocity>3</velocity>
-      <roll_temperature>None</roll_temperature>
-      <transport_duration>None</transport_duration>
+      <gap>2</gap>
+      <rool_radius>None</rool_radius>
+      <in_rotation>4</in_rotation>
+      <velocity>4</velocity>
+      <roll_temperature>2</roll_temperature>
+      <transport_duration>2</transport_duration>
       <atmosphere_temperature>None</atmosphere_temperature>
       <roll_rotation_frequency>None</roll_rotation_frequency>
     </pass>

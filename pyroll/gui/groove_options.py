@@ -38,6 +38,7 @@ class DefaultGrooveOptions:
 class SelectedGrooveOption:
     groove_option: GrooveOption
     selected_values: dict[str, float]
+    """Represents the selected parameters for the groove option, saved as a dict"""
 
     def __init__(self, grooveOption: GrooveOption, selectedValues: dict[str, float]):
         self.groove_option = grooveOption

@@ -24,7 +24,7 @@ from pyroll.gui.in_profiles import (
     DefaultInputProfiles,
     get_test_input_profile,
 )
-from pyroll.gui.row_data import get_test_rowdata_list
+from pyroll.gui.row_data import RowData, get_test_rowdata_list
 from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
@@ -307,30 +307,34 @@ class MainWindow(QMainWindow):
         print(self.input_profile.input_profile.name)
         print(self.input_profile.selected_values)
         print(self.row_data)
+        table_data: list[TableRow] = self.getTableData()
 
         xmlproc = XmlProcessing()
         xmlproc.save_pyroll_xml(
-            self.row_data, self.getTableData(), self.input_profile, "test.xml"
+            self.row_data, table_data, self.input_profile, "test.xml"
         )
-
-        return
 
         print("Proper table data")
         print(self.getTableData())
 
-        input_constr = getattr(Profile, selectedInputProfile.lower())
-        # input = input_constr(**inputItemOptionsDict)
+        input_constr = getattr(Profile, self.input_profile.input_profile.name)
 
-        rollpass_dicts = self.getTableData()
+        input = input_constr(**self.input_profile.selected_values)
+
         # Now get the info from the table
 
         sequence: list[Union[RollPass, Transport]] = []
         default_transport = Transport(duration=2)
-
-        for i, rollpass_tablerow in enumerate(rollpass_dicts):
-            # Construct a RollPass object from the data in the table
-
-            rp = RollPass(**rollpass_tablerow.__dict__, roll=Roll())
+        associated_row_data: RowData
+        table_row: TableRow
+        for i, (associated_row_data, table_row) in enumerate(zip(self.row_data, table_data)):
+            transport = Transport(duration=table_row.transport_duration)
+            groove_name = associated_row_data.selected_groove_option.groove_option.name
+            groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
+            groove_class = globals()[groove_name_final]
+            groove = groove_class(**associated_row_data.selected_groove_option.selected_values)
+            
+            #rp = RollPass(**rollpass_tablerow.__dict__, roll=Roll())
 
 
 def main():

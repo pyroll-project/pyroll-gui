@@ -1,5 +1,6 @@
 import xmlschema
 from pprint import pprint
+from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 from pyroll.gui.in_profiles import InputProfile, SelectedInputProfile
 from pyroll.gui.row_data import RowData
 from pyroll.gui.table_data import TableRow
@@ -59,6 +60,46 @@ class XmlProcessing:
 
         # Write with indent 4
         tree.write(file_path, encoding="utf-8", xml_declaration=True)
+
+    def load_pyroll_xml(self, file_path: str) -> tuple[list[RowData], list[TableRow], SelectedInputProfile]:
+        # Load the xml file
+        tree = ElementTree.parse(file_path)
+        root = tree.getroot()
+
+        # Get the input profile
+        input_profile_element = root.find("in_profile")
+        input_profile = SelectedInputProfile(InputProfile())
+        for key, value in input_profile_element.items():
+            input_profile.selected_values[key] = value
+
+        # Get the pass sequence
+        pass_sequence_element = root.find("pass_sequence")
+        row_data = []
+        table_rows = []
+        for pass_element in pass_sequence_element.findall("pass"):
+            # Get the groove
+            groove_element = pass_element.find("groove")
+            groove_name_element = groove_element.find("*")
+            groove_name = groove_name_element.tag
+            groove_values = {}
+            for key, value in groove_name_element.items():
+                groove_values[key] = value
+            row_data.append(
+                RowData(
+                    0,
+                    SelectedGrooveOption(
+                        DEFAULT_GROOVE_OPTIONS.get_groove_options()[groove_name],
+                        groove_values,
+                    ),
+                )
+            )
+            # Get the table row
+            table_row = TableRow()
+            for key, value in pass_element.items():
+                table_row.__dict__[key] = value
+            table_rows.append(table_row)
+
+        return row_data, table_rows, input_profile
 
 
 if __name__ == "__main__":
