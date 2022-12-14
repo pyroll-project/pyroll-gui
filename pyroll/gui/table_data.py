@@ -15,6 +15,7 @@ class TableRow:
     transport_duration: float | None = None
     atmosphere_temperature: float | None = None
     roll_rotation_frequency: float | None = None
+    nominal_radius: float | None = None
 
     @staticmethod
     def get_column_data_names():

@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
         self.row_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
 
-        self.ui.rollPassTable.setColumnCount(8)
+        self.ui.rollPassTable.setColumnCount(TableRow().get_column_data_names().__len__())
 
         self.ui.rollPassTable.setHorizontalHeaderLabels(
             TableRow().get_column_data_names_pretty()
