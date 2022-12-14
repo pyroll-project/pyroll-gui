@@ -21,6 +21,14 @@ def createGroovePic(groove_option: SelectedGrooveOption) -> Optional[Union[str, 
     except Exception as e:
         print(e)
         return None
+    print(groove)
+    print(groove.contour_line)
     
     raise NotImplementedError("TODO: Create groove picture")
     
+
+if __name__ == "__main__":
+    from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS
+    groove_option = DEFAULT_GROOVE_OPTIONS.get_groove_option("round")
+    go = SelectedGrooveOption(groove_option, {"r1": 1, "r2": 2, "depth": 3})
+    createGroovePic(go)
