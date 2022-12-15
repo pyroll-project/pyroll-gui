@@ -1,1 +1,3 @@
-* Add groove names to XML output
+* A function to persist table data from view to model
+* A function to load the table data from "persistent model" to view
+* Wait for the updated project versions so I can use the newest reporter tool

@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QTableWidget,
     QGridLayout,
+    QFileDialog
 )
 from PySide6 import QtGui
 from PySide6.QtCore import QFile, QSize, Slot
@@ -111,6 +112,39 @@ class MainWindow(QMainWindow):
         # This represents the grooveOptionsGrids, one per row in the table
         self.ui.grooveOptionsGrid = QGridLayout()
         self.grooves = []
+        self.createMenuBar()
+
+    def createMenuBar(self):
+        menuBar = self.menuBar()
+        # File menu
+        fileMenu = menuBar.addMenu("File")
+        # File -> New Project
+        newProjectAction = fileMenu.addAction("New Project")
+        # Export to XML
+        exportToXMLAction = fileMenu.addAction("Export to XML")
+        exportToXMLAction.triggered.connect(self.exportToXML)
+
+    
+    def exportToXML(self):
+        print("Export to XML clicked")
+        # Create file selection dialog
+        file_dialog = QFileDialog()
+        # Select only XML files
+        file_dialog.setNameFilter("XML files (*.xml)")
+
+        file_dialog.setFileMode(QFileDialog.AnyFile)
+
+        file_dialog.exec()
+        file_name = file_dialog.selectedFiles()[0]
+        # If file name does not end with .xml, add it
+        if not file_name.lower().endswith(".xml"):
+            file_name += ".xml"
+
+        self.persistInputProfile()
+
+        #xml_processing = XmlProcessing()
+        #xml_processing.export_to_xml(self.row_data)
+
 
     def addTestRow(self):
         """<gap>1</gap>
