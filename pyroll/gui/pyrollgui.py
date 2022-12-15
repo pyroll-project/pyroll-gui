@@ -90,7 +90,6 @@ class MainWindow(QMainWindow):
 
         # Connect the signal of the solve button to the slot solve
         self.ui.solveButton.clicked.connect(self.solve)
-        self.addTestRow()
 
         # This represents the grooveOptionsGrids, one per row in the table
         self.ui.grooveOptionsGrid = QGridLayout()
@@ -98,6 +97,9 @@ class MainWindow(QMainWindow):
         self.createMenuBar()
 
         self.table_data: list[TableRow] = []
+
+        self.addTestRow()
+
 
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
@@ -138,6 +140,18 @@ class MainWindow(QMainWindow):
         exportToXMLAction = fileMenu.addAction("Export to XML...")
         exportToXMLAction.triggered.connect(self.exportToXML)
 
+    def fillTableFromTableData(self):
+        # Clear the table
+        self.ui.rollPassTable.setRowCount(0)
+
+        # For the list[TableRow] in self.table_data, fill the table with the data
+        for i, table_row in enumerate(self.table_data):
+            self.ui.rollPassTable.insertRow(i)
+            for j, (param, value) in enumerate(table_row.__dict__.items()):
+                self.ui.rollPassTable.setItem(i, j, QTableWidgetItem(value))
+
+
+
     def exportToXML(self):
         print("Export to XML clicked")
         # Create file selection dialog
@@ -168,15 +182,30 @@ class MainWindow(QMainWindow):
         <roll_temperature>20</roll_temperature>
         <transport_duration>1</transport_duration>
         <atmosphere_temperature>20</atmosphere_temperature>"""
-        self.ui.rollPassTable.insertRow(0)
-        self.ui.rollPassTable.setItem(0, 0, QTableWidgetItem("1"))
-        self.ui.rollPassTable.setItem(0, 1, QTableWidgetItem("180"))
-        self.ui.rollPassTable.setItem(0, 2, QTableWidgetItem("1"))
-        self.ui.rollPassTable.setItem(0, 3, QTableWidgetItem("1"))
-        self.ui.rollPassTable.setItem(0, 4, QTableWidgetItem("20"))
-        self.ui.rollPassTable.setItem(0, 5, QTableWidgetItem("1"))
-        self.ui.rollPassTable.setItem(0, 6, QTableWidgetItem("20"))
-        self.ui.rollPassTable.setItem(0, 7, QTableWidgetItem("1"))
+        # Create a corresponding TableRow object
+        table_row = TableRow()
+        table_row.gap = "1"
+        table_row.roll_radius = "180"
+        table_row.in_rotation = "1"
+        table_row.velocity = "1"
+        table_row.roll_temperature = "20"
+        table_row.transport_duration = "1"
+        table_row.atmosphere_temperature = "20"
+        # Add the TableRow object to the list
+        self.table_data.append(table_row)
+        table_row2 = TableRow()
+        table_row2.gap = "2"
+        table_row2.roll_radius = "180"
+        table_row2.in_rotation = "1"
+        table_row2.velocity = "1"
+        table_row2.roll_temperature = "30"
+        table_row2.transport_duration = "1"
+
+        self.table_data.append(table_row2)
+        
+        self.fillTableFromTableData()       
+
+    
 
     @Slot()
     def grooveOptionBoxChanged(self) -> None:
