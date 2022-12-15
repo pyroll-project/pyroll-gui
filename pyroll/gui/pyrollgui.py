@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QTableWidget,
     QGridLayout,
-    QFileDialog
+    QFileDialog,
 )
 from PySide6 import QtGui
 from PySide6.QtCore import QFile, QSize, Slot
@@ -61,30 +61,10 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon("img/pyroll_icon.png"))
         self.setWindowTitle("PyRoll")
 
-        self.row_data = get_test_rowdata_list()
-        self.input_profile = get_test_input_profile()
+        self.loadTestData()
 
-        self.ui.rollPassTable.setColumnCount(TableRow().get_column_data_names().__len__())
+        self.setupRollpassTable()
 
-        self.ui.rollPassTable.setHorizontalHeaderLabels(
-            TableRow().get_column_data_names_pretty()
-        )
-
-        self.ui.rollPassTable.horizontalHeader().setSectionResizeMode(
-            QHeaderView.Stretch
-        )
-        # Only let one row be selected at a time
-        self.ui.rollPassTable.setSelectionMode(QTableWidget.SingleSelection)
-
-        self.ui.rollPassTable.selectionModel().selectionChanged.connect(
-            self.selectedRowChanged
-        )
-
-        self.ui.rollPassTable.selectionModel().selectionChanged.connect(
-            self.createGrooveOptions
-        )
-
-        self.currentRow = 0
         self.ui.grooveOptions: QFormLayout
 
         # Add a row to self.ui.rollPassTable
@@ -114,6 +94,37 @@ class MainWindow(QMainWindow):
         self.grooves = []
         self.createMenuBar()
 
+        self.table_data: list[TableRow] = []
+
+    def loadTestData(self):
+        self.table_groove_data = get_test_rowdata_list()
+        self.input_profile = get_test_input_profile()
+
+    def setupRollpassTable(self):
+        self.ui.rollPassTable.setColumnCount(
+            TableRow().get_column_data_names().__len__()
+        )
+
+        self.ui.rollPassTable.setHorizontalHeaderLabels(
+            TableRow().get_column_data_names_pretty()
+        )
+
+        self.ui.rollPassTable.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Stretch
+        )
+        # Only let one row be selected at a time
+        self.ui.rollPassTable.setSelectionMode(QTableWidget.SingleSelection)
+
+        self.ui.rollPassTable.selectionModel().selectionChanged.connect(
+            self.selectedRowChanged
+        )
+
+        self.ui.rollPassTable.selectionModel().selectionChanged.connect(
+            self.createGrooveOptions
+        )
+
+        self.currentRow = 0
+
     def createMenuBar(self):
         menuBar = self.menuBar()
         # File menu
@@ -124,7 +135,6 @@ class MainWindow(QMainWindow):
         exportToXMLAction = fileMenu.addAction("Export to XML")
         exportToXMLAction.triggered.connect(self.exportToXML)
 
-    
     def exportToXML(self):
         print("Export to XML clicked")
         # Create file selection dialog
@@ -142,9 +152,8 @@ class MainWindow(QMainWindow):
 
         self.persistInputProfile()
 
-        #xml_processing = XmlProcessing()
-        #xml_processing.export_to_xml(self.row_data)
-
+        # xml_processing = XmlProcessing()
+        # xml_processing.export_to_xml(self.row_data)
 
     def addTestRow(self):
         """<gap>1</gap>
@@ -170,19 +179,19 @@ class MainWindow(QMainWindow):
 
         print(groove_option)
         # Print current groove option
-        current_gr_op = self.row_data[self.currentRow].selected_groove_option
+        current_gr_op = self.table_data[self.currentRow].selected_groove_option
         print(current_gr_op.selected_values)
 
         # This deletes the currently entered values if the groove option combobox is changed
         if current_gr_op.groove_option.name != groove_option:
-            self.row_data[
+            self.table_data[
                 self.currentRow
             ].selected_groove_option = SelectedGrooveOption(
                 DEFAULT_GROOVE_OPTIONS.get_groove_option(unprettify(groove_option)), {}
             )
 
     def persistGrooveOptions(self) -> None:
-        self.row_data[
+        self.table_groove_data[
             self.currentRow
         ].selected_groove_option.groove_option = DefaultGrooveOptions.get_groove_option(
             unprettify(self.ui.grooveOptionsBox.currentText())
@@ -191,7 +200,7 @@ class MainWindow(QMainWindow):
             parameter_name = self.ui.grooveOptions.itemAt(i)
             parameter_value = self.ui.grooveOptions.itemAt(i + 1)
             if parameter_name is not None and parameter_value is not None:
-                self.row_data[self.currentRow].selected_groove_option.selected_values[
+                self.table_groove_data[self.currentRow].selected_groove_option.selected_values[
                     unprettify(parameter_name.widget().text())
                 ] = parameter_value.widget().text()
 
@@ -206,6 +215,19 @@ class MainWindow(QMainWindow):
                 self.input_profile.selected_values[
                     unprettify(parameter_name.widget().text())
                 ] = parameter_value.widget().text()
+
+    def persistTableData(self) -> None:
+        """Get the data from the table and return it as a list of TableRow objects"""
+        table_data: list[TableRow] = []
+        for row in range(self.ui.rollPassTable.rowCount()):
+            current_row = TableRow()
+            for column in range(self.ui.rollPassTable.columnCount()):
+                if self.ui.rollPassTable.item(row, column) is not None:
+                    item_value = self.ui.rollPassTable.item(row, column).text()
+                    current_row.set_column_by_index(column, item_value)
+
+            table_data.append(current_row)
+        self.table_data = table_data
 
     @Slot()
     def selectedRowChanged(self) -> None:
@@ -243,7 +265,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def createGrooveOptionsGUI(self) -> None:
 
-        comboBoxValue = self.row_data[
+        comboBoxValue = self.table_groove_data[
             self.currentRow
         ].selected_groove_option.groove_option.name
 
@@ -275,7 +297,7 @@ class MainWindow(QMainWindow):
     def createGrooveOptions(self):
         """Depending on the selected combo box item, create different groove options."""
 
-        grooveOption = self.row_data[
+        grooveOption = self.table_groove_data[
             self.currentRow
         ].selected_groove_option.groove_option
 
@@ -294,10 +316,12 @@ class MainWindow(QMainWindow):
             self.ui.grooveOptions.addRow(QLabel(grooveOptionValue), QLineEdit())
             if (
                 grooveOptionValue
-                in self.row_data[self.currentRow].selected_groove_option.selected_values
+                in self.table_groove_data[
+                    self.currentRow
+                ].selected_groove_option.selected_values
             ):
                 self.ui.grooveOptions.itemAt(itemAtIndex).widget().setText(
-                    f"""{self.row_data[
+                    f"""{self.table_groove_data[
                         self.currentRow
                     ].selected_groove_option.selected_values[grooveOptionValue]}"""
                 )
@@ -319,37 +343,24 @@ class MainWindow(QMainWindow):
                 QLabel(prettify(inputProfileSetting)), QLineEdit()
             )
 
-    def getTableData(self) -> list[TableRow]:
-        """Get the data from the table and return it as a list of TableRow objects"""
-        table_data: list[TableRow] = []
-        for row in range(self.ui.rollPassTable.rowCount()):
-            current_row = TableRow()
-            for column in range(self.ui.rollPassTable.columnCount()):
-                if self.ui.rollPassTable.item(row, column) is not None:
-                    item_value = self.ui.rollPassTable.item(row, column).text()
-                    current_row.set_column_by_index(column, item_value)
-
-            table_data.append(current_row)
-        return table_data
-
     @Slot()
     def solve(self) -> None:
         print("Solve button clicked")
 
         self.persistInputProfile()
         self.persistGrooveOptions()
+        self.persistTableData()
         print(self.input_profile.input_profile.name)
         print(self.input_profile.selected_values)
-        print(self.row_data)
-        table_data: list[TableRow] = self.getTableData()
+        print("Proper table data")
+
+        print(self.table_data)
+        table_data: list[TableRow] = self.table_data
 
         xmlproc = XmlProcessing()
         xmlproc.save_pyroll_xml(
-            self.row_data, table_data, self.input_profile, "test.xml"
+            self.table_data, self.table_groove_data, self.input_profile, "test.xml"
         )
-
-        print("Proper table data")
-        print(self.getTableData())
 
         input_constr = getattr(Profile, self.input_profile.input_profile.name)
 
@@ -359,16 +370,20 @@ class MainWindow(QMainWindow):
 
         sequence: list[Union[RollPass, Transport]] = []
         default_transport = Transport(duration=2)
-        associated_row_data: RowData
+        row_groove_data: RowData
         table_row: TableRow
-        for i, (associated_row_data, table_row) in enumerate(zip(self.row_data, table_data)):
+        for i, (row_groove_data, table_row) in enumerate(
+            zip(self.table_groove_data, table_data)
+        ):
             transport = Transport(duration=table_row.transport_duration)
-            groove_name = associated_row_data.selected_groove_option.groove_option.name
+            groove_name = row_groove_data.selected_groove_option.groove_option.name
             groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
             groove_class = globals()[groove_name_final]
-            groove = groove_class(**associated_row_data.selected_groove_option.selected_values)
-            
-            #rp = RollPass(**rollpass_tablerow.__dict__, roll=Roll())
+            groove = groove_class(
+                **row_groove_data.selected_groove_option.selected_values
+            )
+
+            # rp = RollPass(**rollpass_tablerow.__dict__, roll=Roll())
 
 
 def main():
