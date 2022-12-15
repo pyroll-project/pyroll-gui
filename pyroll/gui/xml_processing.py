@@ -11,26 +11,27 @@ from xml.etree import ElementTree
 
 class XmlProcessing:
     def __init__(self, schema_path="pyroll/gui/process_data.xsd"):
+        # Currently not used
         self.schema = xmlschema.XMLSchema(schema_path)
 
-    def validate_xml(self, xml_path: str):
-        return self.schema.is_valid(xml_path)
-
-    def decode_xml(self, xml_path: str):
-        return self.schema.decode(xml_path)
-
-    def encode_xml(self, data: dict):
-        return self.schema.encode(data)
+#    def validate_xml(self, xml_path: str):
+#        return self.schema.is_valid(xml_path)
+#
+#    def decode_xml(self, xml_path: str):
+#        return self.schema.decode(xml_path)
+#
+#    def encode_xml(self, data: dict):
+#        return self.schema.encode(data)
 
     def save_pyroll_xml(
         self,
-        row_data: list[RowData],
+        row_groove_data: list[RowData],
         table_rows: list[TableRow],
         input_profile: SelectedInputProfile,
         file_path: str,
     ):
         # Check if the number of rows in the table is the same as the number of rows in the row_data
-        if len(row_data) != len(table_rows):
+        if len(row_groove_data) != len(table_rows):
             raise ValueError(
                 "The number of rows in the table is not the same as the number of rows in the row_data"
             )
@@ -42,7 +43,7 @@ class XmlProcessing:
             # Create subelements, not attributes
             ElementTree.SubElement(input_profile_element, key).text = str(value)
         pass_sequence_element = ElementTree.SubElement(root, "pass_sequence")
-        for row, table_row in zip(row_data, table_rows):
+        for row, table_row in zip(row_groove_data, table_rows):
             pass_element = ElementTree.SubElement(pass_sequence_element, "pass")
 
             groove_element = ElementTree.SubElement(pass_element, "groove")

@@ -135,7 +135,7 @@ class MainWindow(QMainWindow):
         # File -> New Project
         newProjectAction = fileMenu.addAction("New Project")
         # Export to XML
-        exportToXMLAction = fileMenu.addAction("Export to XML")
+        exportToXMLAction = fileMenu.addAction("Export to XML...")
         exportToXMLAction.triggered.connect(self.exportToXML)
 
     def exportToXML(self):
@@ -154,9 +154,11 @@ class MainWindow(QMainWindow):
             file_name += ".xml"
 
         self.persistInputProfile()
+        self.persistTableData()
+        self.persistGrooveOptions()
 
-        # xml_processing = XmlProcessing()
-        # xml_processing.export_to_xml(self.row_data)
+        xml_processing = XmlProcessing()
+        xml_processing.save_pyroll_xml(self.table_groove_data, self.table_data, self.input_profile, file_name)
 
     def addTestRow(self):
         """<gap>1</gap>
