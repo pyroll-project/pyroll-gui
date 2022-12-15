@@ -215,3 +215,4 @@ pyroll/gui/mainwindow.ui.autosave
 pyrolltest/
 progress.txt
 pyroll/gui/questions.txt
+*.xml

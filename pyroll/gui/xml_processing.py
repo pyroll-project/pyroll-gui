@@ -1,7 +1,11 @@
 import xmlschema
 from pprint import pprint
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
-from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES, InputProfile, SelectedInputProfile
+from pyroll.gui.in_profiles import (
+    DEFAULT_INPUT_PROFILES,
+    InputProfile,
+    SelectedInputProfile,
+)
 from pyroll.gui.row_data import RowData
 from pyroll.gui.table_data import TableRow
 
@@ -14,14 +18,14 @@ class XmlProcessing:
         # Currently not used
         self.schema = xmlschema.XMLSchema(schema_path)
 
-#    def validate_xml(self, xml_path: str):
-#        return self.schema.is_valid(xml_path)
-#
-#    def decode_xml(self, xml_path: str):
-#        return self.schema.decode(xml_path)
-#
-#    def encode_xml(self, data: dict):
-#        return self.schema.encode(data)
+    #    def validate_xml(self, xml_path: str):
+    #        return self.schema.is_valid(xml_path)
+    #
+    #    def decode_xml(self, xml_path: str):
+    #        return self.schema.decode(xml_path)
+    #
+    #    def encode_xml(self, data: dict):
+    #        return self.schema.encode(data)
 
     def save_pyroll_xml(
         self,
@@ -40,7 +44,9 @@ class XmlProcessing:
         root = ElementTree.Element("process_data")
         input_profile_element = ElementTree.SubElement(root, "in_profile")
         # Create a subelement for the input profile name
-        input_profile_name = ElementTree.SubElement(input_profile_element, input_profile.input_profile.name)
+        input_profile_name = ElementTree.SubElement(
+            input_profile_element, input_profile.input_profile.name
+        )
         for key, value in input_profile.selected_values.items():
             # Create subelements, not attributes
             ElementTree.SubElement(input_profile_name, key).text = str(value)
@@ -49,7 +55,9 @@ class XmlProcessing:
             pass_element = ElementTree.SubElement(pass_sequence_element, "pass")
 
             groove_element = ElementTree.SubElement(pass_element, "groove")
-            groove_name_element = ElementTree.SubElement(groove_element, row.selected_groove_option.groove_option.name)
+            groove_name_element = ElementTree.SubElement(
+                groove_element, row.selected_groove_option.groove_option.name
+            )
             # Create subelement for each key, value pair in the selected_values dict
             for key, value in row.selected_groove_option.selected_values.items():
                 ElementTree.SubElement(groove_name_element, key).text = str(value)
@@ -64,42 +72,55 @@ class XmlProcessing:
         # Write with indent 4
         tree.write(file_path, encoding="utf-8", xml_declaration=True)
 
-    def load_pyroll_xml(self, file_path: str) -> tuple[list[RowData], list[TableRow], SelectedInputProfile]:
+    def load_pyroll_xml(
+        self, file_path: str
+    ) -> tuple[list[RowData], list[TableRow], SelectedInputProfile]:
         # Load the xml file
         tree = ElementTree.parse(file_path)
         root = tree.getroot()
 
         # Get the input profile
         input_profile_element = root.find("in_profile")
-        input_profile = SelectedInputProfile(DEFAULT_INPUT_PROFILES.get_input_profile(""))
-        for key, value in input_profile_element.items():
-            input_profile.selected_values[key] = value
+        # Find the first child of the input profile element
+        input_profile_name_el = input_profile_element.find("*")
+        # Get the name of the input profile
+        input_profile_name = input_profile_name_el.tag
+        selected_values = {}
+        # Get the values of the input profile
+        for key, value in input_profile_name_el.items():
+            selected_values[key] = value
+
+        input_profile = SelectedInputProfile(
+            DEFAULT_INPUT_PROFILES.get_input_profile(input_profile_name),
+            selected_values,
+        )
 
         # Get the pass sequence
         pass_sequence_element = root.find("pass_sequence")
         row_data = []
         table_rows = []
-        for pass_element in pass_sequence_element.findall("pass"):
+        
+        for i, pass_element in enumerate(pass_sequence_element.findall("pass")):
             # Get the groove
             groove_element = pass_element.find("groove")
             groove_name_element = groove_element.find("*")
             groove_name = groove_name_element.tag
             groove_values = {}
-            for key, value in groove_name_element.items():
-                groove_values[key] = value
+            for grooveparam in groove_name_element.findall("*"):
+                groove_values[grooveparam.tag] = grooveparam.text
             row_data.append(
                 RowData(
-                    0,
+                    i,
                     SelectedGrooveOption(
-                        DEFAULT_GROOVE_OPTIONS.get_groove_options()[groove_name],
+                        DEFAULT_GROOVE_OPTIONS.get_groove_option(groove_name),
                         groove_values,
                     ),
                 )
             )
             # Get the table row
             table_row = TableRow()
-            for key, value in pass_element.items():
-                table_row.__dict__[key] = value
+            for child in pass_element.findall("*"):
+                table_row.__dict__[child.tag] = child.text
             table_rows.append(table_row)
 
         return row_data, table_rows, input_profile
