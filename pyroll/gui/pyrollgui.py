@@ -100,7 +100,6 @@ class MainWindow(QMainWindow):
 
         self.addTestRow()
 
-
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
@@ -142,8 +141,6 @@ class MainWindow(QMainWindow):
         # Load from XML
         loadFromXMLAction = fileMenu.addAction("Load from XML...")
         loadFromXMLAction.triggered.connect(self.loadFromXML)
-        
-
 
     def fillTableFromTableData(self):
         # Clear the table
@@ -154,8 +151,6 @@ class MainWindow(QMainWindow):
             self.ui.rollPassTable.insertRow(i)
             for j, (param, value) in enumerate(table_row.__dict__.items()):
                 self.ui.rollPassTable.setItem(i, j, QTableWidgetItem(value))
-
-
 
     def exportToXML(self):
         print("Export to XML clicked")
@@ -177,7 +172,9 @@ class MainWindow(QMainWindow):
         self.persistGrooveOptions()
 
         xml_processing = XmlProcessing()
-        xml_processing.save_pyroll_xml(self.table_groove_data, self.table_data, self.input_profile, file_name)
+        xml_processing.save_pyroll_xml(
+            self.table_groove_data, self.table_data, self.input_profile, file_name
+        )
 
     def loadFromXML(self):
         print("Load from XML clicked")
@@ -192,10 +189,16 @@ class MainWindow(QMainWindow):
         file_name = file_dialog.selectedFiles()[0]
 
         xml_processing = XmlProcessing()
-        self.table_groove_data, self.table_data, self.input_profile = xml_processing.load_pyroll_xml(file_name)
+        (
+            self.table_groove_data,
+            self.table_data,
+            self.input_profile,
+        ) = xml_processing.load_pyroll_xml(file_name)
 
         self.fillTableFromTableData()
-        #TODO: Possibly reload other parts of the GUI
+        #self.grooveOptionBoxChanged()
+        self.createGrooveOptions()
+        # TODO: Possibly reload other parts of the GUI
 
     def addTestRow(self):
         """<gap>1</gap>
@@ -225,10 +228,8 @@ class MainWindow(QMainWindow):
         table_row2.transport_duration = "1"
 
         self.table_data.append(table_row2)
-        
-        self.fillTableFromTableData()       
 
-    
+        self.fillTableFromTableData()
 
     @Slot()
     def grooveOptionBoxChanged(self) -> None:
@@ -236,12 +237,12 @@ class MainWindow(QMainWindow):
 
         print(groove_option)
         # Print current groove option
-        current_gr_op = self.table_data[self.currentRow].selected_groove_option
+        current_gr_op = self.table_groove_data[self.currentRow].selected_groove_option
         print(current_gr_op.selected_values)
 
         # This deletes the currently entered values if the groove option combobox is changed
         if current_gr_op.groove_option.name != groove_option:
-            self.table_data[
+            self.table_groove_data[
                 self.currentRow
             ].selected_groove_option = SelectedGrooveOption(
                 DEFAULT_GROOVE_OPTIONS.get_groove_option(unprettify(groove_option)), {}
