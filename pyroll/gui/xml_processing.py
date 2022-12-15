@@ -1,7 +1,7 @@
 import xmlschema
 from pprint import pprint
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
-from pyroll.gui.in_profiles import InputProfile, SelectedInputProfile
+from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES, InputProfile, SelectedInputProfile
 from pyroll.gui.row_data import RowData
 from pyroll.gui.table_data import TableRow
 
@@ -39,9 +39,11 @@ class XmlProcessing:
         # Now we do the same, but only with the xml package
         root = ElementTree.Element("process_data")
         input_profile_element = ElementTree.SubElement(root, "in_profile")
+        # Create a subelement for the input profile name
+        input_profile_name = ElementTree.SubElement(input_profile_element, input_profile.input_profile.name)
         for key, value in input_profile.selected_values.items():
             # Create subelements, not attributes
-            ElementTree.SubElement(input_profile_element, key).text = str(value)
+            ElementTree.SubElement(input_profile_name, key).text = str(value)
         pass_sequence_element = ElementTree.SubElement(root, "pass_sequence")
         for row, table_row in zip(row_groove_data, table_rows):
             pass_element = ElementTree.SubElement(pass_sequence_element, "pass")
@@ -69,7 +71,7 @@ class XmlProcessing:
 
         # Get the input profile
         input_profile_element = root.find("in_profile")
-        input_profile = SelectedInputProfile(InputProfile())
+        input_profile = SelectedInputProfile(DEFAULT_INPUT_PROFILES.get_input_profile(""))
         for key, value in input_profile_element.items():
             input_profile.selected_values[key] = value
 

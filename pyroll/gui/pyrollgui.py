@@ -139,6 +139,11 @@ class MainWindow(QMainWindow):
         # Export to XML
         exportToXMLAction = fileMenu.addAction("Export to XML...")
         exportToXMLAction.triggered.connect(self.exportToXML)
+        # Load from XML
+        loadFromXMLAction = fileMenu.addAction("Load from XML...")
+        loadFromXMLAction.triggered.connect(self.loadFromXML)
+        
+
 
     def fillTableFromTableData(self):
         # Clear the table
@@ -173,6 +178,24 @@ class MainWindow(QMainWindow):
 
         xml_processing = XmlProcessing()
         xml_processing.save_pyroll_xml(self.table_groove_data, self.table_data, self.input_profile, file_name)
+
+    def loadFromXML(self):
+        print("Load from XML clicked")
+        # Create file selection dialog
+        file_dialog = QFileDialog()
+        # Select only XML files
+        file_dialog.setNameFilter("XML files (*.xml)")
+
+        file_dialog.setFileMode(QFileDialog.AnyFile)
+
+        file_dialog.exec()
+        file_name = file_dialog.selectedFiles()[0]
+
+        xml_processing = XmlProcessing()
+        self.table_groove_data, self.table_data, self.input_profile = xml_processing.load_pyroll_xml(file_name)
+
+        self.fillTableFromTableData()
+        #TODO: Possibly reload other parts of the GUI
 
     def addTestRow(self):
         """<gap>1</gap>
