@@ -15,6 +15,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6 import QtGui
 from PySide6.QtCore import QFile, QSize, Slot
+from pyroll.gui.constants import (
+    PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL,
+)
 from pyroll.gui.groove_options import (
     DEFAULT_GROOVE_OPTIONS,
     DefaultGrooveOptions,
@@ -200,7 +203,9 @@ class MainWindow(QMainWindow):
             parameter_name = self.ui.grooveOptions.itemAt(i)
             parameter_value = self.ui.grooveOptions.itemAt(i + 1)
             if parameter_name is not None and parameter_value is not None:
-                self.table_groove_data[self.currentRow].selected_groove_option.selected_values[
+                self.table_groove_data[
+                    self.currentRow
+                ].selected_groove_option.selected_values[
                     unprettify(parameter_name.widget().text())
                 ] = parameter_value.widget().text()
 
@@ -382,8 +387,15 @@ class MainWindow(QMainWindow):
             groove = groove_class(
                 **row_groove_data.selected_groove_option.selected_values
             )
+            rollpass_parameters = table_row.__dict__
+            roll_parameters_from_table = {}
+            for key in PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL:
+                if key in rollpass_parameters:
+                    roll_parameters_from_table[key] = rollpass_parameters[key]
+                    # Remove the key from the rollpass_parameters dict
+                    del rollpass_parameters[key]
 
-            # rp = RollPass(**rollpass_tablerow.__dict__, roll=Roll())
+            çrp = RollPass(**rollpass_parameters, roll=Roll())
 
 
 def main():
