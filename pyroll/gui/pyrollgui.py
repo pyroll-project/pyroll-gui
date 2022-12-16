@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):
         self.fillTableFromTableData()
         # self.grooveOptionBoxChanged()
         self.createGrooveOptions()
-        # TODO: Possibly reload other parts of the GUI
+        self.createInputProfileOptions()
 
     def addTestRow(self):
         # Create a corresponding TableRow object

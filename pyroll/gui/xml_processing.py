@@ -88,8 +88,8 @@ class XmlProcessing:
         input_profile_name = input_profile_name_el.tag
         selected_values = {}
         # Get the values of the input profile
-        for key, value in input_profile_name_el.items():
-            selected_values[key] = value
+        for inputparams in input_profile_name_el.findall("*"):
+            selected_values[inputparams.tag] = inputparams.text
 
         input_profile = SelectedInputProfile(
             DEFAULT_INPUT_PROFILES.get_input_profile(input_profile_name),
