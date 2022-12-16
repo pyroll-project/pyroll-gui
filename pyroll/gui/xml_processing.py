@@ -1,4 +1,4 @@
-#import xmlschema
+# import xmlschema
 from pprint import pprint
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 from pyroll.gui.in_profiles import (
@@ -100,7 +100,7 @@ class XmlProcessing:
         pass_sequence_element = root.find("pass_sequence")
         row_data = []
         table_rows = []
-        
+
         for i, pass_element in enumerate(pass_sequence_element.findall("pass")):
             # Get the groove
             groove_element = pass_element.find("groove")

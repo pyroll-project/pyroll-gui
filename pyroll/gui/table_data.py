@@ -30,6 +30,4 @@ class TableRow:
     @staticmethod
     def get_column_data_names_pretty():
         """Returns the names of the columns (prettier version) in the class"""
-        return [
-            prettify(name) for name in TableRow.__dataclass_fields__
-        ]
+        return [prettify(name) for name in TableRow.__dataclass_fields__]

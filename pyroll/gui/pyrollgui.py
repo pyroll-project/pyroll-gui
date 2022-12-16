@@ -390,7 +390,7 @@ class MainWindow(QMainWindow):
 
         # Delete all rows from self.ui.grooveOptions QFormLayout
         clearLayout(self.ui.grooveOptions)
-        
+
         for i, grooveOptionValue in enumerate(optionValueList):
             # Create a new row in the grooveOptions QFormLayout
             itemAtIndex = (i + 1) * 2 - 1
@@ -426,32 +426,20 @@ class MainWindow(QMainWindow):
             unprettify(selectedItem)
         )
 
-        # for inputProfileSetting in inputProfile.setting_fields:
-        #    self.ui.inputItemOptions.addRow(
-        #        QLabel(prettify(inputProfileSetting)), QLineEdit()
-        #    )
-
         try:
-        # Use the current input profile (self.input_profile) to set the values of the input profile options
+            # Use the current input profile (self.input_profile) to set the values of the input profile options
             for inputProfileSetting in inputProfile.setting_fields:
                 self.ui.inputItemOptions.addRow(
                     QLabel(prettify(inputProfileSetting)), QLineEdit()
                 )
                 if selected_input_profile != None:
-                    # if inputProfileSetting in self.input_profile.selected_values:
-                    #    self.ui.inputItemOptions.itemAt(
-                    #        self.ui.inputItemOptions.count() - 1
-                    #    ).widget().setText(
-                    #        f"""{self.input_profile.selected_values[inputProfileSetting]}"""
-                    #    )
                     self.ui.inputItemOptions.itemAt(
                         self.ui.inputItemOptions.count() - 1
                     ).widget().setText(
                         f"{selected_input_profile.selected_values[inputProfileSetting]}"
                     )
         except Exception as e:
-            pass # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
-
+            pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
 
     @Slot()
     def solve(self) -> None:
@@ -500,7 +488,7 @@ class MainWindow(QMainWindow):
                     # Remove the key from the rollpass_parameters dict
                     del rollpass_parameters[key]
 
-            çrp = RollPass(**rollpass_parameters, roll=Roll())
+            rp = RollPass(**rollpass_parameters, roll=Roll())
 
 
 def main():
