@@ -22,15 +22,14 @@ jobs:
           poetry-version: "1.3.1"
       - name: Run PyInstaller
         run: |
-          poetry install
+          poetry config virtualenvs.create false
+          poetry install --without dev
           cd pyroll/gui
-          poetry shell
           pyinstaller main.py --add-data="../../img/*;img/" --onefile --windowed --icon="../../img/pyroll_icon.png" --name="PyRoll"
 
-      - name: create release
+      - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
-        
         with:
           files: |
             pyroll/gui/dist/PyRoll.exe
