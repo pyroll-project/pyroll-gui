@@ -27,6 +27,8 @@ from pyroll.gui.helpers import resource_path
 from pyroll.gui.in_profiles import (
     DEFAULT_INPUT_PROFILES,
     DefaultInputProfiles,
+    InputProfile,
+    SelectedInputProfile,
     get_test_input_profile,
 )
 from pyroll.gui.row_data import RowData, get_test_rowdata_list
@@ -79,10 +81,13 @@ class MainWindow(QMainWindow):
         self.createInputProfileOptions()
         self.createGrooveOptions()
 
-        # Connect the signal of self.ui.inputProfileBox to the slot createInputProfileOptions
+        self.ui.inputProfileBox.currentIndexChanged.connect(
+            self.selectedInputProfileBoxWasChanged
+        )
         self.ui.inputProfileBox.currentIndexChanged.connect(
             self.createInputProfileOptions
         )
+
         # Connect the signal of self.ui.grooveOptions to the slot createGrooveOptions
         self.ui.grooveOptionsBox.currentIndexChanged.connect(
             self.grooveOptionBoxChanged
@@ -202,13 +207,6 @@ class MainWindow(QMainWindow):
         # TODO: Possibly reload other parts of the GUI
 
     def addTestRow(self):
-        """<gap>1</gap>
-        <roll_radius>180</roll_radius>
-        <in_rotation>1</in_rotation>
-        <velocity>1</velocity>
-        <roll_temperature>20</roll_temperature>
-        <transport_duration>1</transport_duration>
-        <atmosphere_temperature>20</atmosphere_temperature>"""
         # Create a corresponding TableRow object
         table_row = TableRow()
         table_row.gap = "1"
@@ -289,6 +287,22 @@ class MainWindow(QMainWindow):
 
             table_data.append(current_row)
         self.table_data = table_data
+
+    @Slot()
+    def selectedInputProfileBoxWasChanged(self) -> None:
+        # Set the current input profile to an empty one of the correct type
+        # self.input_profile = InputProfile(
+        #    DefaultInputProfiles.get_input_profile(
+        #        unprettify(self.ui.inputProfileBox.currentText())
+        #    ),
+        #    {},
+        # )
+        self.input_profile = SelectedInputProfile(
+            DefaultInputProfiles.get_input_profile(
+                unprettify(self.ui.inputProfileBox.currentText())
+            ),
+            {},
+        )
 
     @Slot()
     def selectedRowChanged(self) -> None:
