@@ -43,7 +43,8 @@ from pyroll.core import (
     BoxGroove,
 )
 
-from xml_processing import XmlProcessing
+from pyroll.gui.xml_processing import XmlProcessing
+
 
 
 def clearLayout(layout):

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from text_processing import prettify
+
+from pyroll.gui.text_processing import prettify
 
 @dataclass
 class InputProfile:
