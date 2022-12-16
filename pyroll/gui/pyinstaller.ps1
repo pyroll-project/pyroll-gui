@@ -1,1 +1,1 @@
-pyinstaller main.py --add-data="../../img/*;img/"
+pyinstaller main.py --add-data="../../img/*;img/" --onefile --windowed --icon="../../img/pyroll_icon.png" --name="PyRoll"

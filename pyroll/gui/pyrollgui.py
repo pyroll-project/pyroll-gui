@@ -23,6 +23,7 @@ from pyroll.gui.groove_options import (
     DefaultGrooveOptions,
     SelectedGrooveOption,
 )
+from pyroll.gui.helpers import resource_path
 from pyroll.gui.in_profiles import (
     DEFAULT_INPUT_PROFILES,
     DefaultInputProfiles,
@@ -46,7 +47,6 @@ from pyroll.core import (
 from pyroll.gui.xml_processing import XmlProcessing
 
 
-
 def clearLayout(layout):
     if layout is not None:
         while layout.count():
@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon("img/pyroll_icon.png"))
+        self.setWindowIcon(QtGui.QIcon(resource_path("img/pyroll_icon.png")))
         self.setWindowTitle("PyRoll")
 
         self.loadTestData()
