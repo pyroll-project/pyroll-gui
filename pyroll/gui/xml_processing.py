@@ -1,4 +1,4 @@
-import xmlschema
+#import xmlschema
 from pprint import pprint
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 from pyroll.gui.in_profiles import (
@@ -15,6 +15,7 @@ from xml.etree import ElementTree
 
 class XmlProcessing:
     def __init__(self, schema_path="pyroll/gui/process_data.xsd"):
+        return
         # Currently not used
         self.schema = xmlschema.XMLSchema(schema_path)
 
