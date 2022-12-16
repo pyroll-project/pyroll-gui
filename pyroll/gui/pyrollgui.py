@@ -196,7 +196,7 @@ class MainWindow(QMainWindow):
         ) = xml_processing.load_pyroll_xml(file_name)
 
         self.fillTableFromTableData()
-        #self.grooveOptionBoxChanged()
+        # self.grooveOptionBoxChanged()
         self.createGrooveOptions()
         # TODO: Possibly reload other parts of the GUI
 
@@ -295,7 +295,13 @@ class MainWindow(QMainWindow):
         self.persistGrooveOptions()
         selectionModel = self.ui.rollPassTable.selectionModel()
         # Get the current selected row
-        self.currentRow = selectionModel.currentIndex().row()
+
+        currentRow = selectionModel.currentIndex().row()
+        if currentRow != -1:
+            self.currentRow = currentRow
+        else:
+            print("Row would have been -1")
+            self.currentRow = 0
         print("row changed to:", self.currentRow)
 
     @Slot()
@@ -390,7 +396,10 @@ class MainWindow(QMainWindow):
     def createInputProfileOptions(self):
         """Depending on the selected combo box item, create different input profile options"""
 
-        selectedItem = self.ui.inputProfileBox.currentText()
+        if self.input_profile.input_profile.name != None:
+            selectedItem = prettify(self.input_profile.input_profile.name)
+        else:
+            selectedItem = self.ui.inputProfileBox.currentText()
 
         clearLayout(self.ui.inputItemOptions)
 
@@ -398,10 +407,22 @@ class MainWindow(QMainWindow):
             unprettify(selectedItem)
         )
 
+        # for inputProfileSetting in inputProfile.setting_fields:
+        #    self.ui.inputItemOptions.addRow(
+        #        QLabel(prettify(inputProfileSetting)), QLineEdit()
+        #    )
+
+        # Use the current input profile (self.input_profile) to set the values of the input profile options
         for inputProfileSetting in inputProfile.setting_fields:
             self.ui.inputItemOptions.addRow(
                 QLabel(prettify(inputProfileSetting)), QLineEdit()
             )
+            if inputProfileSetting in self.input_profile.selected_values:
+                self.ui.inputItemOptions.itemAt(
+                    self.ui.inputItemOptions.count() - 1
+                ).widget().setText(
+                    f"""{self.input_profile.selected_values[inputProfileSetting]}"""
+                )
 
     @Slot()
     def solve(self) -> None:

@@ -1,3 +1,4 @@
-* A function to persist table data from view to model
-* A function to load the table data from "persistent model" to view
+* A function to persist table data from view to model - I think I already did this?
+* A function to load the table data from "persistent model" to view for input profile and groove
 * Wait for the updated project versions so I can use the newest reporter tool
+* Groove Options box doesn't get change correctly
