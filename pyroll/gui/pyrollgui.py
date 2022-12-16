@@ -390,7 +390,7 @@ class MainWindow(QMainWindow):
 
         # Delete all rows from self.ui.grooveOptions QFormLayout
         clearLayout(self.ui.grooveOptions)
-
+        
         for i, grooveOptionValue in enumerate(optionValueList):
             # Create a new row in the grooveOptions QFormLayout
             itemAtIndex = (i + 1) * 2 - 1
@@ -410,11 +410,15 @@ class MainWindow(QMainWindow):
     @Slot()
     def createInputProfileOptions(self):
         """Depending on the selected combo box item, create different input profile options"""
-
         if self.input_profile.input_profile.name != None:
+            selected_input_profile = self.input_profile
             selectedItem = prettify(self.input_profile.input_profile.name)
+            # Set the input profile box to the selected input profile
+            self.ui.inputProfileBox.setCurrentText(selectedItem)
+            self.input_profile = selected_input_profile
         else:
             selectedItem = self.ui.inputProfileBox.currentText()
+            selected_input_profile = None
 
         clearLayout(self.ui.inputItemOptions)
 
@@ -427,17 +431,27 @@ class MainWindow(QMainWindow):
         #        QLabel(prettify(inputProfileSetting)), QLineEdit()
         #    )
 
+        try:
         # Use the current input profile (self.input_profile) to set the values of the input profile options
-        for inputProfileSetting in inputProfile.setting_fields:
-            self.ui.inputItemOptions.addRow(
-                QLabel(prettify(inputProfileSetting)), QLineEdit()
-            )
-            if inputProfileSetting in self.input_profile.selected_values:
-                self.ui.inputItemOptions.itemAt(
-                    self.ui.inputItemOptions.count() - 1
-                ).widget().setText(
-                    f"""{self.input_profile.selected_values[inputProfileSetting]}"""
+            for inputProfileSetting in inputProfile.setting_fields:
+                self.ui.inputItemOptions.addRow(
+                    QLabel(prettify(inputProfileSetting)), QLineEdit()
                 )
+                if selected_input_profile != None:
+                    # if inputProfileSetting in self.input_profile.selected_values:
+                    #    self.ui.inputItemOptions.itemAt(
+                    #        self.ui.inputItemOptions.count() - 1
+                    #    ).widget().setText(
+                    #        f"""{self.input_profile.selected_values[inputProfileSetting]}"""
+                    #    )
+                    self.ui.inputItemOptions.itemAt(
+                        self.ui.inputItemOptions.count() - 1
+                    ).widget().setText(
+                        f"{selected_input_profile.selected_values[inputProfileSetting]}"
+                    )
+        except Exception as e:
+            pass # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
+
 
     @Slot()
     def solve(self) -> None:

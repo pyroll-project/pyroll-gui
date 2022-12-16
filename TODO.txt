@@ -2,3 +2,4 @@
 * A function to load the table data from "persistent model" to view for input profile and groove
 * Wait for the updated project versions so I can use the newest reporter tool
 * Groove Options box doesn't get change correctly
+* Check if the same problem with the groove options box exists as with input profile
