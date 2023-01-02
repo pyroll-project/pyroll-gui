@@ -84,9 +84,6 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileBox.currentIndexChanged.connect(
             self.selectedInputProfileBoxWasChanged
         )
-        self.ui.inputProfileBox.currentIndexChanged.connect(
-            self.createInputProfileOptions
-        )
 
         # Connect the signal of self.ui.grooveOptions to the slot createGrooveOptions
         self.ui.grooveOptionsBox.currentIndexChanged.connect(
@@ -231,23 +228,6 @@ class MainWindow(QMainWindow):
 
         self.fillTableFromTableData()
 
-    @Slot()
-    def grooveOptionBoxChanged(self) -> None:
-        groove_option = self.ui.grooveOptionsBox.currentText()
-
-        print(groove_option)
-        # Print current groove option
-        current_gr_op = self.table_groove_data[self.currentRow].selected_groove_option
-        print(current_gr_op.selected_values)
-
-        # This deletes the currently entered values if the groove option combobox is changed
-        if current_gr_op.groove_option.name != groove_option:
-            self.table_groove_data[
-                self.currentRow
-            ].selected_groove_option = SelectedGrooveOption(
-                DEFAULT_GROOVE_OPTIONS.get_groove_option(unprettify(groove_option)), {}
-            )
-
     def persistGrooveOptions(self) -> None:
         self.table_groove_data[
             self.currentRow
@@ -288,22 +268,6 @@ class MainWindow(QMainWindow):
 
             table_data.append(current_row)
         self.table_data = table_data
-
-    @Slot()
-    def selectedInputProfileBoxWasChanged(self) -> None:
-        # Set the current input profile to an empty one of the correct type
-        # self.input_profile = InputProfile(
-        #    DefaultInputProfiles.get_input_profile(
-        #        unprettify(self.ui.inputProfileBox.currentText())
-        #    ),
-        #    {},
-        # )
-        self.input_profile = SelectedInputProfile(
-            DefaultInputProfiles.get_input_profile(
-                unprettify(self.ui.inputProfileBox.currentText())
-            ),
-            {},
-        )
 
     @Slot()
     def selectedRowChanged(self) -> None:
@@ -384,6 +348,23 @@ class MainWindow(QMainWindow):
             pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
 
     @Slot()
+    def selectedInputProfileBoxWasChanged(self) -> None:
+        # Set the current input profile to an empty one of the correct type
+        # self.input_profile = InputProfile(
+        #    DefaultInputProfiles.get_input_profile(
+        #        unprettify(self.ui.inputProfileBox.currentText())
+        #    ),
+        #    {},
+        # )
+        self.input_profile = SelectedInputProfile(
+            DefaultInputProfiles.get_input_profile(
+                unprettify(self.ui.inputProfileBox.currentText())
+            ),
+            {},
+        )
+        self.createInputProfileOptions()
+
+    @Slot()
     def createGrooveOptionsGUI(self) -> None:
 
         comboBoxValue = self.table_groove_data[
@@ -449,6 +430,23 @@ class MainWindow(QMainWindow):
                         self.currentRow
                     ].selected_groove_option.selected_values[grooveOptionValue]}"""
                 )
+
+    @Slot()
+    def grooveOptionBoxChanged(self) -> None:
+        groove_option = self.ui.grooveOptionsBox.currentText()
+
+        print(groove_option)
+        # Print current groove option
+        current_gr_op = self.table_groove_data[self.currentRow].selected_groove_option
+        print(current_gr_op.selected_values)
+
+        # This deletes the currently entered values if the groove option combobox is changed
+        if current_gr_op.groove_option.name != groove_option:
+            self.table_groove_data[
+                self.currentRow
+            ].selected_groove_option = SelectedGrooveOption(
+                DEFAULT_GROOVE_OPTIONS.get_groove_option(unprettify(groove_option)), {}
+            )
 
     @Slot()
     def solve(self) -> None:
