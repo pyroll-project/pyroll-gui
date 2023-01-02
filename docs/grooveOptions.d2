@@ -1,8 +1,15 @@
-mainwindow: MainWindow.__init__
+mainwindow: MainWindow.__init__()
 createGrooveGUI: createGrooveOptionsGUI()
-mainwindow -> createGrooveGUI: calls
-setGrooveText: Setting groove options combo box text
-createGrooveGUI -> setGrooveText
 createGrooveOptions: createGrooveOptions()
-loadFromXML -> createGrooveGUI
+setGrooveText: Setting groove options combo box text
+guiCreation: Dynamic groove options form creation
+loadFromXML: loadFromXML()
 
+
+mainwindow -> createGrooveGUI: calls first
+mainwindow -> createGrooveOptions: calls second
+createGrooveGUI -> setGrooveText
+createGrooveOptions -> setGrooveText
+createGrooveOptions -> guiCreation
+loadFromXML -> createGrooveGUI
+loadFromXML -> createGrooveOptions
