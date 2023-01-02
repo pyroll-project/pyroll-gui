@@ -160,7 +160,7 @@ class MainWindow(QMainWindow):
                 self.ui.rollPassTable.setItem(i, j, QTableWidgetItem(value))
 
     def exportToXML(self):
-        print("Export to XML clicked")
+        logging.info("Export to XML clicked")
         # Create file selection dialog
         file_dialog = QFileDialog()
         # Select only XML files
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow):
         )
 
     def loadFromXML(self):
-        print("Load from XML clicked")
+        logging.info("Load from XML clicked")
         # Create file selection dialog
         file_dialog = QFileDialog()
         # Select only XML files
@@ -284,7 +284,7 @@ class MainWindow(QMainWindow):
         if currentRow != -1:
             self.currentRow = currentRow
         else:
-            print("Row would have been -1")
+            logging.warn("Row would have been -1")
             self.currentRow = 0
         print("row changed to:", self.currentRow)
 
@@ -338,8 +338,8 @@ class MainWindow(QMainWindow):
             f"Input profile: {inputProfile.name} selected, {inputProfile.setting_fields} options available"
         )
 
-        #try:
-            # Use the current input profile (self.input_profile) to set the values of the input profile options
+
+        # Use the current input profile (self.input_profile) to set the values of the input profile options
         for inputProfileSetting in inputProfile.setting_fields:
             logging.debug(f"Adding {inputProfileSetting} to input profile options")
             self.ui.inputItemOptions.addRow(
@@ -349,7 +349,7 @@ class MainWindow(QMainWindow):
                 self.ui.inputItemOptions.itemAt(
                     self.ui.inputItemOptions.count() - 1
                 ).widget().setText(
-                    f"{selected_input_profile.selected_values[inputProfileSetting]}"
+                    f"{selected_input_profile.selected_values.get(inputProfileSetting, '')}"
                 )
         #except Exception as e:
         #    print(e)
@@ -462,16 +462,17 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def solve(self) -> None:
-        print("Solve button clicked")
+        logging.info("Solve button clicked")
 
         self.persistInputProfile()
         self.persistGrooveOptions()
         self.persistTableData()
-        print(self.input_profile.input_profile.name)
-        print(self.input_profile.selected_values)
-        print("Proper table data")
-
-        print(self.table_data)
+        #print(self.input_profile.input_profile.name)
+        logging.debug(f"Input profile: {self.input_profile.input_profile.name}")
+        #print(self.input_profile.selected_values)
+        logging.debug(f"Input profile values: {self.input_profile.selected_values}")
+        logging.debug("Proper table data")
+        logging.debug(self.table_data)
         table_data: list[TableRow] = self.table_data
 
         xmlproc = XmlProcessing()
