@@ -4,10 +4,14 @@ createGrooveOptions: createGrooveOptions()
 setGrooveText: Setting groove options combo box text
 guiCreation: Dynamic groove options form creation
 loadFromXML: loadFromXML()
+createInputProfileGUI: createInputProfileGUI()
+createInputProfileOptions: createInputProfileOptions()
 
 
-mainwindow -> createGrooveGUI: calls first
-mainwindow -> createGrooveOptions: calls second
+mainwindow -> createGrooveGUI#: calls first
+mainwindow -> createGrooveOptions#: calls second
+mainwindow -> createInputProfileGUI
+mainwindow -> createInputProfileOptions
 createGrooveGUI -> setGrooveText
 createGrooveOptions -> setGrooveText
 createGrooveOptions -> guiCreation
