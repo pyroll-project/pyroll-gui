@@ -4,24 +4,22 @@ version = "0.1.0"
 description = ""
 authors = [
     "Hannes Krumbiegel <...>",
-    "Max Weiner <max.weiner@imf.tu-freiberg.de>"
+    "Max Weiner <max.weiner@imf.tu-freiberg.de>",
 ]
-packages = [
-    {include = "pyroll/gui"}
-]
+packages = [{ include = "pyroll/gui" }]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.11"
-pyroll = "^1.0.1"
-pyroll-integral-thermal = "^1.1.0"
-pyroll-wusatowski-spreading = "^1.1.0"
-pyroll-hensel-power-and-labour = "^1.0.0"
-pyroll-lendl-equivalent-method = "^1.0.0"
-pyroll-freiberg-flow-stress = "^1.1.1"
-pyroll-zouhar-contact = "^1.0.0"
+python = ">=3.9, <3.11"                                                            # Super frustrating that we can't update yet due to the PySide6 bug -> TODO: Check if this might be fixed in the future
+pyroll = { version = ">=1.0.1", allow-prereleases = true }
+pyroll-integral-thermal = { version = ">=1.1.0", allow-prereleases = true }
+pyroll-wusatowski-spreading = { version = ">=1.1.0", allow-prereleases = true }
+pyroll-hensel-power-and-labour = { version = ">=1.0.0", allow-prereleases = true }
+pyroll-lendl-equivalent-method = { version = ">=1.0.0", allow-prereleases = true }
+pyroll-freiberg-flow-stress = { version = ">=1.1.1", allow-prereleases = true }
+pyroll-zouhar-contact = { version = ">=1.0.0", allow-prereleases = true }
 #xmlschema = "^2.0.1"
-PySide6 = "6.3.*" # The latest version causes a DLL error on Windows
-pyinstaller = "^5.6.2"
+PySide6 = "6.3.*"       # The latest version causes a DLL error on Windows
+pyinstaller = ">=5.6.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
