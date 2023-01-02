@@ -46,6 +46,10 @@ from pyroll.core import (
     BoxGroove,
 )
 
+import logging
+from pprint import pformat
+
+
 from pyroll.gui.xml_processing import XmlProcessing
 
 
@@ -330,38 +334,42 @@ class MainWindow(QMainWindow):
         inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(
             unprettify(selectedItem)
         )
+        logging.debug(
+            f"Input profile: {inputProfile.name} selected, {inputProfile.setting_fields} options available"
+        )
 
-        try:
+        #try:
             # Use the current input profile (self.input_profile) to set the values of the input profile options
-            for inputProfileSetting in inputProfile.setting_fields:
-                self.ui.inputItemOptions.addRow(
-                    QLabel(prettify(inputProfileSetting)), QLineEdit()
+        for inputProfileSetting in inputProfile.setting_fields:
+            logging.debug(f"Adding {inputProfileSetting} to input profile options")
+            self.ui.inputItemOptions.addRow(
+                QLabel(prettify(inputProfileSetting)), QLineEdit()
+            )
+            if selected_input_profile != None:
+                self.ui.inputItemOptions.itemAt(
+                    self.ui.inputItemOptions.count() - 1
+                ).widget().setText(
+                    f"{selected_input_profile.selected_values[inputProfileSetting]}"
                 )
-                if selected_input_profile != None:
-                    self.ui.inputItemOptions.itemAt(
-                        self.ui.inputItemOptions.count() - 1
-                    ).widget().setText(
-                        f"{selected_input_profile.selected_values[inputProfileSetting]}"
-                    )
-        except Exception as e:
-            print(e)
-            pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
+        #except Exception as e:
+        #    print(e)
+        #    pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
 
     @Slot()
     def selectedInputProfileBoxWasChanged(self) -> None:
         # Set the current input profile to an empty one of the correct type
-        # self.input_profile = InputProfile(
-        #    DefaultInputProfiles.get_input_profile(
-        #        unprettify(self.ui.inputProfileBox.currentText())
-        #    ),
-        #    {},
-        # )
         self.input_profile = SelectedInputProfile(
             DefaultInputProfiles.get_input_profile(
                 unprettify(self.ui.inputProfileBox.currentText())
             ),
             {},
         )
+        logging.info(
+            f"The input profile in the persistent data was set to {self.input_profile.input_profile.name}"
+        )
+        # This possible fix I tested does not work
+        # clearLayout(self.ui.inputProfileGrid)
+        # self.createInputProfileGUI()
         self.createInputProfileOptions()
 
     @Slot()
@@ -435,10 +443,14 @@ class MainWindow(QMainWindow):
     def grooveOptionBoxChanged(self) -> None:
         groove_option = self.ui.grooveOptionsBox.currentText()
 
-        print(groove_option)
+        logging.info(
+            f"Following groove option selected from the groove options box: {groove_option}"
+        )
         # Print current groove option
         current_gr_op = self.table_groove_data[self.currentRow].selected_groove_option
-        print(current_gr_op.selected_values)
+        logging.info(
+            f"Current groove option in persistent data: {current_gr_op.groove_option.name}"
+        )
 
         # This deletes the currently entered values if the groove option combobox is changed
         if current_gr_op.groove_option.name != groove_option:
