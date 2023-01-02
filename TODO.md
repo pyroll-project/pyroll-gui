@@ -5,3 +5,8 @@
 * Check if the same problem with the groove options box exists as with input profile
 * Use the Github actions strategy/matrix setting to create Linux release (but maybe find out what exactly is needed before)
 * Fix bug that causes the input item options to be wrongly generated if one changes the combo box -> Find the culprit
+
+## Lower priority:
+* Fix CI/CD to generate changelog
+* Test CI/CD locally using act
+* 
