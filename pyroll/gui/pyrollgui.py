@@ -202,7 +202,8 @@ class MainWindow(QMainWindow):
         ) = xml_processing.load_pyroll_xml(file_name)
 
         self.fillTableFromTableData()
-        # self.grooveOptionBoxChanged()
+        # self.createGrooveOptionsGUI()
+        # I don't know why I added this, it might be needed/
         self.createGrooveOptions()
         self.createInputProfileOptions()
 
@@ -321,6 +322,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def createInputProfileGUI(self):
+        """This creates the general GUI, so the labels, the combobox, and the QFormLayout for the input item options"""
         self.ui.inputProfileGrid.setRowMinimumHeight(3, 100)
 
         self.ui.inputProfileLabel = QLabel("Input profile")
@@ -344,6 +346,44 @@ class MainWindow(QMainWindow):
         self.ui.inputProfileGrid.addLayout(self.ui.inputItemOptions, 3, 0)
 
     @Slot()
+    def createInputProfileOptions(self):
+        """Depending on the selected combo box item, create different input profile options"""
+        if self.input_profile.input_profile.name != None:
+            selected_input_profile = self.input_profile
+            selectedItem = prettify(self.input_profile.input_profile.name)
+            # Set the input profile box to the selected input profile
+            # Block signals to prevent the inputProfileBox from triggering the slot
+            # self.ui.inputProfileBox.blockSignals(True)
+            self.ui.inputProfileBox.setCurrentText(selectedItem)
+            # self.ui.inputProfileBox.blockSignals(False)
+            self.input_profile = selected_input_profile
+        else:
+            selectedItem = self.ui.inputProfileBox.currentText()
+            selected_input_profile = None
+
+        clearLayout(self.ui.inputItemOptions)
+
+        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(
+            unprettify(selectedItem)
+        )
+
+        try:
+            # Use the current input profile (self.input_profile) to set the values of the input profile options
+            for inputProfileSetting in inputProfile.setting_fields:
+                self.ui.inputItemOptions.addRow(
+                    QLabel(prettify(inputProfileSetting)), QLineEdit()
+                )
+                if selected_input_profile != None:
+                    self.ui.inputItemOptions.itemAt(
+                        self.ui.inputItemOptions.count() - 1
+                    ).widget().setText(
+                        f"{selected_input_profile.selected_values[inputProfileSetting]}"
+                    )
+        except Exception as e:
+            print(e)
+            pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
+
+    @Slot()
     def createGrooveOptionsGUI(self) -> None:
 
         comboBoxValue = self.table_groove_data[
@@ -362,7 +402,10 @@ class MainWindow(QMainWindow):
         )
 
         # If a selectedGrooveOption is given, set the grooveOptionsBox to the selectedGrooveOption
+        # Block signals to prevent the grooveOptionsBox from triggering the slot
+        # self.ui.grooveOptionsBox.blockSignals(True)
         self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
+        # self.ui.grooveOptionsBox.blockSignals(False)
 
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsBox, 1, 0)
 
@@ -406,40 +449,6 @@ class MainWindow(QMainWindow):
                         self.currentRow
                     ].selected_groove_option.selected_values[grooveOptionValue]}"""
                 )
-
-    @Slot()
-    def createInputProfileOptions(self):
-        """Depending on the selected combo box item, create different input profile options"""
-        if self.input_profile.input_profile.name != None:
-            selected_input_profile = self.input_profile
-            selectedItem = prettify(self.input_profile.input_profile.name)
-            # Set the input profile box to the selected input profile
-            self.ui.inputProfileBox.setCurrentText(selectedItem)
-            self.input_profile = selected_input_profile
-        else:
-            selectedItem = self.ui.inputProfileBox.currentText()
-            selected_input_profile = None
-
-        clearLayout(self.ui.inputItemOptions)
-
-        inputProfile = DEFAULT_INPUT_PROFILES.get_input_profile(
-            unprettify(selectedItem)
-        )
-
-        try:
-            # Use the current input profile (self.input_profile) to set the values of the input profile options
-            for inputProfileSetting in inputProfile.setting_fields:
-                self.ui.inputItemOptions.addRow(
-                    QLabel(prettify(inputProfileSetting)), QLineEdit()
-                )
-                if selected_input_profile != None:
-                    self.ui.inputItemOptions.itemAt(
-                        self.ui.inputItemOptions.count() - 1
-                    ).widget().setText(
-                        f"{selected_input_profile.selected_values[inputProfileSetting]}"
-                    )
-        except Exception as e:
-            pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
 
     @Slot()
     def solve(self) -> None:
