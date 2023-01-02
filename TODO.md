@@ -1,12 +1,12 @@
-* A function to persist table data from view to model - I think I already did this?
-* A function to load the table data from "persistent model" to view for input profile and groove
-* Wait for the updated project versions so I can use the newest reporter tool
-* Groove Options box doesn't get change correctly
+## High-priority bugs:
+* Loading 8888.xml does not properly load the combo box value of the groove options
+* Changing the row does not change the groove options box to the persistent data
+
+## New Features
+* Implementing the reporter that is supposed to show the contour lines
 * Check if the same problem with the groove options box exists as with input profile
 * Use the Github actions strategy/matrix setting to create Linux release (but maybe find out what exactly is needed before)
-* Fix bug that causes the input item options to be wrongly generated if one changes the combo box -> Find the culprit
 
 ## Lower priority:
 * Fix CI/CD to generate changelog
 * Test CI/CD locally using act
-* 
