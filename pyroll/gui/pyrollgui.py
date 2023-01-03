@@ -161,6 +161,7 @@ class MainWindow(QMainWindow):
         fileMenu = menuBar.addMenu("File")
         # File -> New Project
         newProjectAction = fileMenu.addAction("New Project")
+        newProjectAction.triggered.connect(self.newProject)
         # Export to XML
         exportToXMLAction = fileMenu.addAction("Export to XML...")
         exportToXMLAction.triggered.connect(self.exportToXML)
@@ -169,8 +170,20 @@ class MainWindow(QMainWindow):
         loadFromXMLAction.triggered.connect(self.loadFromXML)
 
     def newProject(self):
-        # Clear the table
-        raise NotImplementedError
+
+        # Clear the table data
+        self.table_data = []
+        # Clear the groove data
+        self.table_groove_data = []
+        self.input_profile = SelectedInputProfile(
+            DEFAULT_INPUT_PROFILES.DEFAULT_INPUT_PROFILE_DICT[0], {}
+        )
+        self.addNewTableRow()
+        # Populate table
+        self.fillTableFromTableData()
+        # Populate groove and input profile options
+        self.createGrooveOptions()
+        self.createInputProfileOptions()
 
     def fillTableFromTableData(self):
         # Clear the table
