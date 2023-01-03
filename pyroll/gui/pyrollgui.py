@@ -107,6 +107,11 @@ class MainWindow(QMainWindow):
 
         self.addTestRow()
 
+        # Add keyboard shortcuts
+        # Add shortcut to add a row
+        self.addRowShortcut = QtGui.QShortcut(QtGui.QKeySequence("Ctrl+Shift+A"), self)
+        self.addRowShortcut.activated.connect(self.addNewTableRow)
+
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
@@ -149,6 +154,10 @@ class MainWindow(QMainWindow):
         loadFromXMLAction = fileMenu.addAction("Load from XML...")
         loadFromXMLAction.triggered.connect(self.loadFromXML)
 
+    def newProject(self):
+        # Clear the table
+        raise NotImplementedError
+
     def fillTableFromTableData(self):
         # Clear the table
         self.ui.rollPassTable.setRowCount(0)
@@ -158,6 +167,32 @@ class MainWindow(QMainWindow):
             self.ui.rollPassTable.insertRow(i)
             for j, (param, value) in enumerate(table_row.__dict__.items()):
                 self.ui.rollPassTable.setItem(i, j, QTableWidgetItem(value))
+
+    def addNewTableRow(self):
+        self.ui.rollPassTable.insertRow(self.ui.rollPassTable.rowCount())
+        self.table_data.append(TableRow())
+        self.table_groove_data.append(
+            RowData(
+                SelectedGrooveOption(
+                    DEFAULT_GROOVE_OPTIONS.DEFAULT_GROOVE_OPTION_DICT[0], {}
+                )
+            )
+        )
+
+    def duplicateTableRow(self):
+        # Get the currently selected row
+        selected_row = self.ui.rollPassTable.currentRow()
+        # Get the data from the selected row
+        selected_row_data = self.table_data[selected_row]
+        # Create a new TableRow with the data from the selected row
+        new_row = TableRow(**selected_row_data.__dict__)
+        # Add the new row to the table
+        self.table_data.append(new_row)
+
+        # Also copy row groove data
+        self.table_groove_data.append(self.table_groove_data[selected_row])
+
+        self.fillTableFromTableData()
 
     def exportToXML(self):
         logging.info("Export to XML clicked")
@@ -287,9 +322,8 @@ class MainWindow(QMainWindow):
             logging.warn("Row would have been -1")
             self.currentRow = 0
         print("row changed to:", self.currentRow)
-        #self.createGrooveOptionsGUI()
-        #self.createGrooveOptions()
-
+        # self.createGrooveOptionsGUI()
+        # self.createGrooveOptions()
 
     @Slot()
     def createInputProfileGUI(self):

@@ -8,7 +8,7 @@ from pyroll.core import (
     BoxGroove,
 )
 from shapely.geometry import LineString
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
 
 def createGroovePic(groove_option: SelectedGrooveOption) -> Optional[Union[str, None]]:
@@ -32,6 +32,7 @@ def createGroovePic(groove_option: SelectedGrooveOption) -> Optional[Union[str, 
     # Save the figure
     plt.savefig(FILENAME)
     return FILENAME
+
 
 if __name__ == "__main__":
     from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS
