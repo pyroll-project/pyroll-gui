@@ -14,6 +14,7 @@
 * Fix CI/CD to generate changelog
 * Test CI/CD locally using act
 * Use the Github actions strategy/matrix setting to create Linux release (but maybe find out what exactly is needed before)
+* Maybe add a padding around the PyQT forms
 
 ## General things
 * Testing
