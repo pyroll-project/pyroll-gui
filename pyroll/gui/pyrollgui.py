@@ -1,3 +1,5 @@
+from copy import deepcopy
+import dataclasses
 import sys
 from typing import Optional, Union
 from PySide6.QtWidgets import (
@@ -112,6 +114,12 @@ class MainWindow(QMainWindow):
         self.addRowShortcut = QtGui.QShortcut(QtGui.QKeySequence("Ctrl+Shift+A"), self)
         self.addRowShortcut.activated.connect(self.addNewTableRow)
 
+        # Duplicate row shortcut
+        self.duplicateRowShortcut = QtGui.QShortcut(
+            QtGui.QKeySequence("Ctrl+Shift+D"), self
+        )
+        self.duplicateRowShortcut.activated.connect(self.duplicateTableRow)
+
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
@@ -169,7 +177,6 @@ class MainWindow(QMainWindow):
                 self.ui.rollPassTable.setItem(i, j, QTableWidgetItem(value))
 
     def addNewTableRow(self):
-        self.ui.rollPassTable.insertRow(self.ui.rollPassTable.rowCount())
         self.table_data.append(TableRow())
         self.table_groove_data.append(
             RowData(
@@ -178,6 +185,7 @@ class MainWindow(QMainWindow):
                 )
             )
         )
+        self.fillTableFromTableData()
 
     def duplicateTableRow(self):
         # Get the currently selected row
@@ -185,12 +193,13 @@ class MainWindow(QMainWindow):
         # Get the data from the selected row
         selected_row_data = self.table_data[selected_row]
         # Create a new TableRow with the data from the selected row
-        new_row = TableRow(**selected_row_data.__dict__)
+        new_row = dataclasses.replace(selected_row_data)
         # Add the new row to the table
         self.table_data.append(new_row)
 
-        # Also copy row groove data
-        self.table_groove_data.append(self.table_groove_data[selected_row])
+        new_groove_data = deepcopy(self.table_groove_data[selected_row])
+
+        self.table_groove_data.append(new_groove_data)
 
         self.fillTableFromTableData()
 
