@@ -9,7 +9,8 @@ authors = [
 packages = [{ include = "pyroll/gui" }]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.11"                                                            # Super frustrating that we can't update yet due to the PySide6 bug -> TODO: Check if this might be fixed in the future
+# Super frustrating that we can't update yet due to the PySide6 bug -> TODO: Check if this might be fixed in the future
+python = ">=3.9, <3.11"
 pyroll = { version = ">=1.0.1", allow-prereleases = true }
 pyroll-integral-thermal = { version = ">=1.1.0", allow-prereleases = true }
 pyroll-wusatowski-spreading = { version = ">=1.1.0", allow-prereleases = true }

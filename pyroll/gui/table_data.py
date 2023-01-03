@@ -8,7 +8,7 @@ class TableRow:
     """Dataclass that contains the data for a row in the table"""
 
     gap: float | None = None
-    rool_radius: float | None = None
+    roll_radius: float | None = None
     in_rotation: float | None = None
     velocity: float | None = None
     roll_temperature: float | None = None
