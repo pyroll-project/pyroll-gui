@@ -106,9 +106,9 @@ class MainWindow(QMainWindow):
         self.ui.grooveOptionsGrid = QGridLayout()
         self.createMenuBar()
 
-        #self.table_data: list[TableRow] = []
+        # self.table_data: list[TableRow] = []
 
-        #self.addTestRow()
+        # self.addTestRow()
         self.newProject()
 
         # Add keyboard shortcuts
@@ -550,16 +550,9 @@ class MainWindow(QMainWindow):
         logging.debug(self.table_data)
         table_data: list[TableRow] = self.table_data
 
-        xmlproc = XmlProcessing()
-        xmlproc.save_pyroll_xml(
-            self.table_data, self.table_groove_data, self.input_profile, "test.xml"
-        )
-
         input_constr = getattr(Profile, self.input_profile.input_profile.name)
 
         input_profile = input_constr(**self.input_profile.selected_values)
-
-        # Now get the info from the table
 
         unit_sequence: list[Unit] = []
         # default_transport = Transport(duration=2)
