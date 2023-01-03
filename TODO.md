@@ -1,5 +1,6 @@
 ## High-priority bugs:
 * Loading 8888.xml does not properly load the combo box value of the groove options
+* Fix 
 
 ## New Features
 * Adding shortcuts to delete and add new rows

@@ -120,6 +120,12 @@ class MainWindow(QMainWindow):
         )
         self.duplicateRowShortcut.activated.connect(self.duplicateTableRow)
 
+        # Delete row shortcut using Ctrl+Shift+Delete kez
+        self.deleteRowShortcut = QtGui.QShortcut(
+            QtGui.QKeySequence("Ctrl+Shift+Delete"), self
+        )
+        self.deleteRowShortcut.activated.connect(self.deleteTableRow)
+
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
         self.input_profile = get_test_input_profile()
@@ -185,6 +191,14 @@ class MainWindow(QMainWindow):
                 )
             )
         )
+        self.fillTableFromTableData()
+
+    def deleteTableRow(self):
+        selected_row = self.ui.rollPassTable.currentRow()
+        self.table_data.pop(selected_row)
+        self.table_groove_data.pop(selected_row)
+        # This apparently causes an error:
+        # self.selectedRowChanged()
         self.fillTableFromTableData()
 
     def duplicateTableRow(self):
@@ -319,6 +333,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def selectedRowChanged(self) -> None:
+        """This function persists the groove options and sets the current index"""
         # Get selectionmodel from self.ui.rollPassTable
         self.persistGrooveOptions()
         selectionModel = self.ui.rollPassTable.selectionModel()
