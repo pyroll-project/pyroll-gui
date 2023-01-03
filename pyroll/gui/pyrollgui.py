@@ -338,7 +338,6 @@ class MainWindow(QMainWindow):
             f"Input profile: {inputProfile.name} selected, {inputProfile.setting_fields} options available"
         )
 
-
         # Use the current input profile (self.input_profile) to set the values of the input profile options
         for inputProfileSetting in inputProfile.setting_fields:
             logging.debug(f"Adding {inputProfileSetting} to input profile options")
@@ -351,9 +350,6 @@ class MainWindow(QMainWindow):
                 ).widget().setText(
                     f"{selected_input_profile.selected_values.get(inputProfileSetting, '')}"
                 )
-        #except Exception as e:
-        #    print(e)
-        #    pass  # This is caused by the XML loading -> changing input item option -> triggering this slot with still the old combo box values
 
     @Slot()
     def selectedInputProfileBoxWasChanged(self) -> None:
@@ -393,6 +389,7 @@ class MainWindow(QMainWindow):
         # If a selectedGrooveOption is given, set the grooveOptionsBox to the selectedGrooveOption
         # Block signals to prevent the grooveOptionsBox from triggering the slot
         # self.ui.grooveOptionsBox.blockSignals(True)
+        logging.debug(f"Setting grooveOptionsBox to {comboBoxValue}")
         self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
         # self.ui.grooveOptionsBox.blockSignals(False)
 
@@ -414,8 +411,12 @@ class MainWindow(QMainWindow):
             self.currentRow
         ].selected_groove_option.groove_option
 
-        comboBoxValue = grooveOption.name
+        logging.debug(
+            f"Groove option: {grooveOption.name} selected, {grooveOption.setting_fields} options available"
+        )
 
+        comboBoxValue = grooveOption.name
+        logging.debug(f"Setting grooveOptionsBox to {comboBoxValue}")
         self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
 
         optionValueList = grooveOption.setting_fields
@@ -436,7 +437,7 @@ class MainWindow(QMainWindow):
                 self.ui.grooveOptions.itemAt(itemAtIndex).widget().setText(
                     f"""{self.table_groove_data[
                         self.currentRow
-                    ].selected_groove_option.selected_values[grooveOptionValue]}"""
+                    ].selected_groove_option.selected_values.get(grooveOptionValue, '')}"""
                 )
 
     @Slot()
@@ -467,9 +468,7 @@ class MainWindow(QMainWindow):
         self.persistInputProfile()
         self.persistGrooveOptions()
         self.persistTableData()
-        #print(self.input_profile.input_profile.name)
         logging.debug(f"Input profile: {self.input_profile.input_profile.name}")
-        #print(self.input_profile.selected_values)
         logging.debug(f"Input profile values: {self.input_profile.selected_values}")
         logging.debug("Proper table data")
         logging.debug(self.table_data)
