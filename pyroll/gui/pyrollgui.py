@@ -46,7 +46,9 @@ from pyroll.core import (
     SquareGroove,
     RoundGroove,
     BoxGroove,
+    solve,
 )
+from pyroll.core.unit import Unit
 
 import logging
 from pprint import pformat
@@ -98,7 +100,7 @@ class MainWindow(QMainWindow):
         self.ui.grooveOptionsBox.currentIndexChanged.connect(self.createGrooveOptions)
 
         # Connect the signal of the solve button to the slot solve
-        self.ui.solveButton.clicked.connect(self.solve)
+        self.ui.solveButton.clicked.connect(self.solveProcess)
 
         # This represents the grooveOptionsGrids, one per row in the table
         self.ui.grooveOptionsGrid = QGridLayout()
@@ -536,7 +538,7 @@ class MainWindow(QMainWindow):
             )
 
     @Slot()
-    def solve(self) -> None:
+    def solveProcess(self) -> None:
         logging.info("Solve button clicked")
 
         self.persistInputProfile()
@@ -555,18 +557,21 @@ class MainWindow(QMainWindow):
 
         input_constr = getattr(Profile, self.input_profile.input_profile.name)
 
-        input = input_constr(**self.input_profile.selected_values)
+        input_profile = input_constr(**self.input_profile.selected_values)
 
         # Now get the info from the table
 
-        sequence: list[Union[RollPass, Transport]] = []
-        default_transport = Transport(duration=2)
+        unit_sequence: list[Unit] = []
+        # default_transport = Transport(duration=2)
         row_groove_data: RowData
         table_row: TableRow
         for i, (row_groove_data, table_row) in enumerate(
             zip(self.table_groove_data, table_data)
         ):
-            transport = Transport(duration=table_row.transport_duration)
+            if table_row.transport_duration is None:
+                transport = None
+            else:
+                transport = Transport(duration=table_row.transport_duration)
             groove_name = row_groove_data.selected_groove_option.groove_option.name
             groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
             groove_class = globals()[groove_name_final]
@@ -581,7 +586,15 @@ class MainWindow(QMainWindow):
                     # Remove the key from the rollpass_parameters dict
                     del rollpass_parameters[key]
 
-            rp = RollPass(**rollpass_parameters, roll=Roll())
+            rp = RollPass(
+                **rollpass_parameters,
+                roll=Roll(groove=groove, **roll_parameters_from_table),
+            )
+            unit_sequence.append(rp)
+            if transport is not None:
+                unit_sequence.append(transport)
+
+        solve(unit_sequence, input_profile)
 
 
 def main():
