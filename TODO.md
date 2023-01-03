@@ -1,6 +1,5 @@
 ## High-priority bugs:
 * Loading 8888.xml does not properly load the combo box value of the groove options
-* Changing the row does not change the groove options box to the persistent data
 
 ## New Features
 * Implementing the reporter that is supposed to show the contour lines

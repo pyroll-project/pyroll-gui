@@ -287,6 +287,9 @@ class MainWindow(QMainWindow):
             logging.warn("Row would have been -1")
             self.currentRow = 0
         print("row changed to:", self.currentRow)
+        #self.createGrooveOptionsGUI()
+        #self.createGrooveOptions()
+
 
     @Slot()
     def createInputProfileGUI(self):
@@ -390,7 +393,7 @@ class MainWindow(QMainWindow):
         # Block signals to prevent the grooveOptionsBox from triggering the slot
         # self.ui.grooveOptionsBox.blockSignals(True)
         logging.debug(f"Setting grooveOptionsBox to {comboBoxValue}")
-        self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
+        self.ui.grooveOptionsBox.setCurrentText(prettify(comboBoxValue))
         # self.ui.grooveOptionsBox.blockSignals(False)
 
         self.ui.grooveOptionsGrid.addWidget(self.ui.grooveOptionsBox, 1, 0)
@@ -417,7 +420,7 @@ class MainWindow(QMainWindow):
 
         comboBoxValue = grooveOption.name
         logging.debug(f"Setting grooveOptionsBox to {comboBoxValue}")
-        self.ui.grooveOptionsBox.setCurrentText(comboBoxValue)
+        self.ui.grooveOptionsBox.setCurrentText(prettify(comboBoxValue))
 
         optionValueList = grooveOption.setting_fields
 
@@ -442,7 +445,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def grooveOptionBoxChanged(self) -> None:
-        groove_option = self.ui.grooveOptionsBox.currentText()
+        groove_option = unprettify(self.ui.grooveOptionsBox.currentText())
 
         logging.info(
             f"Following groove option selected from the groove options box: {groove_option}"
