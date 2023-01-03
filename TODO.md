@@ -7,5 +7,9 @@
 * Use the Github actions strategy/matrix setting to create Linux release (but maybe find out what exactly is needed before)
 
 ## Lower priority:
+* Pretty up the groove option parameters
 * Fix CI/CD to generate changelog
 * Test CI/CD locally using act
+
+## General things
+* Testing
