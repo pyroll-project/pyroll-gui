@@ -16,7 +16,7 @@ class DefaultGrooveOptions:
         GrooveOption("round", ["r1", "r2", "depth"]),
         GrooveOption("circular_oval", ["r1", "r2", "depth"]),
         GrooveOption("false_round", ["r1", "r2", "depth", "flank_angle"]),
-        GrooveOption("square", ["r1", "r2", "depth"]),
+        GrooveOption("square", ["r1", "r2", "depth", "tip_depth"]),
     ]
 
     def get_groove_options(self) -> list[GrooveOption]:
