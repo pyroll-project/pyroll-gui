@@ -1,8 +1,9 @@
 ## High-priority bugs:
 * Loading 8888.xml does not properly load the combo box value of the groove options
-* Fix 
+* Fix the deletion causing 'list index out of range' errors
 
 ## New Features
+* Question: Do we actually need to save the current row or is it enough to always simply call the function
 * Adding shortcuts to delete and add new rows
 * Implementing the reporter that is supposed to show the contour lines
 * Should the input profile be plotted as well?
