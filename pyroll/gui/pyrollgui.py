@@ -104,12 +104,12 @@ class MainWindow(QMainWindow):
 
         # This represents the grooveOptionsGrids, one per row in the table
         self.ui.grooveOptionsGrid = QGridLayout()
-        self.grooves = []
         self.createMenuBar()
 
-        self.table_data: list[TableRow] = []
+        #self.table_data: list[TableRow] = []
 
-        self.addTestRow()
+        #self.addTestRow()
+        self.newProject()
 
         # Add keyboard shortcuts
         # Add shortcut to add a row
