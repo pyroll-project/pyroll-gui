@@ -49,6 +49,7 @@ from pyroll.core import (
     solve,
 )
 from pyroll.core.unit import Unit
+from pyroll.ui.reporter import Reporter
 
 import logging
 from pprint import pformat
@@ -615,6 +616,11 @@ class MainWindow(QMainWindow):
                 unit_sequence.append(transport)
         logging.debug(f"Unit sequence: {pformat(unit_sequence)}")
         solve(unit_sequence, input_profile)
+        reporter = Reporter()
+        html = reporter.render(unit_sequence)
+        # Print the html to disk
+        with open("report.html", "w", encoding="utf-8") as f:
+            f.write(html)
 
 
 def main():

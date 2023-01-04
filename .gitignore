@@ -216,4 +216,5 @@ pyrolltest/
 progress.txt
 pyroll/gui/questions.txt
 *.xml
-groove.png
+*.png
+*.html
