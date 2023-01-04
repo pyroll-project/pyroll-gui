@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<process_data>
+  <in_profile>
+    <square>
+      <side>45e-3</side>
+      <corner_radius>3e-3</corner_radius>
+      <temperature>1473.15</temperature>
+      <flow_stress>100e6</flow_stress>
+      <strain>0</strain>
+    </square>
+  </in_profile>
+  <pass_sequence>
+    <pass>
+      <groove>
+        <diamond>
+          <r1>12e-3</r1>
+          <r2>8e-3</r2>
+          <tip_depth>22e-3</tip_depth>
+          <usable_width>76.5e-3</usable_width>
+        </diamond>
+      </groove>
+      <gap>3e-3</gap>
+      <roll_radius />
+      <in_rotation />
+      <velocity>1</velocity>
+      <roll_temperature />
+      <transport_duration>2</transport_duration>
+      <atmosphere_temperature />
+      <roll_rotation_frequency />
+      <nominal_radius>160e-3</nominal_radius>
+    </pass>
+    <pass>
+      <groove>
+        <square>
+          <r1>8e-3</r1>
+          <r2>6e-3</r2>
+          <tip_depth>26e-3</tip_depth>
+          <usable_width>52.7e-3</usable_width>
+        </square>
+      </groove>
+      <gap>3e-3</gap>
+      <roll_radius />
+      <in_rotation />
+      <velocity>1</velocity>
+      <roll_temperature />
+      <transport_duration />
+      <atmosphere_temperature />
+      <roll_rotation_frequency />
+      <nominal_radius>160e-3</nominal_radius>
+    </pass>
+  </pass_sequence>
+</process_data>
