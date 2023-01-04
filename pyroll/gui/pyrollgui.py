@@ -557,7 +557,7 @@ class MainWindow(QMainWindow):
         for key, value in self.input_profile.selected_values.items():
             float_input_profile_dict[key] = float(value)
 
-        #input_profile = input_constr(**self.input_profile.selected_values)
+        # input_profile = input_constr(**self.input_profile.selected_values)
         input_profile = input_constr(**float_input_profile_dict)
 
         unit_sequence: list[Unit] = []
@@ -567,38 +567,51 @@ class MainWindow(QMainWindow):
         for i, (row_groove_data, table_row) in enumerate(
             zip(self.table_groove_data, table_data)
         ):
-            if table_row.transport_duration is None:
+            if (
+                table_row.transport_duration is None
+                or table_row.transport_duration == ""
+            ):
                 transport = None
             else:
-                transport = Transport(duration=table_row.transport_duration)
+                transport = Transport(duration=float(table_row.transport_duration))
+
             groove_name = row_groove_data.selected_groove_option.groove_option.name
             groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
             groove_class = globals()[groove_name_final]
             groove_selected_values_float = {}
-            for key, value in row_groove_data.selected_groove_option.selected_values.items():
+            for (
+                key,
+                value,
+            ) in row_groove_data.selected_groove_option.selected_values.items():
                 groove_selected_values_float[key] = float(value)
-            #groove = groove_class(
+            # groove = groove_class(
             #    **row_groove_data.selected_groove_option.selected_values
-            #)
-            groove = groove_class(
-                **groove_selected_values_float
-            )
+            # )
+            groove = groove_class(**groove_selected_values_float)
             rollpass_parameters = table_row.__dict__
+            rollpass_parameters_float = {}
+            for key, value in rollpass_parameters.items():
+                if value is not None and value.strip() != "":
+                    rollpass_parameters_float[key] = float(value)
+                if value == "transport_duration":
+                    pass
+
             roll_parameters_from_table = {}
             for key in PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL:
-                if key in rollpass_parameters:
-                    roll_parameters_from_table[key] = rollpass_parameters[key]
+                if key in rollpass_parameters_float:
+                    roll_parameters_from_table[key] = rollpass_parameters_float[key]
                     # Remove the key from the rollpass_parameters dict
-                    del rollpass_parameters[key]
+                    del rollpass_parameters_float[key]
 
             rp = RollPass(
-                **rollpass_parameters,
+                **rollpass_parameters_float,
                 roll=Roll(groove=groove, **roll_parameters_from_table),
             )
+
             unit_sequence.append(rp)
             if transport is not None:
                 unit_sequence.append(transport)
-
+        logging.debug(f"Unit sequence: {pformat(unit_sequence)}")
         solve(unit_sequence, input_profile)
 
 
