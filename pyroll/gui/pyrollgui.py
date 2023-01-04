@@ -578,6 +578,7 @@ class MainWindow(QMainWindow):
             groove_name = row_groove_data.selected_groove_option.groove_option.name
             groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
             groove_class = globals()[groove_name_final]
+            label = f"{prettify(groove_name)} {i + 1}"
             groove_selected_values_float = {}
             for (
                 key,
@@ -604,6 +605,7 @@ class MainWindow(QMainWindow):
                     del rollpass_parameters_float[key]
 
             rp = RollPass(
+                label=label,
                 **rollpass_parameters_float,
                 roll=Roll(groove=groove, **roll_parameters_from_table),
             )
