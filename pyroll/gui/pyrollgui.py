@@ -1,7 +1,9 @@
 from copy import deepcopy
 import dataclasses
+from datetime import datetime
 import sys
 from typing import Optional, Union
+import webbrowser
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -618,9 +620,15 @@ class MainWindow(QMainWindow):
         solve(unit_sequence, input_profile)
         reporter = Reporter()
         html = reporter.render(unit_sequence)
+        # File name should be report.html + timestamp
+        file_name = f"report_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.html"
+
         # Print the html to disk
-        with open("report.html", "w", encoding="utf-8") as f:
+        with open(file_name, "w", encoding="utf-8") as f:
             f.write(html)
+
+        # Open the report in the default browser
+        webbrowser.open(file_name)
 
 
 def main():
