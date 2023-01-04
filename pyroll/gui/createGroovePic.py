@@ -11,7 +11,7 @@ from pyroll.core import (
 )
 from pyroll.core.profile import Profile
 
-from shapely.geometry import LineString
+from shapely.geometry import LineString, Polygon
 import matplotlib.pyplot as plt
 
 
@@ -52,10 +52,10 @@ def createInputProfilePic(
         input_constr = getattr(Profile, input_profile.input_profile.name)
         profile = input_constr(**input_profile.selected_values)
         print(profile)
-        countour_line: LineString = profile.contour_line
+        boundary: Polygon = profile.cross_section.boundary
         fig, ax = plt.subplots()
-        ax.plot(countour_line.xy[0], countour_line.xy[1])
-        x, y = countour_line.xy
+        ax.plot(boundary.xy[0], boundary.xy[1])
+        x, y = boundary.xy
         # Plot the countour line with matplotlib
         plt.plot(x, y)
         # Save the figure
@@ -63,7 +63,7 @@ def createInputProfilePic(
         return filename
 
     except Exception as e:
-        logging.warn(e)
+        logging.warning(e)
         return None
 
 
