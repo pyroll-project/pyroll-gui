@@ -223,6 +223,7 @@ class MainWindow(QMainWindow):
         self.fillTableFromTableData()
 
     def duplicateTableRow(self):
+        self.persistTableData()
         # Get the currently selected row
         selected_row = self.ui.rollPassTable.currentRow()
         # Get the data from the selected row
@@ -340,7 +341,7 @@ class MainWindow(QMainWindow):
                 ] = parameter_value.widget().text()
 
     def persistTableData(self) -> None:
-        """Get the data from the table and return it as a list of TableRow objects"""
+        """Persist the table data into a the model"""
         table_data: list[TableRow] = []
         for row in range(self.ui.rollPassTable.rowCount()):
             current_row = TableRow()
