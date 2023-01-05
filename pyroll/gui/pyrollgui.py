@@ -17,8 +17,10 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QFileDialog,
 )
-from PySide6 import QtGui
+from PySide6 import QtGui, QtWidgets, QtCore
 from PySide6.QtCore import QFile, QSize, Slot
+
+
 from pyroll.gui.constants import (
     PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL,
 )
@@ -77,6 +79,33 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setWindowIcon(QtGui.QIcon(resource_path("img/pyroll_icon.png")))
         self.setWindowTitle("PyRoll")
+
+        # Add the image "testgroove.png" to the contourLinesLayout
+        picLabel = QLabel()
+        self.ui.contourLinesLayout.addWidget(picLabel)
+        pixMap = QtGui.QPixmap(resource_path("testgroove.png"))
+        w = pixMap.width()
+        h = pixMap.height()
+        
+        #Scale the image to 300x300
+
+        # Now calculate the new width and height so that one of them is at most 300
+        if w > h:
+            h = 300 * h / w
+            w = 300
+        else:
+            w = 300 * w / h
+            h = 300
+
+        picLabel.setPixmap(
+            pixMap.scaled(w, h, QtCore.Qt.KeepAspectRatio)
+        )
+        # Set the max size of the picLabel to 300x300
+        picLabel.setMaximumSize(QSize(300, 300))
+        #Allow the picLabel to be scaled, but keep the aspect ratio
+        
+        
+        picLabel.show()
 
         self.setupRollpassTable()
 
