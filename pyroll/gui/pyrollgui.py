@@ -78,19 +78,25 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon(resource_path("img/pyroll_icon.png")))
         self.setWindowTitle("PyRoll")
 
-        self.loadTestData()
+        #self.loadTestData()
+        #self.table_groove_data = [] # 
+        #self.currentRow = 0
+        #self.createInputProfileGUI()
+        #self.createGrooveOptionsGUI()
 
         self.setupRollpassTable()
+
+        self.newProject()
+
 
         self.ui.grooveOptions: QFormLayout
 
         # Add a row to self.ui.rollPassTable
-        self.ui.rollPassTable.insertRow(0)
-        self.createInputProfileGUI()
-        self.createGrooveOptionsGUI()
+        #self.ui.rollPassTable.insertRow(0)
+   
 
-        self.createInputProfileOptions()
-        self.createGrooveOptions()
+        #self.createInputProfileOptions()
+        #self.createGrooveOptions()
 
         self.ui.inputProfileBox.currentIndexChanged.connect(
             self.selectedInputProfileBoxWasChanged
@@ -107,12 +113,12 @@ class MainWindow(QMainWindow):
 
         # This represents the grooveOptionsGrids, one per row in the table
         self.ui.grooveOptionsGrid = QGridLayout()
+        # TODO: What does this here?
         self.createMenuBar()
 
         # self.table_data: list[TableRow] = []
 
         # self.addTestRow()
-        self.newProject()
 
         # Add keyboard shortcuts
         # Add shortcut to add a row
@@ -125,7 +131,6 @@ class MainWindow(QMainWindow):
         )
         self.duplicateRowShortcut.activated.connect(self.duplicateTableRow)
 
-        # Delete row shortcut using Ctrl+Shift+Delete kez
         self.deleteRowShortcut = QtGui.QShortcut(
             QtGui.QKeySequence("Ctrl+Shift+Delete"), self
         )
@@ -186,6 +191,18 @@ class MainWindow(QMainWindow):
         self.addNewTableRow()
         # Populate table
         self.fillTableFromTableData()
+
+        # Check if the GUIs are already created. If not, create them.
+        #if self.ui.inputProfileBox is None:
+        #    self.createInputProfileGUI()
+        # This didn't work, so use meta programming
+        if not hasattr(self.ui, "inputProfileBox"):
+            self.createInputProfileGUI()
+        if not hasattr(self.ui, "grooveOptionsBox"):
+            self.createGrooveOptionsGUI()
+        #if self.ui.grooveOptionsBox is None:
+        #    self.createGrooveOptionsGUI()
+
         # Populate groove and input profile options
         self.createGrooveOptions()
         self.createInputProfileOptions()
@@ -201,6 +218,7 @@ class MainWindow(QMainWindow):
                 self.ui.rollPassTable.setItem(i, j, QTableWidgetItem(value))
 
     def addNewTableRow(self):
+        self.persistTableData()
         self.table_data.append(TableRow())
         self.table_groove_data.append(
             RowData(
@@ -212,7 +230,9 @@ class MainWindow(QMainWindow):
         self.fillTableFromTableData()
 
     def deleteTableRow(self):
+        logging.info("Deleting row")
         selected_row = self.ui.rollPassTable.currentRow()
+        logging.debug(f"Selected row: {selected_row}")
         self.table_data.pop(selected_row)
         self.table_groove_data.pop(selected_row)
         # This apparently causes an error:
