@@ -73,7 +73,7 @@ if __name__ == "__main__":
     groove_option = DEFAULT_GROOVE_OPTIONS.get_groove_option("round")
     go = SelectedGrooveOption(groove_option, {"r1": 1, "r2": 2, "depth": 3})
 
-    createGroovePic(go, "testgroove.png")
+    createGroovePic(go, "testgroove.svg")
 
     from pyroll.gui.in_profiles import DEFAULT_INPUT_PROFILES
 
