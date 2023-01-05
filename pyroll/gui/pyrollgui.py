@@ -78,25 +78,11 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon(resource_path("img/pyroll_icon.png")))
         self.setWindowTitle("PyRoll")
 
-        #self.loadTestData()
-        #self.table_groove_data = [] # 
-        #self.currentRow = 0
-        #self.createInputProfileGUI()
-        #self.createGrooveOptionsGUI()
-
         self.setupRollpassTable()
 
         self.newProject()
 
-
         self.ui.grooveOptions: QFormLayout
-
-        # Add a row to self.ui.rollPassTable
-        #self.ui.rollPassTable.insertRow(0)
-   
-
-        #self.createInputProfileOptions()
-        #self.createGrooveOptions()
 
         self.ui.inputProfileBox.currentIndexChanged.connect(
             self.selectedInputProfileBoxWasChanged
@@ -112,13 +98,10 @@ class MainWindow(QMainWindow):
         self.ui.solveButton.clicked.connect(self.solveProcess)
 
         # This represents the grooveOptionsGrids, one per row in the table
-        self.ui.grooveOptionsGrid = QGridLayout()
         # TODO: What does this here?
+        self.ui.grooveOptionsGrid = QGridLayout()
+
         self.createMenuBar()
-
-        # self.table_data: list[TableRow] = []
-
-        # self.addTestRow()
 
         # Add keyboard shortcuts
         # Add shortcut to add a row
@@ -193,15 +176,10 @@ class MainWindow(QMainWindow):
         self.fillTableFromTableData()
 
         # Check if the GUIs are already created. If not, create them.
-        #if self.ui.inputProfileBox is None:
-        #    self.createInputProfileGUI()
-        # This didn't work, so use meta programming
         if not hasattr(self.ui, "inputProfileBox"):
             self.createInputProfileGUI()
         if not hasattr(self.ui, "grooveOptionsBox"):
             self.createGrooveOptionsGUI()
-        #if self.ui.grooveOptionsBox is None:
-        #    self.createGrooveOptionsGUI()
 
         # Populate groove and input profile options
         self.createGrooveOptions()
