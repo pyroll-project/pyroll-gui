@@ -1,8 +1,4 @@
 ## High-priority bugs:
-* Fix the deletion causing 'list index out of range' errors
-* Get the solve function to work properly
-* Adding a row seems to delete all data
-* The first-time-setup is buggy, there should not be 2 rows
 
 ## New Features
 * Question: Do we actually need to save the current row or is it enough to always simply call the function

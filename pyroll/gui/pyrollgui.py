@@ -213,6 +213,11 @@ class MainWindow(QMainWindow):
         logging.debug(f"Selected row: {selected_row}")
         self.table_data.pop(selected_row)
         self.table_groove_data.pop(selected_row)
+        # Now we likely have an invalid row, so we select row 0
+        self.ui.rollPassTable.selectRow(0)
+        self.currentRow = 0
+        # Now let us build the groove options so that the row 0 groove options are shown
+        self.createGrooveOptions()
         # This apparently causes an error:
         # self.selectedRowChanged()
         self.fillTableFromTableData()
@@ -483,6 +488,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def createGrooveOptions(self):
         """Depending on the selected combo box item, create different groove options."""
+        logging.debug(f"Creating groove options for row {self.currentRow}")
 
         grooveOption = self.table_groove_data[
             self.currentRow
