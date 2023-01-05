@@ -40,6 +40,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.contourLinesLayout = QVBoxLayout()
+        self.contourLinesLayout.setObjectName(u"contourLinesLayout")
+
+        self.horizontalLayout_2.addLayout(self.contourLinesLayout)
+
         self.inputProfileGrid = QGridLayout()
         self.inputProfileGrid.setObjectName(u"inputProfileGrid")
 
