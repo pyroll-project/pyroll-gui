@@ -1,5 +1,14 @@
 # PyRoll GUI
 
+A graphical user interface for the PyRoll Library
+
+### Keyboard shortcuts
+
+* Ctrl-Shift-A: Add a new row
+* Ctrl-Shift-Delete: Delete the selected row
+* Ctrl-Shift-D: Duplicate the selected row
+----
+
 ## Requirements for GUI
 
 - save and load of XML files acc. to `process_data.xsd`
