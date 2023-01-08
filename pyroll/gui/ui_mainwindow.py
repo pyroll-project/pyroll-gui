@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QHeaderView,
     QMainWindow, QMenuBar, QPushButton, QSizePolicy,
-    QStatusBar, QTableWidget, QTableWidgetItem, QVBoxLayout,
-    QWidget)
+    QStatusBar, QTableWidget, QTableWidgetItem, QTextEdit,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -62,6 +62,19 @@ class Ui_MainWindow(object):
         self.solveButton.setObjectName(u"solveButton")
 
         self.verticalLayout.addWidget(self.solveButton)
+
+        self.logText = QTextEdit(self.verticalLayoutWidget)
+        self.logText.setObjectName(u"logText")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.logText.sizePolicy().hasHeightForWidth())
+        self.logText.setSizePolicy(sizePolicy)
+        self.logText.setMinimumSize(QSize(0, 100))
+        self.logText.setMaximumSize(QSize(16777215, 100))
+        self.logText.setReadOnly(True)
+
+        self.verticalLayout.addWidget(self.logText)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
