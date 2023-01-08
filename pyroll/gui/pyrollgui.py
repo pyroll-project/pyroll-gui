@@ -1,25 +1,42 @@
-from copy import deepcopy
 import dataclasses
-from datetime import datetime
+import logging
 import sys
-from typing import Optional, Union
 import webbrowser
+from copy import deepcopy
+from datetime import datetime
+from pprint import pformat
+from typing import Optional, Union
+
+from pyroll.core import (
+    BoxGroove,
+    DiamondGroove,
+    Profile,
+    Roll,
+    RollPass,
+    RoundGroove,
+    SquareGroove,
+    Transport,
+    solve,
+)
+from pyroll.core.unit import Unit
+from pyroll.ui.reporter import Reporter
+from PySide6 import QtCore, QtGui, QtSvg, QtWidgets
+from PySide6.QtCore import QFile, QSize, Slot
+from PySide6.QtSvgWidgets import QGraphicsSvgItem, QSvgWidget
 from PySide6.QtWidgets import (
     QApplication,
-    QMainWindow,
-    QHeaderView,
-    QTableWidgetItem,
-    QLabel,
     QComboBox,
-    QFormLayout,
-    QLineEdit,
-    QTableWidget,
-    QGridLayout,
     QFileDialog,
+    QFormLayout,
+    QGridLayout,
+    QHeaderView,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QTableWidget,
+    QTableWidgetItem,
+    QWidget,
 )
-from PySide6 import QtGui, QtWidgets, QtCore
-from PySide6.QtCore import QFile, QSize, Slot
-
 
 from pyroll.gui.constants import (
     PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL,
@@ -41,24 +58,6 @@ from pyroll.gui.row_data import RowData, get_test_rowdata_list
 from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
-from pyroll.core import (
-    Profile,
-    RollPass,
-    Transport,
-    Roll,
-    DiamondGroove,
-    SquareGroove,
-    RoundGroove,
-    BoxGroove,
-    solve,
-)
-from pyroll.core.unit import Unit
-from pyroll.ui.reporter import Reporter
-
-import logging
-from pprint import pformat
-
-
 from pyroll.gui.xml_processing import XmlProcessing
 
 
@@ -81,31 +80,76 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("PyRoll")
 
         # Add the image "testgroove.png" to the contourLinesLayout
-        picLabel = QLabel()
-        self.ui.contourLinesLayout.addWidget(picLabel)
-        pixMap = QtGui.QPixmap(resource_path("testgroove.png"))
-        w = pixMap.width()
-        h = pixMap.height()
-        
-        #Scale the image to 300x300
+        # picLabel = QLabel()
+        # self.ui.contourLinesLayout.addWidget(picLabel)
+        # pixMap = QtGui.QPixmap(resource_path("testgroove.png"))
+        # w = pixMap.width()
+        # h = pixMap.height()
+
+        # Scale the image to 300x300
 
         # Now calculate the new width and height so that one of them is at most 300
-        if w > h:
-            h = 300 * h / w
-            w = 300
-        else:
-            w = 300 * w / h
-            h = 300
+        # if w > h:
+        #    h = 300 * h / w
+        #    w = 300
+        # else:
+        #    w = 300 * w / h
+        #    h = 300
+        #
+        # picLabel.setPixmap(
+        #    pixMap.scaled(w, h, QtCore.Qt.KeepAspectRatio)
+        # )
+        ## Set the max size of the picLabel to 300x300
+        # picLabel.setMaximumSize(QSize(300, 300))
+        ##Allow the picLabel to be scaled, but keep the aspect ratio
+        #
+        #
+        # picLabel.show()
 
-        picLabel.setPixmap(
-            pixMap.scaled(w, h, QtCore.Qt.KeepAspectRatio)
-        )
-        # Set the max size of the picLabel to 300x300
-        picLabel.setMaximumSize(QSize(300, 300))
-        #Allow the picLabel to be scaled, but keep the aspect ratio
+        # Maybe put each SVG into an individual widget with a sizepolicy?
+
+        #svg_item = QGraphicsSvgItem(resource_path("testgroove.svg"))
+#
+        ## Set the maximum size for the SVG
+        #max_width = 100
+        #max_height = 100
+#
+        ## Calculate the scaling factor for the SVG
+        #original_width = svg_item.boundingRect().width()
+        #original_height = svg_item.boundingRect().height()
+        #aspect_ratio = original_width / original_height
+        #logging.debug(f"Aspect ratio: {aspect_ratio}")
+        #if original_width > max_width:
+        #    scaling_factor = max_width / original_width
+        #elif original_height > max_height:
+        #    scaling_factor = max_height / original_height
+        #else:
+        #    scaling_factor = 1
+#
+        #svg_item.setScale(scaling_factor)
+#
+        #graphics_view = QtWidgets.QGraphicsView()
+        #graphics_view.setScene(QtWidgets.QGraphicsScene(svg_item))
+        ## Shrinks the graphics view to a shrinking size policy
+        #graphics_view.setSizePolicy(
+        #    QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding
+        #)
+        #graphics_view.show()
+        #self.ui.contourLinesLayout.addWidget(graphics_view)
+
+        # Add an svg image to the contourLinesLayout
+        # svgWidget = QSvgWidget(resource_path("testgroove.svg"))
+        # Set maximum width and height to 300
+        # svgWidget.setMaximumSize(QSize(300, 200))
+        # self.ui.contourLinesLayout.addWidget(svgWidget)
+        # svgWidget.show()
+
+        # Create a basic QWidget with a fixed size
+        svgContainerWidget = QWidget()
+        svgContainerWidget.setFixedSize(QSize(300, 300))
+        svgwidget = QSvgWidget(resource_path("testgroove.svg"))
+        # Add the svgwidget to the svgContainerWidget
         
-        
-        picLabel.show()
 
         self.setupRollpassTable()
 
@@ -147,6 +191,9 @@ class MainWindow(QMainWindow):
             QtGui.QKeySequence("Ctrl+Shift+Delete"), self
         )
         self.deleteRowShortcut.activated.connect(self.deleteTableRow)
+
+        # Add log window
+
 
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
