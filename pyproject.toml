@@ -30,6 +30,12 @@ black = "^22.6.0"
 [tool.poetry.scripts]
 pyroll-gui = 'pyroll.gui.pyrollgui:main'
 
+[tool.poetry.group.dev.dependencies]
+isort = "^5.11.4"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
