@@ -4,10 +4,10 @@ from PySide6.QtWidgets import QPlainTextEdit
 
 
 class QTextEditLogger(logging.Handler):
-    def __init__(self, parent):
+    def __init__(self, text_edit: QPlainTextEdit):
         super(QTextEditLogger, self).__init__()
 
-        self.widget = QPlainTextEdit(parent)
+        self.widget = text_edit
         self.widget.setReadOnly(True)
 
         # Set fixed height: 150px

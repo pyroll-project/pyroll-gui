@@ -47,8 +47,8 @@
        </property>
       </widget>
      </item>
-     <!-- <item>
-      <widget class="QTextEdit" name="logText">
+     <item>
+      <widget class="QPlainTextEdit" name="logText">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -71,7 +71,7 @@
         <bool>true</bool>
        </property>
       </widget>
-     </item> -->
+     </item>
     </layout>
    </widget>
   </widget>

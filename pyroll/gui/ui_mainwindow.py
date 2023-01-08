@@ -8,118 +8,90 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (
-    QCoreApplication,
-    QDate,
-    QDateTime,
-    QLocale,
-    QMetaObject,
-    QObject,
-    QPoint,
-    QRect,
-    QSize,
-    Qt,
-    QTime,
-    QUrl,
-)
-from PySide6.QtGui import (
-    QBrush,
-    QColor,
-    QConicalGradient,
-    QCursor,
-    QFont,
-    QFontDatabase,
-    QGradient,
-    QIcon,
-    QImage,
-    QKeySequence,
-    QLinearGradient,
-    QPainter,
-    QPalette,
-    QPixmap,
-    QRadialGradient,
-    QTransform,
-)
-from PySide6.QtWidgets import (
-    QApplication,
-    QGridLayout,
-    QHBoxLayout,
-    QHeaderView,
-    QMainWindow,
-    QMenuBar,
-    QPushButton,
-    QSizePolicy,
-    QStatusBar,
-    QTableWidget,
-    QTableWidgetItem,
-    QVBoxLayout,
-    QWidget,
-)
-
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QHeaderView,
+    QMainWindow, QMenuBar, QPlainTextEdit, QPushButton,
+    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
-            MainWindow.setObjectName("MainWindow")
+            MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1384, 660)
         self.centralwidget = QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayoutWidget = QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
         self.verticalLayoutWidget.setGeometry(QRect(30, 20, 1331, 581))
         self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.rollPassTable = QTableWidget(self.verticalLayoutWidget)
-        self.rollPassTable.setObjectName("rollPassTable")
+        self.rollPassTable.setObjectName(u"rollPassTable")
 
         self.verticalLayout.addWidget(self.rollPassTable)
 
         self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.contourLinesLayout = QVBoxLayout()
-        self.contourLinesLayout.setObjectName("contourLinesLayout")
+        self.contourLinesLayout.setObjectName(u"contourLinesLayout")
 
         self.horizontalLayout_2.addLayout(self.contourLinesLayout)
 
         self.inputProfileGrid = QGridLayout()
-        self.inputProfileGrid.setObjectName("inputProfileGrid")
+        self.inputProfileGrid.setObjectName(u"inputProfileGrid")
 
         self.horizontalLayout_2.addLayout(self.inputProfileGrid)
 
         self.grooveOptionsGrid = QGridLayout()
-        self.grooveOptionsGrid.setObjectName("grooveOptionsGrid")
+        self.grooveOptionsGrid.setObjectName(u"grooveOptionsGrid")
 
         self.horizontalLayout_2.addLayout(self.grooveOptionsGrid)
+
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.solveButton = QPushButton(self.verticalLayoutWidget)
-        self.solveButton.setObjectName("solveButton")
+        self.solveButton.setObjectName(u"solveButton")
 
         self.verticalLayout.addWidget(self.solveButton)
 
+        self.logText = QPlainTextEdit(self.verticalLayoutWidget)
+        self.logText.setObjectName(u"logText")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.logText.sizePolicy().hasHeightForWidth())
+        self.logText.setSizePolicy(sizePolicy)
+        self.logText.setMinimumSize(QSize(0, 100))
+        self.logText.setMaximumSize(QSize(16777215, 100))
+        self.logText.setReadOnly(True)
+
+        self.verticalLayout.addWidget(self.logText)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
-        self.menubar.setObjectName("menubar")
+        self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 1384, 26))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
+        self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
-
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(
-            QCoreApplication.translate("MainWindow", "MainWindow", None)
-        )
-        self.solveButton.setText(
-            QCoreApplication.translate("MainWindow", "Solve", None)
-        )
-
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.solveButton.setText(QCoreApplication.translate("MainWindow", u"Solve", None))
     # retranslateUi
+

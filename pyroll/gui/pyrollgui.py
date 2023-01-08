@@ -36,6 +36,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QWidget,
+    QTextEdit
 )
 
 from pyroll.gui.constants import (
@@ -59,7 +60,7 @@ from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.gui.xml_processing import XmlProcessing
-
+from logging_help import QTextEditLogger
 
 def clearLayout(layout):
     if layout is not None:
@@ -193,7 +194,8 @@ class MainWindow(QMainWindow):
         self.deleteRowShortcut.activated.connect(self.deleteTableRow)
 
         # Add log window
-
+        self.logTextEdit = QTextEditLogger(self.ui.logText)
+        logging.getLogger().addHandler(self.logTextEdit)
 
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
