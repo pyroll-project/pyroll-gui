@@ -1,18 +1,14 @@
 import logging
 from typing import Optional, Union
+
+import matplotlib.pyplot as plt
+from pyroll.core import BoxGroove, DiamondGroove, RoundGroove, SquareGroove
+from pyroll.core.profile import Profile
+from shapely.geometry import LineString, Polygon
+
 from pyroll.gui.groove_options import SelectedGrooveOption
 from pyroll.gui.in_profiles import SelectedInputProfile
 from pyroll.gui.text_processing import prettify
-from pyroll.core import (
-    DiamondGroove,
-    SquareGroove,
-    RoundGroove,
-    BoxGroove,
-)
-from pyroll.core.profile import Profile
-
-from shapely.geometry import LineString, Polygon
-import matplotlib.pyplot as plt
 
 
 def createGroovePic(

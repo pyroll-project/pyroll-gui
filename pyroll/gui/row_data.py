@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from pyroll.gui.groove_options import SelectedGrooveOption, DEFAULT_GROOVE_OPTIONS
+from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 
 
 @dataclass

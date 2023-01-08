@@ -1,5 +1,9 @@
 # import xmlschema
 from pprint import pprint
+
+# We need the xml package because duplicate keys are not allowed in dicts -> Can not
+from xml.etree import ElementTree
+
 from pyroll.gui.groove_options import DEFAULT_GROOVE_OPTIONS, SelectedGrooveOption
 from pyroll.gui.in_profiles import (
     DEFAULT_INPUT_PROFILES,
@@ -8,9 +12,6 @@ from pyroll.gui.in_profiles import (
 )
 from pyroll.gui.row_data import RowData
 from pyroll.gui.table_data import TableRow
-
-# We need the xml package because duplicate keys are not allowed in dicts -> Can not
-from xml.etree import ElementTree
 
 
 class XmlProcessing:

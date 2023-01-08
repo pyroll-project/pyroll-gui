@@ -1,6 +1,7 @@
-import xmlschema
 from pathlib import Path
 from pprint import pprint
+
+import xmlschema
 
 THIS_DIR = Path(__file__).parent
 
