@@ -32,6 +32,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QWidget,
     QTextEdit,
+    QSizePolicy
 )
 from pyroll.gui.background_worker import ProcessRunnable
 
@@ -52,6 +53,7 @@ from pyroll.gui.in_profiles import (
     get_test_input_profile,
 )
 from pyroll.gui.row_data import RowData, get_test_rowdata_list
+from pyroll.gui.svg_scaling import calculate_new_width_and_height
 from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
@@ -136,19 +138,63 @@ class MainWindow(QMainWindow):
         # graphics_view.show()
         # self.ui.contourLinesLayout.addWidget(graphics_view)
 
+        
+        # Load the SVG file from the svg path and give us the aspect ratio
+        #svg_item = QGraphicsSvgItem(resource_path(SVG_PATH))
+        #original_width = svg_item.boundingRect().width()
+        #original_height = svg_item.boundingRect().height()
+        #aspect_ratio = original_width / original_height
+#
+        ## Calculate the scaling factor for the SVG
+        #if original_width > max_width:
+        #    scaling_factor = max_width / original_width
+        #elif original_height > max_height:
+        #    scaling_factor = max_height / original_height
+        #else:
+        #    scaling_factor = 1
+        #new_width = original_width * scaling_factor
+        #new_height = original_height * scaling_factor
+#
+        #logging.debug(f"Aspect ratio: {aspect_ratio}")
+
+        max_width = 150
+        max_height = 150
+
+        SVG_PATH = "testinputprofile.svg"
+        new_width, new_height = calculate_new_width_and_height(resource_path(SVG_PATH), max_width, max_height)
         # Add an svg image to the contourLinesLayout
-        # svgWidget = QSvgWidget(resource_path("testgroove.svg"))
+        svgWidget = QSvgWidget(resource_path(SVG_PATH))
         # Set maximum width and height to 300
-        # svgWidget.setMaximumSize(QSize(300, 200))
-        # self.ui.contourLinesLayout.addWidget(svgWidget)
-        # svgWidget.show()
+        svgWidget.setMaximumSize(QSize(new_width, new_height))
+        # Keep aspect ratio
+        self.ui.contourLinesLayout.addWidget(svgWidget)
+        svgWidget.show()
+
+        max_width = 150
+        max_height = 150
+
+        SVG_PATH = "testgroove.svg"
+        new_width, new_height = calculate_new_width_and_height(resource_path(SVG_PATH), max_width, max_height)
+
+        # Add an svg image to the contourLinesLayout
+        svgWidget = QSvgWidget(resource_path(SVG_PATH))
+        # Set maximum width and height to 300
+        svgWidget.setMaximumSize(QSize(new_width, new_height))
+        # Keep aspect ratio
+        self.ui.contourLinesLayout.addWidget(svgWidget)
+        svgWidget.show()
+
+
 
         # Maybe we want a layout with a fixed size that we add the two SVGs to?
 
+        # Put contourLinesLayout into a widget and set fixed size of that
+        
+
         # Create a basic QWidget with a fixed size
-        svgContainerWidget = QWidget()
-        svgContainerWidget.setFixedSize(QSize(300, 300))
-        svgwidget = QSvgWidget(resource_path("testgroove.svg"))
+        #svgContainerWidget = QWidget()
+        #svgContainerWidget.setFixedSize(QSize(300, 300))
+        #svgwidget = QSvgWidget(resource_path("testgroove.svg"))
         # Add the svgwidget to the svgContainerWidget
 
 

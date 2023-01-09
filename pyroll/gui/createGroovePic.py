@@ -86,4 +86,4 @@ if __name__ == "__main__":
         },
     )
 
-    createInputProfilePic(ip, "testinputprofile.png")
+    createInputProfilePic(ip, "testinputprofile.svg")
