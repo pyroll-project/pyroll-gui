@@ -1,22 +1,18 @@
+from functools import cached_property
 import logging
 
-from PySide6.QtWidgets import QPlainTextEdit
+from PySide6.QtCore import QObject, Signal
 
 
-class QTextEditLogger(logging.Handler):
-    def __init__(self, text_edit: QPlainTextEdit):
-        super(QTextEditLogger, self).__init__()
+class Bridge(QObject):  # This has to be done because there is a naming conflict
+    log = Signal(str)
 
-        self.widget = text_edit
-        self.widget.setReadOnly(True)
 
-        # Set fixed height: 150px
-        self.widget.setMaximumHeight(150)
-        self.widget.setMinimumHeight(150)
+class TextLogHandler(logging.Handler):
+    @cached_property
+    def bridge(self):
+        return Bridge()
 
-    def emit(self, record):
+    def emit(self, record):  # This is inherited from logging.Handler
         msg = self.format(record)
-        self.widget.appendPlainText(msg)
-
-    def write(self, m):
-        pass
+        self.bridge.log.emit(msg)  #

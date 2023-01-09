@@ -1,18 +1,13 @@
 import dataclasses
 import logging
 import sys
-import webbrowser
 from copy import deepcopy
-from datetime import datetime
-from pprint import pformat
-from typing import Optional, Union
 
 from pyroll.core import (
     BoxGroove,
     DiamondGroove,
     Profile,
     Roll,
-    RollPass,
     RoundGroove,
     SquareGroove,
     Transport,
@@ -61,7 +56,7 @@ from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.gui.xml_processing import XmlProcessing
-from pyroll.gui.logging_help import QTextEditLogger
+from pyroll.gui.logging_help import TextLogHandler
 from pyroll.gui.solve_process import solve_process
 
 
@@ -196,8 +191,11 @@ class MainWindow(QMainWindow):
         self.deleteRowShortcut.activated.connect(self.deleteTableRow)
 
         # Add log window
-        self.logTextEdit = QTextEditLogger(self.ui.logText)
-        #logging.getLogger().addHandler(self.logTextEdit)
+        #self.logTextEdit = QTextEditLogger(self.ui.logText)
+        handler = TextLogHandler()
+        handler.bridge.log.connect(self.ui.logText.appendPlainText)
+
+        logging.getLogger().addHandler(handler)
 
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()

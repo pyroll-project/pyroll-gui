@@ -1,6 +1,5 @@
 ## High-priority bugs:
-* Execute solve process in new Thread
-* Make log text edit thread save (https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt)
+* I think there is a bug wih editing some data and then loading XML (Groove options).
 
 ## New Features
 * Implementing the reporter that is supposed to show the contour lines
@@ -10,7 +9,6 @@
 * Properly add all required parameters
 
 ## Lower priority:
-* I think there is a bug wih editing some data and then loading XML (Groove options).
 * Find out how the groove should really be printed
 * Pretty up the groove option parameters
 * Fix CI/CD to generate changelog
