@@ -36,7 +36,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QWidget,
-    QTextEdit
+    QTextEdit,
 )
 
 from pyroll.gui.constants import (
@@ -60,7 +60,9 @@ from pyroll.gui.table_data import TableRow
 from pyroll.gui.text_processing import prettify, unprettify
 from pyroll.gui.ui_mainwindow import Ui_MainWindow
 from pyroll.gui.xml_processing import XmlProcessing
-from logging_help import QTextEditLogger
+from pyroll.gui.logging_help import QTextEditLogger
+from pyroll.gui.solve_process import solve_process
+
 
 def clearLayout(layout):
     if layout is not None:
@@ -109,34 +111,34 @@ class MainWindow(QMainWindow):
 
         # Maybe put each SVG into an individual widget with a sizepolicy?
 
-        #svg_item = QGraphicsSvgItem(resource_path("testgroove.svg"))
-#
+        # svg_item = QGraphicsSvgItem(resource_path("testgroove.svg"))
+        #
         ## Set the maximum size for the SVG
-        #max_width = 100
-        #max_height = 100
-#
+        # max_width = 100
+        # max_height = 100
+        #
         ## Calculate the scaling factor for the SVG
-        #original_width = svg_item.boundingRect().width()
-        #original_height = svg_item.boundingRect().height()
-        #aspect_ratio = original_width / original_height
-        #logging.debug(f"Aspect ratio: {aspect_ratio}")
-        #if original_width > max_width:
+        # original_width = svg_item.boundingRect().width()
+        # original_height = svg_item.boundingRect().height()
+        # aspect_ratio = original_width / original_height
+        # logging.debug(f"Aspect ratio: {aspect_ratio}")
+        # if original_width > max_width:
         #    scaling_factor = max_width / original_width
-        #elif original_height > max_height:
+        # elif original_height > max_height:
         #    scaling_factor = max_height / original_height
-        #else:
+        # else:
         #    scaling_factor = 1
-#
-        #svg_item.setScale(scaling_factor)
-#
-        #graphics_view = QtWidgets.QGraphicsView()
-        #graphics_view.setScene(QtWidgets.QGraphicsScene(svg_item))
+        #
+        # svg_item.setScale(scaling_factor)
+        #
+        # graphics_view = QtWidgets.QGraphicsView()
+        # graphics_view.setScene(QtWidgets.QGraphicsScene(svg_item))
         ## Shrinks the graphics view to a shrinking size policy
-        #graphics_view.setSizePolicy(
+        # graphics_view.setSizePolicy(
         #    QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding
-        #)
-        #graphics_view.show()
-        #self.ui.contourLinesLayout.addWidget(graphics_view)
+        # )
+        # graphics_view.show()
+        # self.ui.contourLinesLayout.addWidget(graphics_view)
 
         # Add an svg image to the contourLinesLayout
         # svgWidget = QSvgWidget(resource_path("testgroove.svg"))
@@ -150,7 +152,6 @@ class MainWindow(QMainWindow):
         svgContainerWidget.setFixedSize(QSize(300, 300))
         svgwidget = QSvgWidget(resource_path("testgroove.svg"))
         # Add the svgwidget to the svgContainerWidget
-        
 
         self.setupRollpassTable()
 
@@ -634,84 +635,89 @@ class MainWindow(QMainWindow):
         logging.debug(f"Input profile values: {self.input_profile.selected_values}")
         logging.debug("Proper table data")
         logging.debug(self.table_data)
-        table_data: list[TableRow] = self.table_data
 
-        input_constr = getattr(Profile, self.input_profile.input_profile.name)
+        solve_process(self.table_data, self.input_profile, self.table_groove_data)
 
-        # Convert the selected values dict to a dict with the correct types
-        float_input_profile_dict = {}
-        for key, value in self.input_profile.selected_values.items():
-            float_input_profile_dict[key] = float(value)
+        # table_data: list[TableRow] = self.table_data
 
-        # input_profile = input_constr(**self.input_profile.selected_values)
-        input_profile = input_constr(**float_input_profile_dict)
 
-        unit_sequence: list[Unit] = []
-        # default_transport = Transport(duration=2)
-        row_groove_data: RowData
-        table_row: TableRow
-        for i, (row_groove_data, table_row) in enumerate(
-            zip(self.table_groove_data, table_data)
-        ):
-            if (
-                table_row.transport_duration is None
-                or table_row.transport_duration == ""
-            ):
-                transport = None
-            else:
-                transport = Transport(duration=float(table_row.transport_duration))
-
-            groove_name = row_groove_data.selected_groove_option.groove_option.name
-            groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
-            groove_class = globals()[groove_name_final]
-            label = f"{prettify(groove_name)} {i + 1}"
-            groove_selected_values_float = {}
-            for (
-                key,
-                value,
-            ) in row_groove_data.selected_groove_option.selected_values.items():
-                groove_selected_values_float[key] = float(value)
-            # groove = groove_class(
-            #    **row_groove_data.selected_groove_option.selected_values
-            # )
-            groove = groove_class(**groove_selected_values_float)
-            rollpass_parameters = table_row.__dict__
-            rollpass_parameters_float = {}
-            for key, value in rollpass_parameters.items():
-                if value is not None and value.strip() != "":
-                    rollpass_parameters_float[key] = float(value)
-                if value == "transport_duration":
-                    pass
-
-            roll_parameters_from_table = {}
-            for key in PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL:
-                if key in rollpass_parameters_float:
-                    roll_parameters_from_table[key] = rollpass_parameters_float[key]
-                    # Remove the key from the rollpass_parameters dict
-                    del rollpass_parameters_float[key]
-
-            rp = RollPass(
-                label=label,
-                **rollpass_parameters_float,
-                roll=Roll(groove=groove, **roll_parameters_from_table),
-            )
-
-            unit_sequence.append(rp)
-            if transport is not None:
-                unit_sequence.append(transport)
-        logging.debug(f"Unit sequence: {pformat(unit_sequence)}")
-        solve(unit_sequence, input_profile)
-        reporter = Reporter()
-        html = reporter.render(unit_sequence)
-        # File name should be report.html + timestamp
-        file_name = f"report_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.html"
-
-        # Print the html to disk
-        with open(file_name, "w", encoding="utf-8") as f:
-            f.write(html)
-
-        # Open the report in the default browser
-        webbrowser.open(file_name)
+#
+# input_constr = getattr(Profile, self.input_profile.input_profile.name)
+#
+## Convert the selected values dict to a dict with the correct types
+# float_input_profile_dict = {}
+# for key, value in self.input_profile.selected_values.items():
+#    float_input_profile_dict[key] = float(value)
+#
+## input_profile = input_constr(**self.input_profile.selected_values)
+# input_profile = input_constr(**float_input_profile_dict)
+#
+# unit_sequence: list[Unit] = []
+## default_transport = Transport(duration=2)
+# row_groove_data: RowData
+# table_row: TableRow
+# for i, (row_groove_data, table_row) in enumerate(
+#    zip(self.table_groove_data, table_data)
+# ):
+#    if (
+#        table_row.transport_duration is None
+#        or table_row.transport_duration == ""
+#    ):
+#        transport = None
+#    else:
+#        transport = Transport(duration=float(table_row.transport_duration))
+#
+#    groove_name = row_groove_data.selected_groove_option.groove_option.name
+#    groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
+#    groove_class = globals()[groove_name_final]
+#    label = f"{prettify(groove_name)} {i + 1}"
+#    groove_selected_values_float = {}
+#    for (
+#        key,
+#        value,
+#    ) in row_groove_data.selected_groove_option.selected_values.items():
+#        groove_selected_values_float[key] = float(value)
+#    # groove = groove_class(
+#    #    **row_groove_data.selected_groove_option.selected_values
+#    # )
+#    groove = groove_class(**groove_selected_values_float)
+#    rollpass_parameters = table_row.__dict__
+#    rollpass_parameters_float = {}
+#    for key, value in rollpass_parameters.items():
+#        if value is not None and value.strip() != "":
+#            rollpass_parameters_float[key] = float(value)
+#        if value == "transport_duration":
+#            pass
+#
+#    roll_parameters_from_table = {}
+#    for key in PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL:
+#        if key in rollpass_parameters_float:
+#            roll_parameters_from_table[key] = rollpass_parameters_float[key]
+#            # Remove the key from the rollpass_parameters dict
+#            del rollpass_parameters_float[key]
+#
+#    rp = RollPass(
+#        label=label,
+#        **rollpass_parameters_float,
+#        roll=Roll(groove=groove, **roll_parameters_from_table),
+#    )
+#
+#    unit_sequence.append(rp)
+#    if transport is not None:
+#        unit_sequence.append(transport)
+# logging.debug(f"Unit sequence: {pformat(unit_sequence)}")
+# solve(unit_sequence, input_profile)
+# reporter = Reporter()
+# html = reporter.render(unit_sequence)
+## File name should be report.html + timestamp
+# file_name = f"report_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.html"
+#
+## Print the html to disk
+# with open(file_name, "w", encoding="utf-8") as f:
+#    f.write(html)
+#
+## Open the report in the default browser
+# webbrowser.open(file_name)
 
 
 def main():
