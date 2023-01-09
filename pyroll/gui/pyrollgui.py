@@ -143,11 +143,14 @@ class MainWindow(QMainWindow):
         # self.ui.contourLinesLayout.addWidget(svgWidget)
         # svgWidget.show()
 
+        # Maybe we want a layout with a fixed size that we add the two SVGs to?
+
         # Create a basic QWidget with a fixed size
         svgContainerWidget = QWidget()
         svgContainerWidget.setFixedSize(QSize(300, 300))
         svgwidget = QSvgWidget(resource_path("testgroove.svg"))
         # Add the svgwidget to the svgContainerWidget
+
 
         self.setupRollpassTable()
 

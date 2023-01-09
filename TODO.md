@@ -1,5 +1,4 @@
 ## High-priority bugs:
-* I think there is a bug wih editing some data and then loading XML (Groove options).
 
 ## New Features
 * Implementing the reporter that is supposed to show the contour lines

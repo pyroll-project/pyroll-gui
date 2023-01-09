@@ -1,6 +1,6 @@
 # PyRoll GUI
 
-A graphical user interface for the PyRoll Library
+A graphical user interface for the PyRoll Library.
 
 ### Keyboard shortcuts
 
