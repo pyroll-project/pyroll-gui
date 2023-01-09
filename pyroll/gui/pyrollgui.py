@@ -343,6 +343,7 @@ class MainWindow(QMainWindow):
 
     def loadFromXML(self):
         logging.info("Load from XML clicked")
+        self.newProject()
         # Create file selection dialog
         file_dialog = QFileDialog()
         # Select only XML files
