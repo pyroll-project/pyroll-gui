@@ -38,6 +38,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QTextEdit,
 )
+from pyroll.gui.background_worker import ProcessRunnable
 
 from pyroll.gui.constants import (
     PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL,
@@ -196,7 +197,7 @@ class MainWindow(QMainWindow):
 
         # Add log window
         self.logTextEdit = QTextEditLogger(self.ui.logText)
-        logging.getLogger().addHandler(self.logTextEdit)
+        #logging.getLogger().addHandler(self.logTextEdit)
 
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
@@ -636,7 +637,9 @@ class MainWindow(QMainWindow):
         logging.debug("Proper table data")
         logging.debug(self.table_data)
 
-        solve_process(self.table_data, self.input_profile, self.table_groove_data)
+        p = ProcessRunnable(target=solve_process, args=(self.table_data, self.input_profile, self.table_groove_data))
+        p.start()
+
 
 
 
