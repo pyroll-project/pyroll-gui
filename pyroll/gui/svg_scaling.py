@@ -4,6 +4,7 @@ from PySide6.QtSvgWidgets import QGraphicsSvgItem
 # Named tuple containing width and height.
 Size = namedtuple("Size", ["width", "height"])
 
+
 def calculate_new_width_and_height(
     svg_path: str, max_width: float, max_height: float
 ) -> Size:

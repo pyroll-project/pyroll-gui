@@ -32,7 +32,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QWidget,
     QTextEdit,
-    QSizePolicy
+    QSizePolicy,
 )
 from pyroll.gui.background_worker import ProcessRunnable
 
@@ -80,124 +80,6 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setWindowIcon(QtGui.QIcon(resource_path("img/pyroll_icon.png")))
         self.setWindowTitle("PyRoll")
-
-        # Add the image "testgroove.png" to the contourLinesLayout
-        # picLabel = QLabel()
-        # self.ui.contourLinesLayout.addWidget(picLabel)
-        # pixMap = QtGui.QPixmap(resource_path("testgroove.png"))
-        # w = pixMap.width()
-        # h = pixMap.height()
-
-        # Scale the image to 300x300
-
-        # Now calculate the new width and height so that one of them is at most 300
-        # if w > h:
-        #    h = 300 * h / w
-        #    w = 300
-        # else:
-        #    w = 300 * w / h
-        #    h = 300
-        #
-        # picLabel.setPixmap(
-        #    pixMap.scaled(w, h, QtCore.Qt.KeepAspectRatio)
-        # )
-        ## Set the max size of the picLabel to 300x300
-        # picLabel.setMaximumSize(QSize(300, 300))
-        ##Allow the picLabel to be scaled, but keep the aspect ratio
-        #
-        #
-        # picLabel.show()
-
-        # Maybe put each SVG into an individual widget with a sizepolicy?
-
-        # svg_item = QGraphicsSvgItem(resource_path("testgroove.svg"))
-        #
-        ## Set the maximum size for the SVG
-        # max_width = 100
-        # max_height = 100
-        #
-        ## Calculate the scaling factor for the SVG
-        # original_width = svg_item.boundingRect().width()
-        # original_height = svg_item.boundingRect().height()
-        # aspect_ratio = original_width / original_height
-        # logging.debug(f"Aspect ratio: {aspect_ratio}")
-        # if original_width > max_width:
-        #    scaling_factor = max_width / original_width
-        # elif original_height > max_height:
-        #    scaling_factor = max_height / original_height
-        # else:
-        #    scaling_factor = 1
-        #
-        # svg_item.setScale(scaling_factor)
-        #
-        # graphics_view = QtWidgets.QGraphicsView()
-        # graphics_view.setScene(QtWidgets.QGraphicsScene(svg_item))
-        ## Shrinks the graphics view to a shrinking size policy
-        # graphics_view.setSizePolicy(
-        #    QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding
-        # )
-        # graphics_view.show()
-        # self.ui.contourLinesLayout.addWidget(graphics_view)
-
-        
-        # Load the SVG file from the svg path and give us the aspect ratio
-        #svg_item = QGraphicsSvgItem(resource_path(SVG_PATH))
-        #original_width = svg_item.boundingRect().width()
-        #original_height = svg_item.boundingRect().height()
-        #aspect_ratio = original_width / original_height
-#
-        ## Calculate the scaling factor for the SVG
-        #if original_width > max_width:
-        #    scaling_factor = max_width / original_width
-        #elif original_height > max_height:
-        #    scaling_factor = max_height / original_height
-        #else:
-        #    scaling_factor = 1
-        #new_width = original_width * scaling_factor
-        #new_height = original_height * scaling_factor
-#
-        #logging.debug(f"Aspect ratio: {aspect_ratio}")
-
-        """   max_width = 150
-        max_height = 150
-
-        SVG_PATH = "testinputprofile.svg"
-        new_width, new_height = calculate_new_width_and_height(resource_path(SVG_PATH), max_width, max_height)
-        # Add an svg image to the contourLinesLayout
-        svgWidget = QSvgWidget(resource_path(SVG_PATH))
-        # Set maximum width and height to 300
-        svgWidget.setMaximumSize(QSize(new_width, new_height))
-        # Keep aspect ratio
-        self.ui.contourLinesLayout.addWidget(svgWidget)
-        svgWidget.show()
-
-        max_width = 150
-        max_height = 150
-
-        SVG_PATH = "testgroove.svg"
-        new_width, new_height = calculate_new_width_and_height(resource_path(SVG_PATH), max_width, max_height)
-
-        # Add an svg image to the contourLinesLayout
-        svgWidget = QSvgWidget(resource_path(SVG_PATH))
-        # Set maximum width and height to 300
-        svgWidget.setMaximumSize(QSize(new_width, new_height))
-        # Keep aspect ratio
-        self.ui.contourLinesLayout.addWidget(svgWidget)
-        svgWidget.show()
- """
-
-
-        # Maybe we want a layout with a fixed size that we add the two SVGs to?
-
-        # Put contourLinesLayout into a widget and set fixed size of that
-        
-
-        # Create a basic QWidget with a fixed size
-        #svgContainerWidget = QWidget()
-        #svgContainerWidget.setFixedSize(QSize(300, 300))
-        #svgwidget = QSvgWidget(resource_path("testgroove.svg"))
-        # Add the svgwidget to the svgContainerWidget
-
 
         self.setupRollpassTable()
 
@@ -247,7 +129,7 @@ class MainWindow(QMainWindow):
         self.displayContourLinesShortcut.activated.connect(self.displayContourLines)
 
         # Add log window
-        #self.logTextEdit = QTextEditLogger(self.ui.logText)
+        # self.logTextEdit = QTextEditLogger(self.ui.logText)
         handler = TextLogHandler()
         handler.bridge.log.connect(self.ui.logText.appendPlainText)
 
@@ -257,7 +139,7 @@ class MainWindow(QMainWindow):
         # Persist input profile
         self.persistInputProfile()
         self.persistGrooveOptions()
-        
+
         # Empty the layout
         clearLayout(self.ui.contourLinesLayout)
 
@@ -266,14 +148,20 @@ class MainWindow(QMainWindow):
         if selected_row == -1:
             logging.warning("No row selected")
             return
-        
+
         MAX_HEIGHT = 140
         MAX_WIDTH = 140
 
-        groove_pic_path = createGroovePic(self.table_groove_data[selected_row].selected_groove_option, "groove.svg")
-        input_profile_pic_path = createInputProfilePic(self.input_profile, "inputprofile.svg")
+        groove_pic_path = createGroovePic(
+            self.table_groove_data[selected_row].selected_groove_option, "groove.svg"
+        )
+        input_profile_pic_path = createInputProfilePic(
+            self.input_profile, "inputprofile.svg"
+        )
         for path in [groove_pic_path, input_profile_pic_path]:
-            new_width, new_height = calculate_new_width_and_height(path, MAX_WIDTH, MAX_HEIGHT)
+            new_width, new_height = calculate_new_width_and_height(
+                path, MAX_WIDTH, MAX_HEIGHT
+            )
             svgWidget = QSvgWidget(path)
             svgWidget.setMaximumSize(QSize(new_width, new_height))
             self.ui.contourLinesLayout.addWidget(svgWidget)
@@ -718,10 +606,11 @@ class MainWindow(QMainWindow):
         logging.debug("Proper table data")
         logging.debug(self.table_data)
 
-        p = ProcessRunnable(target=solve_process, args=(self.table_data, self.input_profile, self.table_groove_data))
+        p = ProcessRunnable(
+            target=solve_process,
+            args=(self.table_data, self.input_profile, self.table_groove_data),
+        )
         p.start()
-
-
 
 
 def main():

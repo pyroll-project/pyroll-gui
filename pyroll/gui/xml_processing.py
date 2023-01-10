@@ -112,7 +112,7 @@ class XmlProcessing:
                 groove_values[grooveparam.tag] = grooveparam.text
             row_data.append(
                 RowData(
-                    #i,
+                    # i,
                     SelectedGrooveOption(
                         DEFAULT_GROOVE_OPTIONS.get_groove_option(groove_name),
                         groove_values,
