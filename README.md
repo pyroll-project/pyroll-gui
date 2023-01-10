@@ -11,7 +11,7 @@ A graphical user interface for the PyRoll Library.
 * Ctrl-Shift-C: Plot contour lines of input profile and groove options
 
 ### Example projects
-Under tests/pyroll-core-readme-example.xml is an example XML file that can be loaded (File -> Load from XML...). It contains enough information to start the solve process.
+Under tests/pyroll-core-readme-example.xml is an example XML file that can be loaded (File -> Load from XML...). It contains enough information to start the simulation.
 
 ----
 

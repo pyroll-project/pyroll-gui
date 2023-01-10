@@ -4,7 +4,9 @@ import logging
 from PySide6.QtCore import QObject, Signal
 
 
-class Bridge(QObject):  # This has to be done because there is a naming conflict
+class Bridge(
+    QObject
+):  # This has to be done because there is a naming conflict between emit
     log = Signal(str)
 
 
@@ -15,4 +17,4 @@ class TextLogHandler(logging.Handler):
 
     def emit(self, record):  # This is inherited from logging.Handler
         msg = self.format(record)
-        self.bridge.log.emit(msg)  #
+        self.bridge.log.emit(msg)  # This is the signal we defined in Bridge

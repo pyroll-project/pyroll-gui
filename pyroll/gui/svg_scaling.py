@@ -1,4 +1,5 @@
 from collections import namedtuple
+import logging
 from PySide6.QtSvgWidgets import QGraphicsSvgItem
 
 # Named tuple containing width and height.
@@ -13,7 +14,9 @@ def calculate_new_width_and_height(
     original_width = svg_item.boundingRect().width()
     original_height = svg_item.boundingRect().height()
     aspect_ratio = original_width / original_height
-
+    logging.debug(
+        f"Original width: {original_width}, original height: {original_height}, aspect ratio: {aspect_ratio}"
+    )
     # Calculate the scaling factor for the SVG
     if original_width > max_width:
         scaling_factor = max_width / original_width
