@@ -8,6 +8,8 @@
   * If this is too slow, attempt it to do it maybe every second if a change has been made
 * Allow the user to shift the row data around (Ctrl-Shift-Arrow-Up)
 * Properly add all required parameters
+* Maybe add feature to enlarge the size of the groove pictures
+* Add writing to contour lines
 
 ## Lower priority:
 * Find out how the groove should really be printed
