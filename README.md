@@ -7,7 +7,8 @@ A graphical user interface for the PyRoll Library.
 * Ctrl-Shift-A: Add a new row
 * Ctrl-Shift-Delete: Delete the selected row
 * Ctrl-Shift-D: Duplicate the selected row
-* Ctrl-Shift-C: Plot contour lines
+* Ctrl-Shift-Up (-Down): Move the selected row up (down)
+* Ctrl-Shift-C: Plot contour lines of input profile and groove options
 
 ### Example projects
 Under tests/pyroll-core-readme-example.xml is an example XML file that can be loaded (File -> Load from XML...). It contains enough information to start the solve process.
