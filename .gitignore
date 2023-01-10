@@ -218,4 +218,4 @@ pyroll/gui/questions.txt
 *.xml
 *.png
 *.html
-#*.svg
+*.svg
