@@ -18,21 +18,22 @@ def createGroovePic(
     groove_name = groove_option.groove_option.name
     groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
     groove_class = globals()[groove_name_final]
-    try:
-        groove = groove_class(**groove_option.selected_values)
-        print(groove)
-        countour_line: LineString = groove.contour_line
-        fig, ax = plt.subplots()
-        ax.plot(countour_line.xy[0], countour_line.xy[1])
-        x, y = countour_line.xy
-        # Plot the countour line with matplotlib
-        plt.plot(x, y)
-        # Save the figure
-        plt.savefig(filename)
-        return filename
-    except Exception as e:
-        logging.warn(e)
-        return None
+    # try:
+    fixed_dict = {k: float(v) for k, v in groove_option.selected_values.items()}
+    groove = groove_class(**fixed_dict)
+    print(groove)
+    countour_line: LineString = groove.contour_line
+    fig, ax = plt.subplots()
+    ax.plot(countour_line.xy[0], countour_line.xy[1])
+    x, y = countour_line.xy
+    # Plot the countour line with matplotlib
+    plt.plot(x, y)
+    # Save the figure
+    plt.savefig(filename)
+    return filename
+    # except Exception as e:
+    #    logging.warn(e)
+    #    return None
 
 
 def createInputProfilePic(
@@ -41,26 +42,28 @@ def createInputProfilePic(
     """Tries to construct the groove from the given groove option. Returns the path to the created picture."""
 
     # Convert the selected values dict to a dict with the correct types
-    float_input_profile_dict = {}
-    for key, value in input_profile.selected_values.items():
-        float_input_profile_dict[key] = float(value)
-    try:
-        input_constr = getattr(Profile, input_profile.input_profile.name)
-        profile = input_constr(**input_profile.selected_values)
-        print(profile)
-        boundary: Polygon = profile.cross_section.boundary
-        fig, ax = plt.subplots()
-        ax.plot(boundary.xy[0], boundary.xy[1])
-        x, y = boundary.xy
-        # Plot the countour line with matplotlib
-        plt.plot(x, y)
-        # Save the figure
-        plt.savefig(filename)
-        return filename
+    # float_input_profile_dict = {}
+    # for key, value in input_profile.selected_values.items():
+    #    float_input_profile_dict[key] = float(value)
+    # try:
+    input_constr = getattr(Profile, input_profile.input_profile.name)
+    profile = input_constr(
+        **{k: float(v) for k, v in input_profile.selected_values.items()}
+    )
+    print(profile)
+    boundary: Polygon = profile.cross_section.boundary
+    fig, ax = plt.subplots()
+    ax.plot(boundary.xy[0], boundary.xy[1])
+    x, y = boundary.xy
+    # Plot the countour line with matplotlib
+    plt.plot(x, y)
+    # Save the figure
+    plt.savefig(filename)
+    return filename
 
-    except Exception as e:
-        logging.warning(e)
-        return None
+    # except Exception as e:
+    #    logging.warning(e)
+    #    return None
 
 
 if __name__ == "__main__":

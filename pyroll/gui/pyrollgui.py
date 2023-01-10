@@ -39,6 +39,7 @@ from pyroll.gui.background_worker import ProcessRunnable
 from pyroll.gui.constants import (
     PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL,
 )
+from pyroll.gui.createGroovePic import createGroovePic, createInputProfilePic
 from pyroll.gui.groove_options import (
     DEFAULT_GROOVE_OPTIONS,
     DefaultGrooveOptions,
@@ -157,7 +158,7 @@ class MainWindow(QMainWindow):
 #
         #logging.debug(f"Aspect ratio: {aspect_ratio}")
 
-        max_width = 150
+        """   max_width = 150
         max_height = 150
 
         SVG_PATH = "testinputprofile.svg"
@@ -183,7 +184,7 @@ class MainWindow(QMainWindow):
         # Keep aspect ratio
         self.ui.contourLinesLayout.addWidget(svgWidget)
         svgWidget.show()
-
+ """
 
 
         # Maybe we want a layout with a fixed size that we add the two SVGs to?
@@ -239,12 +240,41 @@ class MainWindow(QMainWindow):
         )
         self.deleteRowShortcut.activated.connect(self.deleteTableRow)
 
+        # A shortcut to display the contour lines
+        self.displayContourLinesShortcut = QtGui.QShortcut(
+            QtGui.QKeySequence("Ctrl+Shift+C"), self
+        )
+        self.displayContourLinesShortcut.activated.connect(self.displayContourLines)
+
         # Add log window
         #self.logTextEdit = QTextEditLogger(self.ui.logText)
         handler = TextLogHandler()
         handler.bridge.log.connect(self.ui.logText.appendPlainText)
 
         logging.getLogger().addHandler(handler)
+
+    def displayContourLines(self):
+        # Persist input profile
+        self.persistInputProfile()
+        self.persistGrooveOptions()
+        
+        # Get current selected row
+        selected_row = self.ui.rollPassTable.currentRow()
+        if selected_row == -1:
+            logging.warning("No row selected")
+            return
+        
+        MAX_HEIGHT = 140
+        MAX_WIDTH = 140
+
+        groove_pic_path = createGroovePic(self.table_groove_data[selected_row].selected_groove_option, "groove.svg")
+        input_profile_pic_path = createInputProfilePic(self.input_profile, "inputprofile.svg")
+        for path in [groove_pic_path, input_profile_pic_path]:
+            new_width, new_height = calculate_new_width_and_height(path, MAX_WIDTH, MAX_HEIGHT)
+            svgWidget = QSvgWidget(path)
+            svgWidget.setMaximumSize(QSize(new_width, new_height))
+            self.ui.contourLinesLayout.addWidget(svgWidget)
+            svgWidget.show()
 
     def loadTestData(self):
         self.table_groove_data = get_test_rowdata_list()
