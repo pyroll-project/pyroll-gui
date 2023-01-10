@@ -122,6 +122,12 @@ class MainWindow(QMainWindow):
         )
         self.deleteRowShortcut.activated.connect(self.deleteTableRow)
 
+        # Add shortcut to move a row up
+        self.moveRowUpShortcut = QtGui.QShortcut(
+            QtGui.QKeySequence("Ctrl+Shift+Up"), self
+        )
+        self.moveRowUpShortcut.activated.connect(self.moveTableRowUp)
+
         # A shortcut to display the contour lines
         self.displayContourLinesShortcut = QtGui.QShortcut(
             QtGui.QKeySequence("Ctrl+Shift+C"), self
@@ -286,6 +292,44 @@ class MainWindow(QMainWindow):
         self.table_groove_data.append(new_groove_data)
 
         self.fillTableFromTableData()
+
+    def moveTableRowUp(self):
+        self.persistTableData()
+
+        selected_row = self.ui.rollPassTable.currentRow()
+        if selected_row == 0:
+            return
+
+        # Get the data from the selected row
+        # selected_row_data = self.table_data[selected_row]
+        # selected_groove_data = self.table_groove_data[selected_row]
+        ## Get the data from the row above
+        # row_above_data = self.table_data[selected_row - 1]
+        # row_above_groove_data = self.table_groove_data[selected_row - 1]
+        ## Replace the data in the selected row with the data from the row above
+        # self.table_data[selected_row] = row_above_data
+        # self.table_groove_data[selected_row] = row_above_groove_data
+        ## Replace the data in the row above with the data from the selected row
+        # self.table_data[selected_row - 1] = selected_row_data
+        # self.table_groove_data[selected_row - 1] = selected_groove_data
+
+        self.table_data[selected_row], self.table_data[selected_row - 1] = (
+            self.table_data[selected_row - 1],
+            self.table_data[selected_row],
+        )
+        (
+            self.table_groove_data[selected_row],
+            self.table_groove_data[selected_row - 1],
+        ) = (
+            self.table_groove_data[selected_row - 1],
+            self.table_groove_data[selected_row],
+        )
+        self.currentRow = self.currentRow - 1
+
+        self.createGrooveOptions()
+
+        self.fillTableFromTableData()
+        # Build groove options (Not sure if needed)
 
     def exportToXML(self):
         logging.info("Export to XML clicked")
