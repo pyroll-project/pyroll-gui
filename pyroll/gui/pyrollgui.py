@@ -258,6 +258,9 @@ class MainWindow(QMainWindow):
         self.persistInputProfile()
         self.persistGrooveOptions()
         
+        # Empty the layout
+        clearLayout(self.ui.contourLinesLayout)
+
         # Get current selected row
         selected_row = self.ui.rollPassTable.currentRow()
         if selected_row == -1:
