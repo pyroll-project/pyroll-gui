@@ -24,6 +24,7 @@ def createGroovePic(
     print(groove)
     countour_line: LineString = groove.contour_line
     fig, ax = plt.subplots()
+    ax.set_aspect("equal")
     ax.plot(countour_line.xy[0], countour_line.xy[1])
     x, y = countour_line.xy
     # Plot the countour line with matplotlib
@@ -53,6 +54,7 @@ def createInputProfilePic(
     print(profile)
     boundary: Polygon = profile.cross_section.boundary
     fig, ax = plt.subplots()
+    ax.set_aspect("equal")
     ax.plot(boundary.xy[0], boundary.xy[1])
     x, y = boundary.xy
     # Plot the countour line with matplotlib
