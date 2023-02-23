@@ -425,8 +425,8 @@ class MainWindow(QMainWindow):
         self.fillTableFromTableData()
 
     def persistGrooveOptions(self) -> None:
-        if self.table_groove_data is None:
-            logging.info("Groove data is None, nothing to persist")
+        if self.table_groove_data is None or self.table_groove_data == []:
+            logging.info("Groove data is None or empty, nothing to persist")
             return
         self.table_groove_data[
             self.currentRow
