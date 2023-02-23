@@ -4,3 +4,4 @@ Label in Tabelle für Rollpass
 Rechtsklickmenü
 Bug-> duplizieren plus XML laden funktioniert nicht ganz richtig
 Update GUI to be compatible to new API
+Fix loading XML when more than 1 line exists

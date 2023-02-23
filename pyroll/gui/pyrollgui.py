@@ -231,6 +231,7 @@ class MainWindow(QMainWindow):
         self.input_profile = SelectedInputProfile(
             DEFAULT_INPUT_PROFILES.DEFAULT_INPUT_PROFILE_DICT[0], {}
         )
+        self.fillTableFromTableData() # This is needed because addNewTableRow persists the data -> The table data will be filled again
         self.addNewTableRow()
         # Populate table
         self.fillTableFromTableData()
@@ -424,6 +425,9 @@ class MainWindow(QMainWindow):
         self.fillTableFromTableData()
 
     def persistGrooveOptions(self) -> None:
+        if self.table_groove_data is None:
+            logging.info("Groove data is None, nothing to persist")
+            return
         self.table_groove_data[
             self.currentRow
         ].selected_groove_option.groove_option = DefaultGrooveOptions.get_groove_option(
