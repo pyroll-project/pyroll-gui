@@ -3,3 +3,4 @@ Erste Spalte: Unveränderlich, Diamond Square/(Groove profile)
 Label in Tabelle für Rollpass
 Rechtsklickmenü
 Bug-> duplizieren plus XML laden funktioniert nicht ganz richtig
+Update GUI to be compatible to new API
