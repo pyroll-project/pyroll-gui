@@ -146,6 +146,7 @@ class MainWindow(QMainWindow):
         handler.bridge.log.connect(self.ui.logText.appendPlainText)
 
         logging.getLogger().addHandler(handler)
+    
 
     def displayContourLines(self):
         # Persist input profile

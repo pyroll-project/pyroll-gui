@@ -37,7 +37,7 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QTableWidget" name="rollPassTable"/>
+      <widget class="RollPassTableWidget" name="rollPassTable"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -93,12 +93,19 @@
      <x>0</x>
      <y>0</y>
      <width>1384</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RollPassTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>pyroll.gui.rollpass_table</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
