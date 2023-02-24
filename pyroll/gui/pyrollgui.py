@@ -185,6 +185,7 @@ class MainWindow(QMainWindow):
         self.input_profile = get_test_input_profile()
 
     def setupRollpassTable(self):
+        self.ui.rollPassTable.mainWidget = self
         self.ui.rollPassTable.setColumnCount(
             TableRow().get_column_data_names().__len__()
         )
