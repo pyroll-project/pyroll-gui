@@ -42,7 +42,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <layout class="QVBoxLayout" name="contourLinesLayout"/>
+        <layout class="QHBoxLayout" name="contourLinesLayout"/>
        </item>
        <item>
         <layout class="QGridLayout" name="inputProfileGrid"/>
