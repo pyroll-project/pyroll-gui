@@ -11,10 +11,9 @@ from pyroll.core import (
     RoundGroove,
     SquareGroove,
     Transport,
-    solve,
 )
+from pyroll.core.grooves.boxes.upset_box import BoxGroove
 from pyroll.core.unit import Unit
-from pyroll.ui.reporter import Reporter
 from PySide6 import QtCore, QtGui, QtSvg, QtWidgets
 from PySide6.QtCore import QFile, QSize, Slot
 from PySide6.QtSvgWidgets import QGraphicsSvgItem, QSvgWidget

@@ -17,10 +17,11 @@ from pyroll.core import (
     RoundGroove,
     SquareGroove,
     Transport,
-    solve,
+    PassSequence,
 )
 from pyroll.core.unit import Unit
-from pyroll.ui.reporter import Reporter
+from pyroll.report.report import report
+
 
 from pyroll.gui.text_processing import prettify
 
@@ -48,7 +49,7 @@ def solve_process(
         if table_row.transport_duration is None or table_row.transport_duration == "":
             transport = None
         else:
-            transport = Transport(duration=float(table_row.transport_duration))
+            transport = Transport(duration=float(table_row.transport_duration), label=f"Transport {i + 1}")
         groove_name = row_groove_data.selected_groove_option.groove_option.name
         groove_name_final = prettify(groove_name).replace(" ", "") + "Groove"
         groove_class = globals()[groove_name_final]
@@ -85,9 +86,11 @@ def solve_process(
         if transport is not None:
             unit_sequence.append(transport)
     logging.debug(f"Unit sequence: {pformat(unit_sequence)}")
-    solve(unit_sequence, input_profile)
-    reporter = Reporter()
-    html = reporter.render(unit_sequence)
+    # Convert the unit sequence to a proper sequence
+    pass_sequence = PassSequence(unit_sequence)
+    pass_sequence.solve(input_profile)
+    #reporter = Reporter()
+    html = report(pass_sequence)
     # File name should be report.html + timestamp
     file_name = f"report_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.html"
     # Print the html to disk
