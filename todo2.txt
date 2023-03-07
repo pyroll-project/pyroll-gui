@@ -2,4 +2,4 @@ Erste Spalte: Unveränderlich, Diamond Square/(Groove profile)
 Label in Tabelle für Rollpass
 
 Popup-Menü für bestimmten Parameter 
-Update GUI to be compatible to new API
+Fix the CI/CD for the newest version
