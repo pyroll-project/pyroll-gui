@@ -31,6 +31,8 @@ class RollPassTableWidget(QTableWidget):
         move_row_up_action = menu.addAction("Move Row Up")
         # Action to move a row down
         move_row_down_action = menu.addAction("Move Row Down")
+        # Action to display contour lines
+        display_contour_lines_action = menu.addAction("Display Contour Lines")
 
         # Get the selected action
         action = menu.exec_(self.mapToGlobal(pos))
@@ -45,6 +47,8 @@ class RollPassTableWidget(QTableWidget):
             self.mainWidget.moveTableRowUp()
         elif action == move_row_down_action:
             self.mainWidget.moveTableRowDown()
+        elif action == display_contour_lines_action:
+            self.mainWidget.displayContourLines()
 
 
 if __name__ == "__main__":
