@@ -1,6 +1,8 @@
 from datetime import datetime
 import logging
+import os
 from pprint import pformat
+import sys
 import webbrowser
 from pyroll.gui.constants import (
     PARAMETERS_SAVED_IN_TABLE_ROW_THAT_SHOULD_BE_PASSED_TO_ROLL,
@@ -93,6 +95,11 @@ def solve_process(
     html = report(pass_sequence)
     # File name should be report.html + timestamp
     file_name = f"report_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.html"
+    # Log current working dir
+    logging.info(f"Current working dir: {os.getcwd()}")
+    # if getattr(sys, 'frozen', False):
+    #     file_name = os.path.dirname(sys.executable) + os.sep + file_name
+    logging.info(f"File name: {file_name}")
     # Print the html to disk
     with open(file_name, "w", encoding="utf-8") as f:
         f.write(html)
