@@ -28,7 +28,7 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --without dev
           cd pyroll/gui
-          pyinstaller main.py --add-data="../../img/*;img/" --collect-data "pyroll" --onefile --windowed --icon="../../img/pyroll_icon.png" --name="PyRoll"
+          pyinstaller main.py --add-data="../../img/*;img/" --collect-data "pyroll" --onefile --windowed --icon="../../img/pyroll_icon.png" --name="PyRoll" --hidden-import="matplotlib.backends.backend_svg"
       - name: Build Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v3
