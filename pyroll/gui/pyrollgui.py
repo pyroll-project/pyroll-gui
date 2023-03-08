@@ -627,7 +627,7 @@ class MainWindow(QMainWindow):
         for i, grooveOptionValue in enumerate(optionValueList):
             # Create a new row in the grooveOptions QFormLayout
             itemAtIndex = (i + 1) * 2 - 1
-            self.ui.grooveOptions.addRow(QLabel(grooveOptionValue), QLineEdit())
+            self.ui.grooveOptions.addRow(QLabel(prettify(grooveOptionValue)), QLineEdit())
             if (
                 grooveOptionValue
                 in self.table_groove_data[
