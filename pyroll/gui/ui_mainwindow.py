@@ -36,13 +36,11 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
-        self.verticalLayoutWidget = QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(30, 20, 1331, 581))
-        self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout_2 = QVBoxLayout(self.centralwidget)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.rollPassTable = RollPassTableWidget(self.verticalLayoutWidget)
+        self.rollPassTable = RollPassTableWidget(self.centralwidget)
         self.rollPassTable.setObjectName(u"rollPassTable")
 
         self.verticalLayout.addWidget(self.rollPassTable)
@@ -67,12 +65,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.solveButton = QPushButton(self.verticalLayoutWidget)
+        self.solveButton = QPushButton(self.centralwidget)
         self.solveButton.setObjectName(u"solveButton")
 
         self.verticalLayout.addWidget(self.solveButton)
 
-        self.logText = QPlainTextEdit(self.verticalLayoutWidget)
+        self.logText = QPlainTextEdit(self.centralwidget)
         self.logText.setObjectName(u"logText")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
@@ -84,6 +82,9 @@ class Ui_MainWindow(object):
         self.logText.setReadOnly(True)
 
         self.verticalLayout.addWidget(self.logText)
+
+
+        self.verticalLayout_2.addLayout(self.verticalLayout)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
