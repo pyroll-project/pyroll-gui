@@ -1,5 +1,3 @@
 Erste Spalte: Unveränderlich, Diamond Square/(Groove profile)
-Label in Tabelle für Rollpass
-
+Label in Tabelle für Rollpass -> Schwer zu implementieren
 Popup-Menü für bestimmten Parameter 
-Fix the CI/CD for the newest version
