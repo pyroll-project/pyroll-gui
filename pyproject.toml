@@ -1,45 +1,33 @@
-[tool.poetry]
+[project]
 name = "pyroll-gui"
-version = "0.1.0"
-description = ""
+description = "Extension providing a graphic user interface for pyroll-basic."
 authors = [
-    "Hannes Krumbiegel <...>",
-    "Max Weiner <max.weiner@imf.tu-freiberg.de>",
+    { name = "Christoph Renzing", email = "christophrenzing@posteo.de" },
+    { name = "Hannes Krumbiegel", email = "" },
+    { name = "Max Weiner", email = "max.weiner@imf.tu-freiberg.de" },
 ]
-packages = [{ include = "pyroll/gui" }]
+license = "BSD-3-Clause"
+homepage = "https://pyroll-project.github.io/"
+repository = "https://github.com/pyroll-project/pyroll-gui"
+documentation = "https://github.com/pyroll-project/pyroll-gui/blob/main/docs/docs.pdf"
 
-[tool.poetry.dependencies]
-# Super frustrating that we can't update yet due to the PySide6 bug -> TODO: Check if this might be fixed in the future
-python = ">=3.9, <3.11"
-#pyroll = { version = ">=1.0.1", allow-prereleases = true }
-pyroll-core = { version = ">=1.0.0", allow-prereleases = true }
-pyroll-cli = { version = ">=1.0.0", allow-prereleases = true }
-pyroll-report = { version = ">=1.0.0", allow-prereleases = true }
-pyroll-export = { version = ">=1.0.0", allow-prereleases = true }
-pyroll-integral-thermal = { version = ">=1.1.0", allow-prereleases = true }
-pyroll-wusatowski-spreading = { version = ">=1.1.0", allow-prereleases = true }
-pyroll-hensel-power-and-labour = { version = ">=1.0.0", allow-prereleases = true }
-pyroll-lendl-equivalent-method = { version = ">=1.0.0", allow-prereleases = true }
-pyroll-freiberg-flow-stress = { version = ">=1.1.1", allow-prereleases = true }
-pyroll-zouhar-contact = { version = ">=1.0.0", allow-prereleases = true }
-#xmlschema = "^2.0.1"
-PySide6 = "6.3.*"       # The latest version causes a DLL error on Windows
-pyinstaller = ">=5.6.2"
+readme = "README.md"
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Manufacturing",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering"
+]
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.1.2"
-mypy = "^0.971"
-black = "^22.6.0"
+requires-python = ">=3.9, <4.0"
+dependencies = [
+    "pyroll-basic",
+    "PySide6",
+    "pyinstaller"
+]
 
-[tool.poetry.scripts]
-pyroll-gui = 'pyroll.gui.pyrollgui:main'
-
-[tool.poetry.group.dev.dependencies]
-isort = "^5.11.4"
+dynamic = ["version"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.isort]
-profile = "black"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
