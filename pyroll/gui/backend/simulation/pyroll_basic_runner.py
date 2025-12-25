@@ -1,121 +1,114 @@
-from typing import Dict, List, Any
 import numpy as np
+import pyroll.basic
 
+from typing import Dict, List, Any
+from pyroll.core import Profile, PassSequence, RollPass, Transport, CoolingPipe
 
-def extract_parameters(params: List[Dict[str, Any]]) -> Dict[str, float]:
-    """
-    Extrahiert Parameter aus der Tabelle
-
-    Args:
-        params: Liste von Dicts mit {parameter, wert, einheit}
-
-    Returns:
-        Dictionary mit parametername: wert
-    """
-    param_dict = {}
-    for p in params:
-        param_name = p['parameter'].lower().replace(' ', '_')
-        param_dict[param_name] = float(p['wert'])
-
-    return param_dict
+from .helpers import create_roll_pass, create_transport, create_cooling_pipe
 
 
 def run_pyroll_simulation(units: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """
-    Führt die PyRoll Simulation durch
 
-    Args:
-        units: Liste von Pass-Units aus dem Frontend
-    """
+    try:
+        sequence = PassSequence([])
 
-    # Units durchgehen und verarbeiten
-    pass_sequence = []
+        for unit in units:
+            unit_type = unit['type']
 
-    for unit in units:
-        unit_type = unit['type']
+            if unit_type == 'TwoRollPass':
+                sequence.append(create_roll_pass(unit))
+            elif unit_type == 'ThreeRollPass':
+                sequence.append(create_roll_pass(unit))
+            elif unit_type == 'Transport':
+                sequence.append(create_transport(unit))
+            elif unit_type == 'CoolingPipe':
+                sequence.append(create_cooling_pipe(unit))
 
-        if unit_type == 'TwoRollPass':
-            # TODO: PyRoll TwoRollPass Objekt erstellen
-            pass_data = {
-                'type': 'TwoRollPass',
-                'grooveDepth': unit['grooveDepth'],
-                'grooveWidth': unit['grooveWidth'],
-                'rollRadius': unit['rollRadius']
-            }
-            pass_sequence.append(pass_data)
+        sequence.flatten()
 
-        elif unit_type == 'ThreeRollPass':
-            pass_data = {
-                'type': 'ThreeRollPass',
-                'grooveDepth': unit['grooveDepth'],
-                'grooveWidth': unit['grooveWidth'],
-                'rollRadius': unit['rollRadius'],
-                'roll3Offset': unit['roll3Offset']
-            }
-            pass_sequence.append(pass_data)
+        # Initiales Profil definieren
+        # TODO: Diese Werte sollten vom Frontend kommen oder konfigurierbar sein
+        initial_profile = Profile(
+            # Beispiel für rundes Profil
+            # temperature=1200,  # °C
+            # strain=0,
+            # ... weitere Initialisierungswerte
+        )
 
-        elif unit_type == 'Transport':
-            pass_data = {
-                'type': 'Transport',
-                'length': unit['length'],
-                'duration': unit['duration']
-            }
-            pass_sequence.append(pass_data)
+        sequence.solve(initial_profile)
 
-        elif unit_type == 'CoolingPipe':
-            pass_data = {
-                'type': 'CoolingPipe',
-                'length': unit['length'],
-                'coolingRate': unit['coolingRate'],
-                'temperature': unit['temperature']
-            }
-            pass_sequence.append(pass_data)
+        results = extract_results(sequence)
 
-    # Dummy-Ergebnis
-    result = {
-        "erfolg": True,
-        "anzahlUnits": len(pass_sequence),
-        "passSequence": pass_sequence,
-        "ausgabeParameter": {
-            "gesamtKraft": 1250.5,
-            "gesamtMoment": 450.3,
+        return results
+
+    except Exception as e:
+        import traceback
+        print(f"Simulation Error: {str(e)}")
+        print(traceback.format_exc())
+        raise
+
+
+def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
+
+    results = {
+        "success": True,
+        "units": len(pass_sequence),
+        "passes": []
+    }
+
+    for i, unit in enumerate(pass_sequence):
+        pass_result = {
+            "pass_nr": i + 1,
+            "label": unit.label if hasattr(unit, 'label') else f"Pass {i + 1}",
+            "type": type(unit).__name__,
         }
-    }
 
-    return result
+        if hasattr(unit, 'roll_force'):
+            pass_result['roll_force'] = float(unit.roll_force)
+        if hasattr(unit, 'roll_torque'):
+            pass_result['roll_torque'] = float(unit.roll.roll_torque)
+        if hasattr(unit, 'power'):
+            pass_result['power'] = float(unit.roll.power)
 
+        # Profil-Informationen
+        if hasattr(unit, 'out_profile'):
+            profile = unit.out_profile
+            if hasattr(profile, 'temperature'):
+                pass_result['out_temperature'] = float(profile.temperature)
+            if hasattr(profile, 'height'):
+                pass_result['out_height'] = float(profile.height)
+            if hasattr(profile, 'width'):
+                pass_result['out_width'] = float(profile.width)
 
-def generate_example_diagram(params: Dict[str, float]) -> Dict[str, List]:
-    """
-    Generiert Beispiel-Diagrammdaten
-    In der echten Version würdest du hier die PyRoll-Ergebnisse visualisieren
-    """
-    x = np.linspace(0, 10, 50)
-    faktor = params.get('durchmesser', 50) / 50.0
-    y = faktor * (x ** 2 + np.sin(x) * 10)
+        results['passes'].append(pass_result)
 
-    return {
-        "x": x.tolist(),
-        "y": y.tolist(),
-        "label": "Kraft über Weg"
-    }
+    return results
 
-
-def validate_parameters(params: List[Dict[str, Any]]) -> tuple[bool, str]:
+def validate_parameters(units: List[Dict[str, Any]]) -> tuple[bool, str]:
     """
     Validiert die Eingabeparameter
 
     Returns:
         (is_valid, error_message)
     """
-    required_params = ['durchmesser', 'geschwindigkeit', 'temperatur']
-    param_dict = extract_parameters(params)
+    if not units or len(units) == 0:
+        return False, "Keine Units definiert"
 
-    for req in required_params:
-        if req not in param_dict:
-            return False, f"Fehlender Parameter: {req}"
+    for i, unit in enumerate(units):
+        unit_type = unit.get('type')
 
-        if param_dict[req] <= 0:
-            return False, f"Parameter {req} muss größer als 0 sein"
+        if not unit_type:
+            return False, f"Unit {i + 1}: Type fehlt"
+
+        if unit_type == 'TwoRollPass':
+            if 'grooveType' not in unit:
+                return False, f"Unit {i + 1}: Groove Type fehlt"
+            if 'groove' not in unit or not unit['groove']:
+                return False, f"Unit {i + 1}: Groove Parameter fehlen"
+
+            # Validiere Groove-Parameter
+            groove_params = unit['groove']
+            if groove_params.get('r1', 0) <= 0:
+                return False, f"Unit {i + 1}: R1 muss größer als 0 sein"
 
     return True, ""

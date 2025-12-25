@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 
 function App() {
     const [activeTab, setActiveTab] = useState('passdesign');
+
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
 
@@ -35,6 +36,7 @@ function App() {
                     {key: 'gap', label: 'Gap', type: 'number'},
                     {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
                     {key: 'velocity', label: 'Velocity', type: 'number'},
+                    {key: 'coulomb_friction_coefficient', label: 'Coulomb Friction Coefficient', type: 'number'},
                     {
                         key: 'grooveType', label: 'Groove Type', type: 'select', options: [
                             'BoxGroove',
@@ -62,6 +64,8 @@ function App() {
                     {key: 'inscribed_circle_diameter', label: 'Inscribed Circle Diameter (ICD)', type: 'number'},
                     {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
                     {key: 'velocity', label: 'Velocity', type: 'number'},
+                    {key: 'coulomb_friction_coefficient', label: 'Coulob Friction Coefficient', type: 'number'},
+                    {key: 'orientation', label: 'Orientation', type: 'string'},
                     {
                         key: 'grooveType', label: 'Groove Type', type: 'select', options: [
                             'CircularOvalGroove',
@@ -75,6 +79,7 @@ function App() {
                 return [
                     {key: 'label', label: 'Label', type: 'string'},
                     {key: 'transportDefineBy', label: 'Define by', type: 'select', options: ['length', 'duration']},
+                    { key: 'transportValue', label: 'Value', type: 'number', unit: '' },
                     {key: 'environment_temperature', label: 'Environment Temperature', type: 'number'},
                     {key: 'heat_transfer_coefficient', label: 'Heat Transfer Coefficient', type: 'number'}
                 ];
@@ -82,6 +87,7 @@ function App() {
                 return [
                     {key: 'label', label: 'Label', type: 'string'},
                     {key: 'coolingDefineBy', label: 'Define by', type: 'select', options: ['length', 'duration']},
+                    { key: 'coolingValue', label: 'Value', type: 'number', unit: '' },
                     {key: 'inner_radius', label: 'Inner Radius', type: 'number'},
                     {key: 'coolant_temperature', label: 'Coolant Temperature', type: 'number'},
                     {key: 'coolant_volume_flux', label: 'Coolant Volume Flux', type: 'number'},
@@ -144,7 +150,7 @@ function App() {
                         {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                     ],
                     rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                }
+                };
             case 'DiamondGroove':
                 return {
                     required: [
@@ -167,7 +173,7 @@ function App() {
                         {key: 'tip_angle', label: 'Tip Angle', tooltip: 'Angle between the flanks'},
                     ],
                     rule: 'Exactly two of Usable Width, Tip Depth and Tip Angle must be given.'
-                }
+                };
             case 'GothicGroove':
                 return {
                     required: [
@@ -185,7 +191,7 @@ function App() {
                     ],
                 optional: [],
                     rule: ''
-                }
+                };
             case 'SquareGroove':
                 return {
                     required: [
@@ -208,7 +214,7 @@ function App() {
                         {key: 'tip_angle', label: 'Tip Angle', tooltip: 'Angle between the flanks'},
                     ],
                     rule: 'Exactly two of Usable Width, Tip Depth and Tip Angle must be given. Tip angle is <85° or >95° (no matter if given or calculated internally)'
-                }
+                };
             case 'CircularOvalGroove':
                 return {
                     required: [
@@ -226,7 +232,7 @@ function App() {
                         {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
                     ],
                     rule: 'Exactly two of R2, Usable Width and Depth must be given.'
-                }
+                };
             case 'ConstrictedCircularOvalGroove':
                 return {
                     required: [
@@ -247,7 +253,7 @@ function App() {
                     ],
                     optional: [],
                     rule: ''
-                }
+                };
             case 'ConstrictedSwedishOvalGroove':
                 return {
                     required: [
@@ -274,7 +280,7 @@ function App() {
                         {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                     ],
                     rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                }
+                };
             case 'FlatOvalGroove':
                 return {
                     required: [
@@ -297,7 +303,7 @@ function App() {
                         {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
                     ],
                     rule: 'Exactly one of the Optional Parameters must be set'
-                }
+                };
             case 'Oval3RadiiGroove':
                 return {
                     required: [
@@ -315,7 +321,7 @@ function App() {
                     ],
                     optional: [],
                     rule: ''
-                }
+                };
             case 'Oval3RadiiFlankedGroove':
                 return {
                     required: [
@@ -337,7 +343,8 @@ function App() {
                         {key: 'flank_height', label: 'Flank Height',tooltip: 'Vertical extent of the flanks'},
                         {key: 'flank_length', label: 'Flank Length',tooltip: 'Length of the flanks'},
                     ],
-                }
+                    rule: ''
+                };
             case 'SwedishOvalGroove':
                 return {
                     required: [
@@ -358,7 +365,7 @@ function App() {
                         {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                     ],
                     rule: 'Exactly one of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                }
+                };
             case 'UpsetOvalGroove':
                 return {
                     required: [
@@ -376,7 +383,7 @@ function App() {
                     ],
                     optional: [],
                     rule: ''
-                }
+                };
             case 'RoundGroove':
                 return {
                     required: [
@@ -435,21 +442,16 @@ function App() {
                         newRow.grooveType = 'BoxGroove';
                         newRow.groove = {r1: 0, r2: 0, depth: 0, pad_angle: 0};
                     } else if (newType === 'ThreeRollPass') {
-                        newRow.gap = 0;
+                        newRow.inscribed_circle_diameter = 0;
                         newRow.nominal_radius = 0;
                         newRow.velocity = 0;
-                        newRow.grooveType = 'BoxGroove';
-                        newRow.groove = {r1: 0, r2: 0, depth: 0, pad_angle: 0};
-                        newRow.roll3Offset = 0;
+                        newRow.grooveType = 'RoundGroove';
+                        newRow.groove = {r1: 0, pad_angle: 0};
                     } else if (newType === 'Transport') {
                         newRow.transportDefineBy = 'length';
-                        newRow.transportValue = 0;
                     } else if (newType === 'CoolingPipe') {
                         newRow.coolingDefineBy = 'length';
-                        newRow.coolingValue = 0;
-                        newRow.temperature = 0;
                     }
-
                     return newRow;
                 }
                 return row;
