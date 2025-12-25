@@ -170,7 +170,9 @@ function App() {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         }
-                    ]
+                    ],
+                optional: [],
+                    rule: ''
                 }
             case 'SquareGroove':
                 return {
@@ -230,7 +232,9 @@ function App() {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         },
-                    ]
+                    ],
+                    optional: [],
+                    rule: ''
                 }
             case 'ConstrictedSwedishOvalGroove':
                 return {
@@ -296,7 +300,9 @@ function App() {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         },
-                    ]
+                    ],
+                    optional: [],
+                    rule: ''
                 }
             case 'Oval3RadiiFlankedGroove':
                 return {
@@ -355,7 +361,9 @@ function App() {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         },
-                    ]
+                    ],
+                    optional: [],
+                    rule: ''
                 }
             case 'RoundGroove':
                 return {
