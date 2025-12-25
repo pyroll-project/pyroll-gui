@@ -9,17 +9,18 @@ function App() {
         {
             id: 1,
             type: 'TwoRollPass',
-            gap: 2e-3,
-            nominal_radius: 150e-3,
-            velocity: 1.5,
+            label: 'Stand 1',
+            gap: 0,
+            nominal_radius: 0,
+            velocity: 0,
             grooveType: 'BoxGroove',
             groove: {
-                r1: 5e-3,
-                r2: 3e-3,
-                depth: 10e-3,
+                r1: 0,
+                r2: 0,
+                depth: 0,
                 pad_angle: 0,
-                ground_width: 20e-3,
-                usable_width: 50e-3
+                ground_width: 0,
+                usable_width: 0
             }
         }
     ]);
@@ -30,6 +31,7 @@ function App() {
         switch (type) {
             case 'TwoRollPass':
                 return [
+                    {key: 'label', label: 'Label', type: 'string'},
                     {key: 'gap', label: 'Gap', type: 'number'},
                     {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
                     {key: 'velocity', label: 'Velocity', type: 'number'},
@@ -56,23 +58,33 @@ function App() {
                 ];
             case 'ThreeRollPass':
                 return [
-                    {key: 'gap', label: 'Gap', type: 'number'},
+                    {key: 'label', label: 'Label', type: 'string'},
+                    {key: 'inscribed_circle_diameter', label: 'Inscribed Circle Diameter (ICD)', type: 'number'},
                     {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
                     {key: 'velocity', label: 'Velocity', type: 'number'},
-                    {key: 'grooveType', label: 'Groove Type', type: 'select', options: ['BoxGroove', 'RoundGroove']},
+                    {
+                        key: 'grooveType', label: 'Groove Type', type: 'select', options: [
+                            'CircularOvalGroove',
+                            'RoundGroove',
+                            'FalseRoundGroove'
+                        ]
+                    },
                     {key: 'groove', label: 'Groove Parameters', type: 'groove'},
-                    {key: 'roll3Offset', label: 'Roll 3 Offset', type: 'number'},
                 ];
             case 'Transport':
                 return [
+                    {key: 'label', label: 'Label', type: 'string'},
                     {key: 'transportDefineBy', label: 'Define by', type: 'select', options: ['length', 'duration']},
-                    {key: 'transportValue', label: 'Value', type: 'number', unit: ''},
+                    {key: 'environment_temperature', label: 'Environment Temperature', type: 'number'},
+                    {key: 'heat_transfer_coefficient', label: 'Heat Transfer Coefficient', type: 'number'}
                 ];
             case 'CoolingPipe':
                 return [
-                    {key: 'coolingDefineBy', label: 'Define by', type: 'select', options: ['length', 'coolingRate']},
-                    {key: 'coolingValue', label: 'Value', type: 'number', unit: ''},
-                    {key: 'temperature', label: 'Target Temp (°C)', type: 'number'},
+                    {key: 'label', label: 'Label', type: 'string'},
+                    {key: 'coolingDefineBy', label: 'Define by', type: 'select', options: ['length', 'duration']},
+                    {key: 'inner_radius', label: 'Inner Radius', type: 'number'},
+                    {key: 'coolant_temperature', label: 'Coolant Temperature', type: 'number'},
+                    {key: 'coolant_volume_flux', label: 'Coolant Volume Flux', type: 'number'},
                 ];
             default:
                 return [];
@@ -548,15 +560,15 @@ function App() {
             });
 
             if (!response.ok) {
-                throw new Error('Simulation fehlgeschlagen');
+                throw new Error('Simulation Failed');
             }
 
             const data = await response.json();
             setResults(data);
             setActiveTab('results');
         } catch (error) {
-            console.error('Fehler:', error);
-            alert('Simulation fehlgeschlagen. Stelle sicher, dass das Backend läuft.');
+            console.error('Error:', error);
+            alert('Simulation Failed. Check if Backend is running.');
         }
         setLoading(false);
     };
