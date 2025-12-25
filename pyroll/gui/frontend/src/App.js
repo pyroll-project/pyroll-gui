@@ -1,10 +1,17 @@
 import React, {useState} from 'react';
 
 function App() {
-    const [activeTab, setActiveTab] = useState('passdesign');
-
+    const [activeTab, setActiveTab] = useState('inprofile');
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
+
+    const [inProfile, setInProfile] = useState({
+        shape: 'round',
+        diameter: 0,
+        temperature: 1200,
+        density: 7850,
+        material: 'C45',
+    });
 
     const [tableData, setTableData] = useState([
         {
@@ -584,6 +591,23 @@ function App() {
             {/* Tab Navigation */}
             <div style={{display: 'flex', borderBottom: '2px solid #ddd', marginBottom: '20px'}}>
                 <button
+                    onClick={() => setActiveTab('inprofile')}
+                    style={{
+                        padding: '12px 24px',
+                        border: 'none',
+                        background: activeTab === 'inprofile' ? '#4CAF50' : '#f1f1f1',
+                        color: activeTab === 'inprofile' ? 'white' : '#333',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        borderRadius: '5px 5px 0 0',
+                        marginRight: '5px',
+                        transition: 'background 0.3s'
+                    }}
+                >
+                    In Profile
+                </button>
+                <button
                     onClick={() => setActiveTab('passdesign')}
                     style={{
                         padding: '12px 24px',
@@ -617,6 +641,251 @@ function App() {
                     Results
                 </button>
             </div>
+
+           {/* In Profile Tab */}
+            {activeTab === 'inprofile' && (
+                <div>
+                    <h2 style={{color: '#555'}}>Initial Profile Configuration</h2>
+
+                    <div style={{overflowX: 'auto'}}>
+                        <table style={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            marginTop: '20px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        }}>
+                            <thead>
+                            <tr style={{background: '#2196F3', color: 'white'}}>
+                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Shape</th>
+                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd'}}>Parameters</th>
+                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Temperature (°C)</th>
+                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Density (kg/m³)</th>
+                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Material</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr style={{background: '#f9f9f9'}}>
+                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
+                                    <select
+                                        value={inProfile.shape}
+                                        onChange={(e) => setInProfile({...inProfile, shape: e.target.value})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="round">Round</option>
+                                        <option value="square">Square</option>
+                                        <option value="box">Box</option>
+                                        <option value="hexagon">Hexagon</option>
+                                    </select>
+                                </td>
+                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
+                                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                        {inProfile.shape === 'round' && (
+                                            <div style={{minWidth: '150px'}}>
+                                                <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                    Diameter (mm)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    value={inProfile.diameter || 0}
+                                                    onChange={(e) => setInProfile({...inProfile, diameter: parseFloat(e.target.value) || 0})}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '8px',
+                                                        border: '1px solid #ddd',
+                                                        borderRadius: '4px',
+                                                        fontSize: '14px'
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        {inProfile.shape === 'square' && (
+                                            <>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Side (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.side || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, side: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Corner Radius (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.corner_radius || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, corner_radius: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+                                        {inProfile.shape === 'box' && (
+                                            <>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Height (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.height || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, height: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Width (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.width || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, width: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Corner Radius (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.corner_radius || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, corner_radius: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+                                        {inProfile.shape === 'hexagon' && (
+                                            <>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Side (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.side || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, side: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div style={{minWidth: '150px'}}>
+                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
+                                                        Corner Radius (mm)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        value={inProfile.corner_radius || 0}
+                                                        onChange={(e) => setInProfile({...inProfile, corner_radius: parseFloat(e.target.value) || 0})}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '8px',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </td>
+                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
+                                    <input
+                                        type="number"
+                                        value={inProfile.temperature}
+                                        onChange={(e) => setInProfile({...inProfile, temperature: parseFloat(e.target.value) || 0})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px'
+                                        }}
+                                    />
+                                </td>
+                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
+                                    <input
+                                        type="number"
+                                        value={inProfile.density}
+                                        onChange={(e) => setInProfile({...inProfile, density: parseFloat(e.target.value) || 0})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px'
+                                        }}
+                                    />
+                                </td>
+                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
+                                    <input
+                                        type="text"
+                                        value={inProfile.material}
+                                        onChange={(e) => setInProfile({...inProfile, material: e.target.value})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px'
+                                        }}
+                                    />
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
 
             {/* PassDesign Tab */}
             {activeTab === 'passdesign' && (
