@@ -35,7 +35,8 @@ export default function RollPassPlot({ row }) {
       const contourData = await getRollPassContour({
         grooveType: row.grooveType,
         groove: row.groove,
-        gap: row.gap || 0
+        gap: row.gap || 0,
+        label: row.label,
       });
 
       if (!contourData.success) {
@@ -120,7 +121,7 @@ export default function RollPassPlot({ row }) {
         .attr('text-anchor', 'middle')
         .style('font-size', '13px')
         .style('font-weight', 'bold')
-        .text('Width (mm)');
+        .text('Width');
 
       g.append('text')
         .attr('transform', 'rotate(-90)')
@@ -129,14 +130,14 @@ export default function RollPassPlot({ row }) {
         .attr('text-anchor', 'middle')
         .style('font-size', '13px')
         .style('font-weight', 'bold')
-        .text('Height (mm)');
+        .text('Height');
 
-      // Line generator
+
       const line = d3.line()
         .x(d => xScale(d.x))
         .y(d => yScale(d.y));
 
-      // Draw upper roll (groove)
+
       g.append('path')
         .datum(upperPoints)
         .attr('fill', '#FFE680')
@@ -145,7 +146,6 @@ export default function RollPassPlot({ row }) {
         .attr('stroke-width', 2.5)
         .attr('d', line);
 
-      // Draw lower roll (groove)
       g.append('path')
         .datum(lowerPoints)
         .attr('fill', '#FFE680')
@@ -154,7 +154,7 @@ export default function RollPassPlot({ row }) {
         .attr('stroke-width', 2.5)
         .attr('d', line);
 
-      // Draw gap line (centerline)
+
       const gapY = yScale(0);
       g.append('line')
         .attr('x1', 0)
@@ -165,7 +165,7 @@ export default function RollPassPlot({ row }) {
         .attr('stroke-width', 1)
         .attr('stroke-dasharray', '5,5');
 
-      // Add labels
+
       const infoX = plotWidth - 5;
       const infoY = 15;
 
@@ -176,7 +176,7 @@ export default function RollPassPlot({ row }) {
         .style('font-size', '12px')
         .style('fill', '#333')
         .style('font-weight', 'bold')
-        .text(`Gap: ${contourData.gap?.toFixed(2) || 0} mm`);
+        .text(`Gap: ${contourData.gap?.toFixed(2) || 0}`);
 
       if (contourData.usable_width) {
         g.append('text')
@@ -185,7 +185,7 @@ export default function RollPassPlot({ row }) {
           .attr('text-anchor', 'end')
           .style('font-size', '11px')
           .style('fill', '#666')
-          .text(`Usable Width: ${contourData.usable_width.toFixed(2)} mm`);
+          .text(`Usable Width: ${contourData.usable_width.toFixed(2)}`);
       }
 
       if (contourData.depth) {
@@ -195,7 +195,7 @@ export default function RollPassPlot({ row }) {
           .attr('text-anchor', 'end')
           .style('font-size', '11px')
           .style('fill', '#666')
-          .text(`Depth: ${contourData.depth.toFixed(2)} mm`);
+          .text(`Depth: ${contourData.depth.toFixed(2)}`);
       }
 
       // Title
@@ -206,7 +206,7 @@ export default function RollPassPlot({ row }) {
         .style('font-size', '15px')
         .style('font-weight', 'bold')
         .style('fill', '#333')
-        .text(`Roll Pass: ${contourData.groove_type}`);
+        .text(`Roll Pass: ${contourData.label}`);
 
       setLoading(false);
     };
@@ -223,7 +223,7 @@ export default function RollPassPlot({ row }) {
       border: '2px solid #FFDD00'
     }}>
       <div style={{ fontWeight: 'bold', marginBottom: '15px', fontSize: '14px', color: '#333' }}>
-        Roll Pass Visualization (from PyRoll):
+        Roll Pass Visualization:
       </div>
       {loading && (
         <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
