@@ -140,17 +140,15 @@ export default function RollPassPlot({ row }) {
 
       g.append('path')
         .datum(upperPoints)
-        .attr('fill', '#FFE680')
-        .attr('fill-opacity', 0.6)
-        .attr('stroke', '#FFDD00')
+        .attr('fill', 'none')
+        .attr('stroke', '#000000')
         .attr('stroke-width', 2.5)
         .attr('d', line);
 
       g.append('path')
         .datum(lowerPoints)
-        .attr('fill', '#FFE680')
-        .attr('fill-opacity', 0.6)
-        .attr('stroke', '#FFDD00')
+        .attr('fill', 'none')
+        .attr('stroke', '#000000')
         .attr('stroke-width', 2.5)
         .attr('d', line);
 

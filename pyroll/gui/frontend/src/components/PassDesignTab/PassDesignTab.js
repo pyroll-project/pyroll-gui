@@ -119,7 +119,6 @@ export default function PassDesignTab({
           margin: '0 5px'
         }} />
 
-        {/* Start Simulation Button */}
         <button
           onClick={runSimulation}
           disabled={loading}
@@ -166,7 +165,6 @@ export default function PassDesignTab({
         </button>
       </div>
 
-      {/* Info Box */}
       <div style={{
         marginTop: '20px',
         padding: '15px',
@@ -180,7 +178,6 @@ export default function PassDesignTab({
         The XML file contains all units with set parameters and groove definitions.
       </div>
 
-      {/* CSS for spinner animation */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes spin {
           to { transform: rotate(360deg); }
