@@ -47,6 +47,13 @@ def health_check():
 async def run_simulation(data: SimulationRequest):
     try:
 
+        print("=" * 50)
+        print("Received data from GUI:")
+        print(f"Type of data.inProfile: {type(data.inProfile)}")
+        print(f"Content: {data.inProfile}")
+        print(f"Is it a dict? {isinstance(data.inProfile, dict)}")
+        print("=" * 50)
+
         result = run_pyroll_simulation(
             units=data.passDesignData,
             in_profile_data=data.inProfile

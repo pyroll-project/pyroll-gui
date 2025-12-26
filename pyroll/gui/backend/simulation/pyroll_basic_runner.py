@@ -62,7 +62,7 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
         if hasattr(unit, 'roll_torque'):
             pass_result['roll_torque'] = float(unit.roll.roll_torque)
         if hasattr(unit, 'power'):
-            pass_result['power'] = float(unit.roll.power)
+            pass_result['power'] = float(unit.power)
 
         if hasattr(unit, 'out_profile'):
             profile = unit.out_profile

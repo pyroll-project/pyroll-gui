@@ -36,7 +36,6 @@ export default function ProfilePlot({ inProfile }) {
     const g = svg.append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Scales with equal aspect ratio
     const xExtent = d3.extent(contour.x);
     const yExtent = d3.extent(contour.y);
 
@@ -56,7 +55,6 @@ export default function ProfilePlot({ inProfile }) {
       .domain([yCenter - maxRange / 2 - padding, yCenter + maxRange / 2 + padding])
       .range([plotHeight, 0]);
 
-    // Grid
     const xGrid = d3.axisBottom(xScale)
       .tickSize(-plotHeight)
       .tickFormat("");
@@ -131,7 +129,7 @@ export default function ProfilePlot({ inProfile }) {
       .style("font-size", "16px")
       .style("font-weight", "bold")
       .text("Input Profile");
-  }, [inProfile, inProfile.corner_radius]);
+  }, [inProfile]); // ← NUR inProfile als Dependency
 
   useEffect(() => {
     renderProfilePlot();

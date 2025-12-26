@@ -7,7 +7,7 @@ from pyroll.freiberg_flow_stress import FreibergFlowStressCoefficients
 
 def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
     shape = in_profile_data.get('shape')
-    flow_stress_params = in_profile_data.get('flowStressParams', {})
+    material_type = in_profile_data.get('materialType')
 
     if shape == 'round':
 
@@ -21,9 +21,10 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if flow_stress_params and any(flow_stress_params.values()):
-            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
-                in_profile.get(flow_stress_params))
+        if material_type != '':
+            flow_stress_params = in_profile_data.get('flowStressParams')
+            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
+            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
         return in_profile
 
@@ -39,9 +40,10 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if flow_stress_params and any(flow_stress_params.values()):
-            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
-                in_profile.get(flow_stress_params))
+        if material_type != '':
+            flow_stress_params = in_profile_data.get('flowStressParams')
+            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
+            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
         return in_profile
 
@@ -59,15 +61,16 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if flow_stress_params and any(flow_stress_params.values()):
-            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
-                in_profile.get(flow_stress_params))
+        if material_type != '':
+            flow_stress_params = in_profile_data.get('flowStressParams')
+            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
+            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
         return in_profile
 
     elif shape == 'hexagon':
 
-        in_profile = Profile.box(
+        in_profile = Profile.hexagon(
             side=in_profile_data.get('side'),
             corner_radius=in_profile_data.get('corner_radius'),
             temperature=in_profile_data.get('temperature'),
@@ -78,9 +81,10 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if flow_stress_params and any(flow_stress_params.values()):
-            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
-                in_profile.get(flow_stress_params))
+        if material_type != '':
+            flow_stress_params = in_profile_data.get('flowStressParams')
+            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
+            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
         return in_profile
 
