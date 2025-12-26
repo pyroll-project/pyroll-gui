@@ -47,13 +47,6 @@ def health_check():
 async def run_simulation(data: SimulationRequest):
     try:
 
-        print("=" * 50)
-        print("Received data from GUI:")
-        print(f"Type of data.inProfile: {type(data.inProfile)}")
-        print(f"Content: {data.inProfile}")
-        print(f"Is it a dict? {isinstance(data.inProfile, dict)}")
-        print("=" * 50)
-
         result = run_pyroll_simulation(
             units=data.passDesignData,
             in_profile_data=data.inProfile
@@ -72,21 +65,6 @@ async def run_simulation(data: SimulationRequest):
             input_data=data.passDesignData,
             errors=f"{str(e)}\n\n{traceback.format_exc()}"
         )
-
-
-@app.get("/api/parameters")
-def get_default_parameters():
-    return {
-        "defaultParameters": [
-            {"id": 1, "parameter": "Durchmesser", "wert": 50, "einheit": "mm"},
-            {"id": 2, "parameter": "Geschwindigkeit", "wert": 100, "einheit": "m/s"},
-            {"id": 3, "parameter": "Temperatur", "wert": 200, "einheit": "°C"},
-            {"id": 4, "parameter": "Druck", "wert": 5, "einheit": "bar"},
-            {"id": 5, "parameter": "Abstand", "wert": 10, "einheit": "mm"},
-            {"id": 6, "parameter": "Winkel", "wert": 45, "einheit": "°"},
-        ]
-    }
-
 
 @app.post("/api/rollpass-contour")
 async def rollpass_contour(data: dict):

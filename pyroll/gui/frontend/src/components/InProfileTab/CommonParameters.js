@@ -114,7 +114,6 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </select>
       </div>
 
-      {/* Material Flow Stress Parameters - nur wenn "Other" ausgewählt */}
       {isMaterialOther && (
         <>
           <div style={{

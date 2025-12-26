@@ -21,7 +21,7 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type != '':
+        if material_type:
             flow_stress_params = in_profile_data.get('flowStressParams')
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
@@ -40,7 +40,7 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type != '':
+        if material_type:
             flow_stress_params = in_profile_data.get('flowStressParams')
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
@@ -61,7 +61,8 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type != '':
+        if material_type:
+            print('Here')
             flow_stress_params = in_profile_data.get('flowStressParams')
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
@@ -81,7 +82,7 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type != '':
+        if material_type:
             flow_stress_params = in_profile_data.get('flowStressParams')
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
@@ -117,22 +118,23 @@ def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
             label=unit.get('label', ''),
             roll=Roll(
                 groove=groove,
-                nominal_radius=unit.get('nominal_radius', 0),
+                nominal_radius=unit.get('nominal_radius'),
             ),
-            gap=unit.get('gap', 0),
-            velocity=unit.get('velocity', 0),
+            gap=unit.get('gap'),
+            velocity=unit.get('velocity'),
+            coulomb_friction_coefficient = unit.get('coulomb_friction_coefficient'),
         )
     elif unit['type'] == 'ThreeRollPass':
         roll_pass = ThreeRollPass(
             label=unit.get('label', ''),
-            orientation=unit.get('orientation', 0),
+            orientation=unit.get('orientation'),
             roll=Roll(
                 groove=groove,
-                nominal_radius=unit.get('nominal_radius', 0),
+                nominal_radius=unit.get('nominal_radius'),
             ),
-            inscribed_circle_diameter=unit.get('inscribed_circle_diameter', 0),
-            velocity=unit.get('velocity', 0),
-            coulomb_friction_coefficient = unit.get('coulomb_friction_coefficient', 0),
+            inscribed_circle_diameter=unit.get('inscribed_circle_diameter'),
+            velocity=unit.get('velocity'),
+            coulomb_friction_coefficient = unit.get('coulomb_friction_coefficient'),
         )
     return roll_pass
 
@@ -144,18 +146,17 @@ def create_transport(unit: Dict[str, Any]) -> Transport:
     if define_by == 'length':
         transport = Transport(
             label=unit.get('label', ''),
-            length=unit.get('transportValue', 0),
+            length=unit.get('transportValue'),
+            environment_temperature=unit.get('environment_temperature', 293.15),
+            heat_transfer_coefficient=unit.get('heat_transfer_coefficient', 15)
         )
     else:
         transport = Transport(
             label=unit.get('label', ''),
-            duration=unit.get('transportValue', 0),
+            duration=unit.get('transportValue'),
+            environment_temperature = unit.get('environment_temperature', 293.15),
+            heat_transfer_coefficient = unit.get('heat_transfer_coefficient', 15)
         )
-
-    if 'environment_temperature' in unit:
-        transport.environment_temperature = unit['environment_temperature']
-    if 'heat_transfer_coefficient' in unit:
-        transport.heat_transfer_coefficient = unit['heat_transfer_coefficient']
 
     return transport
 

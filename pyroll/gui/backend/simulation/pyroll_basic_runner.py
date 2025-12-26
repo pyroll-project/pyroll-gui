@@ -12,21 +12,19 @@ def run_pyroll_simulation(
         in_profile_data: Dict[str, Any]
 ) -> Dict[str, Any]:
     try:
-        sequence = PassSequence([])
-
+        sequence_list = []
         for unit in units:
-            unit_type = unit['type']
+            unit_type = unit.get('type')
 
             if unit_type == 'TwoRollPass':
-                sequence.append(create_roll_pass(unit))
+                sequence_list.append(create_roll_pass(unit))
             elif unit_type == 'ThreeRollPass':
-                sequence.append(create_roll_pass(unit))
+                sequence_list.append(create_roll_pass(unit))
             elif unit_type == 'Transport':
-                sequence.append(create_transport(unit))
+                sequence_list.append(create_transport(unit))
             elif unit_type == 'CoolingPipe':
-                sequence.append(create_cooling_pipe(unit))
-
-        sequence.flatten()
+                sequence_list.append(create_cooling_pipe(unit))
+        sequence = PassSequence(sequence_list)
 
         initial_profile = create_initial_profile(in_profile_data)
 
@@ -51,27 +49,28 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
     }
 
     for i, unit in enumerate(pass_sequence):
-        pass_result = {
-            "pass_nr": i + 1,
-            "label": unit.label if hasattr(unit, 'label') else f"Pass {i + 1}",
-            "type": type(unit).__name__,
-        }
 
-        if hasattr(unit, 'roll_force'):
-            pass_result['roll_force'] = float(unit.roll_force)
-        if hasattr(unit, 'roll_torque'):
-            pass_result['roll_torque'] = float(unit.roll.roll_torque)
-        if hasattr(unit, 'power'):
+        unit_type = type(unit)
+
+        pass_result = {"pass": i + 1,
+                       "label": unit.label if hasattr(unit, 'label') else f"Pass {i + 1}",
+                       "type": unit_type,
+
+                       }
+        if unit_type == "TwoRollPass" or unit_type == "ThreeRollPass":
+            pass_result['roll_force'] = float(unit.roll_force),
+            pass_result['roll_torque'] = float(unit.roll.roll_torque),
             pass_result['power'] = float(unit.power)
 
         if hasattr(unit, 'out_profile'):
             profile = unit.out_profile
-            if hasattr(profile, 'temperature'):
-                pass_result['out_temperature'] = float(profile.temperature)
-            if hasattr(profile, 'height'):
-                pass_result['out_height'] = float(profile.height)
-            if hasattr(profile, 'width'):
-                pass_result['out_width'] = float(profile.width)
+            pass_result['out_strain'] = float(profile.strain)
+            pass_result['out_temperature'] = float(profile.temperature)
+            pass_result['out_height'] = float(profile.height)
+            pass_result['out_width'] = float(profile.width)
+            pass_result['cross_section_area'] = float(profile.cross_section.area)
+            pass_result['filling_ratio'] = float(profile.filling_ratio)
+
 
         results['passes'].append(pass_result)
 
@@ -79,15 +78,6 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
 
 
 def validate_parameters(units: List[Dict[str, Any]]) -> tuple[bool, str]:
-    """
-    Validiert die Pass Design Parameter.
-
-    Args:
-        units: Liste der Pass Design Units
-
-    Returns:
-        Tuple (is_valid, error_message)
-    """
     if not units or len(units) == 0:
         return False, "No Units defined"
 
@@ -103,7 +93,6 @@ def validate_parameters(units: List[Dict[str, Any]]) -> tuple[bool, str]:
             if 'groove' not in unit or not unit['groove']:
                 return False, f"Unit {i + 1}: Groove Parameter missing"
 
-            # Validiere Groove-Parameter
             groove_params = unit['groove']
             if groove_params.get('r1', 0) <= 0:
                 return False, f"Unit {i + 1}: R1 must be greater than 0"
