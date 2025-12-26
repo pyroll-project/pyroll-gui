@@ -50,26 +50,26 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
 
     for i, unit in enumerate(pass_sequence):
 
-        unit_type = type(unit)
+        unit_type = type(unit).__name__
 
         pass_result = {"pass": i + 1,
                        "label": unit.label if hasattr(unit, 'label') else f"Pass {i + 1}",
                        "type": unit_type,
-
                        }
-        if unit_type == "TwoRollPass" or unit_type == "ThreeRollPass":
+        if unit_type in ("TwoRollPass", "ThreeRollPass"):
             pass_result['roll_force'] = float(unit.roll_force),
             pass_result['roll_torque'] = float(unit.roll.roll_torque),
             pass_result['power'] = float(unit.power)
 
-        if hasattr(unit, 'out_profile'):
-            profile = unit.out_profile
-            pass_result['out_strain'] = float(profile.strain)
-            pass_result['out_temperature'] = float(profile.temperature)
-            pass_result['out_height'] = float(profile.height)
-            pass_result['out_width'] = float(profile.width)
-            pass_result['cross_section_area'] = float(profile.cross_section.area)
-            pass_result['filling_ratio'] = float(profile.filling_ratio)
+        pass_result['in_strain'] = float(unit.in_profile.strain)
+        pass_result['in_temperature'] =  float(unit.in_profile.temperature)
+
+        pass_result['out_strain'] = float(unit.out_profile.strain)
+        pass_result['out_temperature'] = float(unit.out_profile.temperature)
+        pass_result['out_height'] = float(unit.out_profile.height)
+        pass_result['out_width'] = float(unit.out_profile.width)
+        pass_result['out_cross_section_area'] = float(unit.out_profile.cross_section.area)
+        pass_result['filling_ratio'] = float(unit.out_profile.filling_ratio)
 
 
         results['passes'].append(pass_result)
