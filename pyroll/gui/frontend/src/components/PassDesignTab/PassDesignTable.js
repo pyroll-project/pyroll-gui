@@ -1,6 +1,7 @@
 import React from 'react';
 import PassDesignRow from './PassDesignRow';
 
+
 const typeOptions = ['TwoRollPass', 'ThreeRollPass', 'Transport', 'CoolingPipe'];
 
 export default function PassDesignTable({ tableData, setTableData }) {
@@ -20,18 +21,12 @@ export default function PassDesignTable({ tableData, setTableData }) {
         minWidth: '800px'
       }}>
         <thead>
-          <tr style={{background: '#FFDD00', color: 'white'}}>
-            <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '60px'}}>
-              Unit Nr.
-            </th>
+          <tr style={{background: '#FFDD00', color: '#333'}}>
             <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>
-              Type
+              Unit
             </th>
             <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd'}}>
               Parameters
-            </th>
-            <th style={{padding: '12px', textAlign: 'center', borderBottom: '2px solid #ddd', minWidth: '80px'}}>
-              Action
             </th>
           </tr>
         </thead>

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 
+from simulation import get_rollpass_contour
 app = FastAPI(title="PyRolL-Basic")
 
 # CORS für React-Frontend
@@ -11,7 +12,6 @@ app.add_middleware(
     allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 
@@ -98,6 +98,20 @@ def get_default_parameters():
         ]
     }
 
+
+@app.post("/api/rollpass-contour")
+async def rollpass_contour(data: dict):
+    try:
+        contour = get_rollpass_contour(data)
+        return contour
+
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 if __name__ == "__main__":
     import uvicorn
