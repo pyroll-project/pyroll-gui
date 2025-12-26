@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 
-from simulation import get_rollpass_contour
+from simulation import get_rollpass_contour, get_in_profile_contour
 app = FastAPI(title="PyRolL-Basic")
 
 # CORS für React-Frontend
@@ -42,9 +42,6 @@ def health_check():
 
 @app.post("/api/simulate", response_model=SimulationResponse)
 async def run_simulation(data: PassDesignData):
-    """
-    Führt die PyRoll Simulation mit den übergebenen PassDesign Parametern aus
-    """
     try:
         params = data.passDesignData
 
@@ -112,6 +109,22 @@ async def rollpass_contour(data: dict):
             "error": str(e),
             "traceback": traceback.format_exc()
         }
+
+
+@app.post("/api/inprofile-contour")
+async def inprofile_contour(data: dict):
+    try:
+        contour = get_in_profile_contour(data)
+        return contour
+
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
+
 
 if __name__ == "__main__":
     import uvicorn

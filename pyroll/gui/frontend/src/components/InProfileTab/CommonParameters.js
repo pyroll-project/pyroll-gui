@@ -32,7 +32,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.density}
+          value={inProfile.strain || 0}
           onChange={(e) => setInProfile({...inProfile, strain: parseFloat(e.target.value) || 0})}
           style={{
             width: '250px',
@@ -49,7 +49,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.density}
+          value={inProfile.density || 0}
           onChange={(e) => setInProfile({...inProfile, density: parseFloat(e.target.value) || 0})}
           style={{
             width: '250px',
@@ -65,7 +65,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.density}
+          value={inProfile.specific_heat_capacity || 0}
           onChange={(e) => setInProfile({...inProfile, specific_heat_capacity: parseFloat(e.target.value) || 0})}
           style={{
             width: '250px',
@@ -81,7 +81,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.density}
+          value={inProfile.thermal_conductivity || 0}
           onChange={(e) => setInProfile({...inProfile, thermal_conductivity: parseFloat(e.target.value) || 0})}
           style={{
             width: '250px',

@@ -5,6 +5,20 @@ from pyroll.core import Profile, PassSequence, Roll, RollPass, Transport, Coolin
 from pyroll.core import grooves
 from pyroll.core.roll.hookimpls import nominal_radius
 
+def create_profile(groove_type: str, groove_params: Dict[str, Any]):
+    try:
+        groove_class = getattr(grooves, groove_type)
+    except AttributeError:
+        raise ValueError(f"Unknown groove type: {groove_type}")
+
+    clean_params = {k: v for k, v in groove_params.items() if v is not None}
+
+    try:
+        groove = groove_class(**clean_params)
+        return groove
+    except Exception as e:
+        raise ValueError(f"Error creating {groove_type}: {str(e)}")
+
 
 def create_groove(groove_type: str, groove_params: Dict[str, Any]):
     try:

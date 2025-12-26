@@ -85,26 +85,20 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
     return results
 
 def validate_parameters(units: List[Dict[str, Any]]) -> tuple[bool, str]:
-    """
-    Validiert die Eingabeparameter
-
-    Returns:
-        (is_valid, error_message)
-    """
     if not units or len(units) == 0:
-        return False, "Keine Units definiert"
+        return False, "No Units defined"
 
     for i, unit in enumerate(units):
         unit_type = unit.get('type')
 
         if not unit_type:
-            return False, f"Unit {i + 1}: Type fehlt"
+            return False, f"Unit {i + 1}: Type missing"
 
         if unit_type == 'TwoRollPass':
             if 'grooveType' not in unit:
-                return False, f"Unit {i + 1}: Groove Type fehlt"
+                return False, f"Unit {i + 1}: Groove Type missing"
             if 'groove' not in unit or not unit['groove']:
-                return False, f"Unit {i + 1}: Groove Parameter fehlen"
+                return False, f"Unit {i + 1}: Groove Parameter missing"
 
             # Validiere Groove-Parameter
             groove_params = unit['groove']

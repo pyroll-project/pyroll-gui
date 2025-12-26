@@ -5,13 +5,13 @@ export default function SquareProfile({ inProfile, setInProfile }) {
   return (
     <>
       <InputField
-        label="Side (mm)"
+        label="Side"
         type="number"
         value={inProfile.side || 0}
         onChange={(value) => setInProfile({...inProfile, side: value})}
       />
       <InputField
-        label="Corner Radius (mm)"
+        label="Corner Radius"
         type="number"
         value={inProfile.corner_radius || 0}
         onChange={(value) => setInProfile({...inProfile, corner_radius: value})}

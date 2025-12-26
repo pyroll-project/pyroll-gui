@@ -1,9 +1,22 @@
 import React from "react";
+import ScientificInputField from "./ScientificInputField";
 
 export default function InputField({ label, type, value, onChange, placeholder }) {
+
+  if (type === 'number') {
+    return (
+      <ScientificInputField
+        label={label}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
+    );
+  }
+
+  // For non-number types, use standard input
   const handleChange = (e) => {
-    const val = type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value;
-    onChange(val);
+    onChange(e.target.value);
   };
 
   return (

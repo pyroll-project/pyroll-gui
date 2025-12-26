@@ -4,6 +4,7 @@ import SquareProfile from "./SquareProfile";
 import BoxProfile from "./BoxProfile";
 import HexagonProfile from "./HexagonProfile";
 import CommonParameters from "./CommonParameters";
+import ProfilePlot from './InProfilePlot';
 
 export default function InProfileTab({ inProfile, setInProfile }) {
   return (
@@ -67,6 +68,9 @@ export default function InProfileTab({ inProfile, setInProfile }) {
           </tbody>
         </table>
       </div>
+
+      {/* Profile Plot */}
+      <ProfilePlot inProfile={inProfile} />
     </div>
   );
 }

@@ -4,20 +4,16 @@ import { getGrooveFields } from '../../data/GrooveDefinitions';
 import GrooveParametersBox from './GrooveParameterBox';
 import RollPassPlot from './RollPassPlot';
 
-// KORRIGIERTE Validierungsfunktion - erlaubt alle Zwischenschritte beim Tippen
 const isValidNumberInput = (value) => {
   // Leere Eingabe erlauben
   if (value === '') {
     return true;
   }
 
-  // Einzelne Zeichen erlauben
   if (value === '-' || value === '+' || value === '.') {
     return true;
   }
 
-  // Pattern erlaubt unvollständige wissenschaftliche Notation
-  // Das '?' nach \d am Ende macht die Ziffer nach +/- optional
   const pattern = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d*)?$/;
 
   return pattern.test(value);
@@ -29,7 +25,6 @@ const parseNumberInput = (value) => {
     return 0;
   }
 
-  // Unvollständige Eingaben wie "100e" oder "100e-" abfangen
   if (value.endsWith('e') || value.endsWith('e-') || value.endsWith('e+') ||
       value.endsWith('E') || value.endsWith('E-') || value.endsWith('E+')) {
     return 0;
