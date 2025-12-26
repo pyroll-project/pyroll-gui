@@ -1,1271 +1,244 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import InProfileTab from './components/InProfileTab/InProfileTab';
+import PassDesignTab from './components/PassDesignTab/PassDesignTab';
+import ResultsTab from './components/ResultsTab/ResultsTab';
+import { runSimulation } from './utils/api';
 
 function App() {
-    const [activeTab, setActiveTab] = useState('inprofile');
-    const [loading, setLoading] = useState(false);
-    const [results, setResults] = useState(null);
+  const [activeTab, setActiveTab] = useState('inprofile');
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
 
-    const [inProfile, setInProfile] = useState({
-        shape: 'round',
-        diameter: 0,
-        temperature: 1200,
-        density: 7850,
-        material: 'C45',
-    });
+  // Initial Profile State
+  const [inProfile, setInProfile] = useState({
+    shape: 'round',
+    diameter: 0,
+    temperature: 1200,
+    density: 0,
+      specific_heat_capacity: 0,
+      thermal_conductivity: 0,
+      pre_strain :0,
+    material: 'C45',
+    materialType: '',
+    flowStressParams: {
+      a: 0,
+      m1: 0,
+      m2: 0,
+      m3: 0,
+      m4: 0,
+      m5: 0,
+      m6: 0,
+      m7: 0,
+      m8: 0,
+      m9: 0,
+      baseStrain: 0.1,
+      baseStrainRate: 0.1
+    }
+  });
 
-    const [tableData, setTableData] = useState([
-        {
-            id: 1,
-            type: 'TwoRollPass',
-            label: 'Stand 1',
-            gap: 0,
-            nominal_radius: 0,
-            velocity: 0,
-            grooveType: 'BoxGroove',
-            groove: {
-                r1: 0,
-                r2: 0,
-                depth: 0,
-                pad_angle: 0,
-                ground_width: 0,
-                usable_width: 0
-            }
-        }
-    ]);
+  // Pass Design State
+  const [tableData, setTableData] = useState([
+    {
+      id: 1,
+      type: 'TwoRollPass',
+      label: 'Stand 1',
+      gap: 0,
+      nominal_radius: 0,
+      velocity: 0,
+      coulomb_friction_coefficient: 0,
+      grooveType: 'BoxGroove',
+      groove: {
+        r1: 0,
+        r2: 0,
+        depth: 0,
+        pad_angle: 0,
+        ground_width: 0,
+        usable_width: 0
+      }
+    }
+  ]);
 
-    const typeOptions = ['TwoRollPass', 'ThreeRollPass', 'Transport', 'CoolingPipe'];
+  const handleRunSimulation = async () => {
+    setLoading(true);
 
-    const getFieldsForType = (type) => {
-        switch (type) {
-            case 'TwoRollPass':
-                return [
-                    {key: 'label', label: 'Label', type: 'string'},
-                    {key: 'gap', label: 'Gap', type: 'number'},
-                    {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
-                    {key: 'velocity', label: 'Velocity', type: 'number'},
-                    {key: 'coulomb_friction_coefficient', label: 'Coulomb Friction Coefficient', type: 'number'},
-                    {
-                        key: 'grooveType', label: 'Groove Type', type: 'select', options: [
-                            'BoxGroove',
-                            'ConstrictedBoxGroove',
-                            'DiamondGroove',
-                            'GothicGroove',
-                            'SquareGroove',
-                            'CircularOvalGroove',
-                            'ConstrictedCircularOvalGroove',
-                            'ConstrictedSwedishOvalGroove',
-                            'FlatOvalGroove',
-                            'Oval3RadiiGroove',
-                            'Oval3RadiiFlankedGroove',
-                            'SwedishOvalGroove',
-                            'UpsetOvalGroove',
-                            'RoundGroove',
-                            'FalseRoundGroove'
-                        ]
-                    },
-                    {key: 'groove', label: 'Groove Parameters', type: 'groove'},
-                ];
-            case 'ThreeRollPass':
-                return [
-                    {key: 'label', label: 'Label', type: 'string'},
-                    {key: 'inscribed_circle_diameter', label: 'Inscribed Circle Diameter (ICD)', type: 'number'},
-                    {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
-                    {key: 'velocity', label: 'Velocity', type: 'number'},
-                    {key: 'coulomb_friction_coefficient', label: 'Coulob Friction Coefficient', type: 'number'},
-                    {key: 'orientation', label: 'Orientation', type: 'string'},
-                    {
-                        key: 'grooveType', label: 'Groove Type', type: 'select', options: [
-                            'CircularOvalGroove',
-                            'RoundGroove',
-                            'FalseRoundGroove'
-                        ]
-                    },
-                    {key: 'groove', label: 'Groove Parameters', type: 'groove'},
-                ];
-            case 'Transport':
-                return [
-                    {key: 'label', label: 'Label', type: 'string'},
-                    {key: 'transportDefineBy', label: 'Define by', type: 'select', options: ['length', 'duration']},
-                    { key: 'transportValue', label: 'Value', type: 'number', unit: '' },
-                    {key: 'environment_temperature', label: 'Environment Temperature', type: 'number'},
-                    {key: 'heat_transfer_coefficient', label: 'Heat Transfer Coefficient', type: 'number'}
-                ];
-            case 'CoolingPipe':
-                return [
-                    {key: 'label', label: 'Label', type: 'string'},
-                    {key: 'coolingDefineBy', label: 'Define by', type: 'select', options: ['length', 'duration']},
-                    { key: 'coolingValue', label: 'Value', type: 'number', unit: '' },
-                    {key: 'inner_radius', label: 'Inner Radius', type: 'number'},
-                    {key: 'coolant_temperature', label: 'Coolant Temperature', type: 'number'},
-                    {key: 'coolant_volume_flux', label: 'Coolant Volume Flux', type: 'number'},
-                ];
-            default:
-                return [];
-        }
-    };
+    const result = await runSimulation(inProfile, tableData);
 
-    const getGrooveFields = (grooveType) => {
-        switch (grooveType) {
-            case 'BoxGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'ground_width', label: 'Ground Width', tooltip: 'Width of the groove ground'},
-                        {
-                            key: 'even_ground_width',
-                            label: 'Even Ground Width',
-                            tooltip: 'Width of the even ground line'
-                        },
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
-                    ],
-                    rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                };
-            case 'ConstrictedBoxGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r4', label: 'R4', tooltip: 'Radius 4 (indent)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'indent', label: 'Indent', tooltip: 'Indentation depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'ground_width', label: 'Ground Width', tooltip: 'Width of the groove ground'},
-                        {
-                            key: 'even_ground_width',
-                            label: 'Even Ground Width',
-                            tooltip: 'Width of the even ground'
-                        },
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
-                    ],
-                    rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                };
-            case 'DiamondGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        }
-                    ],
-                    optional: [
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {
-                            key: 'tip_depth',
-                            label: 'Tip Depth',
-                            tooltip: 'Depth of the intersection of the extrapolated flanks'
-                        },
-                        {key: 'tip_angle', label: 'Tip Angle', tooltip: 'Angle between the flanks'},
-                    ],
-                    rule: 'Exactly two of Usable Width, Tip Depth and Tip Angle must be given.'
-                };
-            case 'GothicGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r3', label: 'R3', tooltip: 'Radius 3 (ground)'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        }
-                    ],
-                optional: [],
-                    rule: ''
-                };
-            case 'SquareGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        }
-                    ],
-                    optional: [
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {
-                            key: 'tip_depth',
-                            label: 'Tip Depth',
-                            tooltip: 'Depth of the intersection of the extrapolated flanks'
-                        },
-                        {key: 'tip_angle', label: 'Tip Angle', tooltip: 'Angle between the flanks'},
-                    ],
-                    rule: 'Exactly two of Usable Width, Tip Depth and Tip Angle must be given. Tip angle is <85° or >95° (no matter if given or calculated internally)'
-                };
-            case 'CircularOvalGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        }
-                    ],
-                    optional: [
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                    ],
-                    rule: 'Exactly two of R2, Usable Width and Depth must be given.'
-                };
-            case 'ConstrictedCircularOvalGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r3', label: 'R3', tooltip: 'Radius 3 (ground)'},
-                        {key: 'r4', label: 'R4', tooltip: 'Radius 4 (indent)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'even_ground_width',  label: 'Even Ground Width', tooltip: 'Width of the even ground'},
-                        {key: 'indent', label: 'Indent', tooltip: 'Indentation depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [],
-                    rule: ''
-                };
-            case 'ConstrictedSwedishOvalGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r4', label: 'R4', tooltip: 'Radius 4 (indent)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'indent', label: 'Indent', tooltip: 'Indentation depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'ground_width', label: 'Ground Width', tooltip: 'Width of the groove ground'},
-                        {
-                            key: 'even_ground_width',
-                            label: 'Even Ground Width',
-                            tooltip: 'Width of the even ground'
-                        },
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
-                    ],
-                    rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                };
-            case 'FlatOvalGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {
-                            key: 'even_ground_width',
-                            label: 'Even Ground Width',
-                            tooltip: 'Width of the even ground'
-                        },
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                    ],
-                    rule: 'Exactly one of the Optional Parameters must be set'
-                };
-            case 'Oval3RadiiGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r3', label: 'R3', tooltip: 'Radius 3 (ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [],
-                    rule: ''
-                };
-            case 'Oval3RadiiFlankedGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r3', label: 'R3', tooltip: 'Radius 3 (ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'flank_angle', label: 'Flank Angle',tooltip: 'Inclination angle of the flanks'},
-                        {key: 'flank_width', label: 'Flank Width',tooltip: 'Horizontal extent of the flanks'},
-                        {key: 'flank_height', label: 'Flank Height',tooltip: 'Vertical extent of the flanks'},
-                        {key: 'flank_length', label: 'Flank Length',tooltip: 'Length of the flanks'},
-                    ],
-                    rule: ''
-                };
-            case 'SwedishOvalGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'ground_width', label: 'Ground Width', tooltip: 'Width of the groove ground'},
-                        {key: 'even_ground_width', label: 'Even Ground Width', tooltip: 'Width of the even ground'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
-                    ],
-                    rule: 'Exactly one of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
-                };
-            case 'UpsetOvalGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'r3', label: 'R3', tooltip: 'Radius 3 (ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle (°)',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [],
-                    rule: ''
-                };
-            case 'RoundGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width'},
-                    ],
-                    rule: 'Exactly two of the Optional Parameters must be set'
-                };
-            case 'FalseRoundGroove':
-                return {
-                    required: [
-                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
-                        {
-                            key: 'pad_angle',
-                            label: 'Pad Angle',
-                            tooltip: 'Angle between z-axis and roll face padding',
-                            default: 0
-                        },
-                    ],
-                    optional: [
-                        {key: 'r2', label: 'R2', tooltip: 'Radius 2 (flank/ground)'},
-                        {key: 'depth', label: 'Depth', tooltip: 'Maximum depth'},
-                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width'},
-                        {key: 'flank_angle', label: 'Flank Angle',tooltip: 'Inclination angle of the flanks'},
-                        {key: 'flank_width', label: 'Flank Width',tooltip: 'Horizontal extent of the flanks'},
-                        {key: 'flank_height', label: 'Flank Height',tooltip: 'Vertical extent of the flanks'},
-                        {key: 'flank_length', label: 'Flank Length',tooltip: 'Length of the flanks'},
-                    ],
-                    rule: 'Exactly two of R2, Depth or Usable Width must be set. Exactly one of Flank Angle, Width, Height or Length must be set.'
-                };
-            default:
-                return {required: [], optional: [], rule: ''};
-        }
-    };
+    if (result.success) {
+      setResults(result.data);
+      setActiveTab('results');
+    } else {
+      alert(`Simulation Failed: ${result.error}\nCheck if Backend is running.`);
+    }
 
-    const handleTypeChange = (id, newType) => {
-        setTableData(prevData =>
-            prevData.map(row => {
-                if (row.id === id) {
-                    const newRow = {id: row.id, type: newType};
+    setLoading(false);
+  };
 
-                    if (newType === 'TwoRollPass') {
-                        newRow.gap = 0;
-                        newRow.nominal_radius = 0;
-                        newRow.velocity = 0;
-                        newRow.grooveType = 'BoxGroove';
-                        newRow.groove = {r1: 0, r2: 0, depth: 0, pad_angle: 0};
-                    } else if (newType === 'ThreeRollPass') {
-                        newRow.inscribed_circle_diameter = 0;
-                        newRow.nominal_radius = 0;
-                        newRow.velocity = 0;
-                        newRow.grooveType = 'RoundGroove';
-                        newRow.groove = {r1: 0, pad_angle: 0};
-                    } else if (newType === 'Transport') {
-                        newRow.transportDefineBy = 'length';
-                    } else if (newType === 'CoolingPipe') {
-                        newRow.coolingDefineBy = 'length';
-                    }
-                    return newRow;
-                }
-                return row;
-            })
-        );
-    };
+  return (
+    <div style={{
+      fontFamily: 'Arial, sans-serif',
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: '20px'
+    }}>
+      <h1 style={{
+        color: '#333',
+        borderBottom: '3px solid #FFDD00',
+        paddingBottom: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px'
+      }}>
+        <svg
+          version="1.1"
+          width="40"
+          height="40"
+          viewBox="0 0 210.8 210.877"
+          style={{flexShrink: 0}}
+        >
+          <g transform="translate(-141.65831,-27.428261)">
+            <path
+              style={{fill: '#ffffff', fillOpacity: 1, stroke: '#ffffff', strokeWidth: 3.77953}}
+              d="m 215.26858,75.661123 c -23.06596,29.823367 -19.85232,70.017267 -12.35039,105.453737 -4.98032,0.86805 -11.34738,2.06028 -21.25973,9.68851 l 15.58899,88.40958 93.96451,-16.56848 c 1.18787,-20.49722 -0.56621,-42.19292 -5.81139,-65.04744 -1.38521,-6.03558 -1.021,-11.55619 3.07775,-15.19696 7.41408,-6.58566 17.46781,-14.55994 23.04182,-27.52084 21.51417,-4.09863 45.21805,-3.33513 64.85042,0.19096 -12.92857,-7.46334 -26.8312,-19.39321 -51.50921,-18.19919 24.10905,-1.91792 38.62987,6.33498 60.6369,17.33742 C 373.91154,130.90772 345.3281,119.5681 320.45218,112.05653 310.23719,45.650945 232.94263,52.809271 215.26858,75.661123 Z"
+              transform="rotate(10,414.98637,-49.079111)"
+            />
+          </g>
+          <g transform="translate(-185.53868,-5.6956442)">
+            <g transform="rotate(10,199.68807,227.2766)">
+              <path
+                style={{fill: '#ffdd00', fillOpacity: 1}}
+                d="m 186.40835,217.74132 10.8391,61.47163 93.96451,-16.56848 c 1.18787,-20.49724 -0.5662,-42.1929 -5.81139,-65.04744 -1.38521,-6.03559 -1.02101,-11.55618 3.07775,-15.19696 7.41408,-6.58566 17.4678,-14.55993 23.04182,-27.52084 l 8.93204,-42.8227 C 310.44781,47.020087 233.86329,51.618897 215.26858,75.661123 191.63088,106.22375 195.57831,147.69136 203.47086,183.7543 c -4.8448,8.12929 -10.6784,19.80683 -17.06251,33.98702 z"
+                transform="translate(-11.819628,-62.209889)"
+              />
+              <path
+                style={{fill: '#d4691e'}}
+                d="m 320.45169,112.05625 c -2.91466,11.38637 -8.1639,19.56889 -19.08754,28.56489 5.2456,3.3297 8.63951,7.95743 10.1555,14.25781 21.51419,-4.09864 45.21803,-3.33514 64.85042,0.19096 -12.92858,-7.46335 -26.83127,-19.39187 -51.5093,-18.19785 24.10907,-1.91792 38.62995,6.33363 60.63701,17.33608 -11.58673,-23.30073 -40.17014,-34.64032 -65.04609,-42.15189 z"
+                transform="translate(-11.819629,-62.209889)"
+              />
+              <path
+                style={{fill: '#1a1a1a', fillOpacity: 1}}
+                d="m 326.54611,120.04225 c 1.73906,-1.73936 4.51945,-1.56299 6.2114,0.38552 l 0.52187,0.5952 -0.62023,0.6217 c -1.69149,1.68523 -4.39651,1.51966 -6.04136,-0.36894 l -0.60116,-0.69819 z"
+                transform="translate(-11.819629,-62.209889)"
+              />
+              <path
+                style={{fill: '#1a1a1a', fillOpacity: 1}}
+                d="m 271.41169,87.912335 c -10.12501,0.263686 -22.26354,15.262175 -32.71061,18.714515 -1.97454,0.65249 -2.19154,4.51285 0,5.16015 11.09415,3.27676 25.85719,18.35703 37.2118,15.78144 22.80167,-5.17217 25.28444,-7.04001 39.5037,-2.77143 2.37271,-1.42937 7.43616,-11.30287 5.06345,-12.73221 -20.21561,-3.76888 -34.13472,-24.541389 -49.06834,-24.152465 z"
+                transform="translate(-11.819629,-62.209889)"
+              />
+              <ellipse
+                style={{fill: '#d4691e', fillOpacity: 1}}
+                cx="262.07318"
+                cy="131.59364"
+                rx="14"
+                ry="16"
+                transform="rotate(-5,-718.33017,104.25206)"
+              />
+              <ellipse
+                style={{fill: '#000000', fillOpacity: 1}}
+                cx="262.07318"
+                cy="131.59364"
+                rx="10"
+                ry="12"
+                transform="rotate(-5,-718.33017,104.25206)"
+              />
+              <ellipse
+                style={{fill: '#ffffff'}}
+                cx="237.37843"
+                cy="175.65837"
+                rx="3.87"
+                ry="4.21"
+                transform="rotate(-15,-242.17532,13.784553)"
+              />
+              <path
+                style={{fill: '#1a1a1a', fillOpacity: 1}}
+                d="m 181.65846,190.80337 15.58899,88.40958 74.04331,-13.05584 c 4.32758,-15.2772 5.12095,-30.11965 1.10961,-44.05137 -9.28437,-32.24539 -42.24236,-48.4186 -75.15176,-39.77303 -5.02834,1.32099 -10.24487,4.35711 -15.59015,8.47066 z"
+                transform="translate(-11.819629,-62.209889)"
+              />
+            </g>
+          </g>
+        </svg>
+        PyRoll Simulation
+      </h1>
 
-    const handleGrooveTypeChange = (id, newGrooveType) => {
-        setTableData(prevData =>
-            prevData.map(row => {
-                if (row.id === id) {
-                    const grooveFields = getGrooveFields(newGrooveType);
-                    const newGroove = {};
+      {/* Tab Navigation */}
+      <div style={{
+        display: 'flex',
+        borderBottom: '2px solid #ddd',
+        marginBottom: '20px'
+      }}>
+        <button
+          onClick={() => setActiveTab('inprofile')}
+          style={{
+            padding: '12px 24px',
+            border: 'none',
+            background: activeTab === 'inprofile' ? '#FFDD00' : '#f1f1f1',
+            color: '#333',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            borderRadius: '5px 5px 0 0',
+            marginRight: '5px',
+            transition: 'background 0.3s'
+          }}
+        >
+          In Profile
+        </button>
+        <button
+          onClick={() => setActiveTab('passdesign')}
+          style={{
+            padding: '12px 24px',
+            border: 'none',
+            background: activeTab === 'passdesign' ? '#FFDD00' : '#f1f1f1',
+            color: '#333',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            borderRadius: '5px 5px 0 0',
+            marginRight: '5px',
+            transition: 'background 0.3s'
+          }}
+        >
+          Pass Design
+        </button>
+        <button
+          onClick={() => setActiveTab('results')}
+          style={{
+            padding: '12px 24px',
+            border: 'none',
+            background: activeTab === 'results' ? '#FFDD00' : '#f1f1f1',
+            color: '#333',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            borderRadius: '5px 5px 0 0',
+            transition: 'background 0.3s'
+          }}
+        >
+          Results
+        </button>
+      </div>
 
-                    grooveFields.required.forEach(field => {
-                        newGroove[field.key] = field.default !== undefined ? field.default : 0;
-                    });
+      {/* Tab Content */}
+      {activeTab === 'inprofile' && (
+        <InProfileTab
+          inProfile={inProfile}
+          setInProfile={setInProfile}
+        />
+      )}
 
-                    return {...row, grooveType: newGrooveType, groove: newGroove};
-                }
-                return row;
-            })
-        );
-    };
+      {activeTab === 'passdesign' && (
+        <PassDesignTab
+          tableData={tableData}
+          setTableData={setTableData}
+          loading={loading}
+          runSimulation={handleRunSimulation}
+        />
+      )}
 
-    const handleGrooveParamChange = (id, paramKey, value) => {
-        setTableData(prevData =>
-            prevData.map(row => {
-                if (row.id === id) {
-                    return {
-                        ...row,
-                        groove: {
-                            ...row.groove,
-                            [paramKey]: value
-                        }
-                    };
-                }
-                return row;
-            })
-        );
-    };
-
-    const toggleGrooveOptionalParam = (id, paramKey) => {
-        setTableData(prevData =>
-            prevData.map(row => {
-                if (row.id === id) {
-                    const newGroove = {...row.groove};
-                    if (newGroove[paramKey] !== undefined) {
-                        delete newGroove[paramKey];
-                    } else {
-                        newGroove[paramKey] = 0;
-                    }
-                    return {...row, groove: newGroove};
-                }
-                return row;
-            })
-        );
-    };
-
-    const handleInputChange = (id, field, value) => {
-        setTableData(prevData =>
-            prevData.map(row =>
-                row.id === id ? {...row, [field]: value} : row
-            )
-        );
-    };
-
-    const addRow = () => {
-        const newId = Math.max(...tableData.map(r => r.id)) + 1;
-        setTableData([...tableData, {
-            id: newId,
-            type: 'TwoRollPass',
-            gap: 0,
-            nominal_radius: 0,
-            velocity: 0,
-            grooveType: 'BoxGroove',
-            groove: {r1: 0, r2: 0, depth: 0, pad_angle: 0}
-        }]);
-    };
-
-    const getUnitForField = (row, field) => {
-        if (row.type === 'Transport' && field.key === 'transportValue') {
-            return row.transportDefineBy === 'length' ? 'mm' : 's';
-        }
-        if (row.type === 'CoolingPipe' && field.key === 'coolingValue') {
-            return row.coolingDefineBy === 'length' ? 'mm' : '°C/s';
-        }
-        return '';
-    };
-
-    const deleteRow = (id) => {
-        if (tableData.length > 1) {
-            setTableData(tableData.filter(row => row.id !== id));
-        }
-    };
-
-    const runSimulation = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch('http://localhost:8000/api/simulate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    passDesignData: tableData
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Simulation Failed');
-            }
-
-            const data = await response.json();
-            setResults(data);
-            setActiveTab('results');
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Simulation Failed. Check if Backend is running.');
-        }
-        setLoading(false);
-    };
-
-    return (
-        <div style={{fontFamily: 'Arial, sans-serif', maxWidth: '1400px', margin: '0 auto', padding: '20px'}}>
-            <h1 style={{color: '#333', borderBottom: '3px solid #4CAF50', paddingBottom: '10px'}}>
-                PyRoll Simulation
-            </h1>
-
-            {/* Tab Navigation */}
-            <div style={{display: 'flex', borderBottom: '2px solid #ddd', marginBottom: '20px'}}>
-                <button
-                    onClick={() => setActiveTab('inprofile')}
-                    style={{
-                        padding: '12px 24px',
-                        border: 'none',
-                        background: activeTab === 'inprofile' ? '#4CAF50' : '#f1f1f1',
-                        color: activeTab === 'inprofile' ? 'white' : '#333',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        borderRadius: '5px 5px 0 0',
-                        marginRight: '5px',
-                        transition: 'background 0.3s'
-                    }}
-                >
-                    In Profile
-                </button>
-                <button
-                    onClick={() => setActiveTab('passdesign')}
-                    style={{
-                        padding: '12px 24px',
-                        border: 'none',
-                        background: activeTab === 'passdesign' ? '#4CAF50' : '#f1f1f1',
-                        color: activeTab === 'passdesign' ? 'white' : '#333',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        borderRadius: '5px 5px 0 0',
-                        marginRight: '5px',
-                        transition: 'background 0.3s'
-                    }}
-                >
-                    Pass Design
-                </button>
-                <button
-                    onClick={() => setActiveTab('results')}
-                    style={{
-                        padding: '12px 24px',
-                        border: 'none',
-                        background: activeTab === 'results' ? '#4CAF50' : '#f1f1f1',
-                        color: activeTab === 'results' ? 'white' : '#333',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        borderRadius: '5px 5px 0 0',
-                        transition: 'background 0.3s'
-                    }}
-                >
-                    Results
-                </button>
-            </div>
-
-           {/* In Profile Tab */}
-            {activeTab === 'inprofile' && (
-                <div>
-                    <h2 style={{color: '#555'}}>Initial Profile Configuration</h2>
-
-                    <div style={{overflowX: 'auto'}}>
-                        <table style={{
-                            width: '100%',
-                            borderCollapse: 'collapse',
-                            marginTop: '20px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        }}>
-                            <thead>
-                            <tr style={{background: '#2196F3', color: 'white'}}>
-                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Shape</th>
-                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd'}}>Parameters</th>
-                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Temperature (°C)</th>
-                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Density (kg/m³)</th>
-                                <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Material</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr style={{background: '#f9f9f9'}}>
-                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                    <select
-                                        value={inProfile.shape}
-                                        onChange={(e) => setInProfile({...inProfile, shape: e.target.value})}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px',
-                                            border: '1px solid #ddd',
-                                            borderRadius: '4px',
-                                            fontSize: '14px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <option value="round">Round</option>
-                                        <option value="square">Square</option>
-                                        <option value="box">Box</option>
-                                        <option value="hexagon">Hexagon</option>
-                                    </select>
-                                </td>
-                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                                        {inProfile.shape === 'round' && (
-                                            <div style={{minWidth: '150px'}}>
-                                                <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                    Diameter (mm)
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    value={inProfile.diameter || 0}
-                                                    onChange={(e) => setInProfile({...inProfile, diameter: parseFloat(e.target.value) || 0})}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '8px',
-                                                        border: '1px solid #ddd',
-                                                        borderRadius: '4px',
-                                                        fontSize: '14px'
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
-                                        {inProfile.shape === 'square' && (
-                                            <>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Side (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.side || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, side: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Corner Radius (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.corner_radius || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, corner_radius: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
-                                        {inProfile.shape === 'box' && (
-                                            <>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Height (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.height || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, height: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Width (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.width || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, width: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Corner Radius (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.corner_radius || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, corner_radius: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
-                                        {inProfile.shape === 'hexagon' && (
-                                            <>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Side (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.side || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, side: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div style={{minWidth: '150px'}}>
-                                                    <label style={{fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px'}}>
-                                                        Corner Radius (mm)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        value={inProfile.corner_radius || 0}
-                                                        onChange={(e) => setInProfile({...inProfile, corner_radius: parseFloat(e.target.value) || 0})}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '8px',
-                                                            border: '1px solid #ddd',
-                                                            borderRadius: '4px',
-                                                            fontSize: '14px'
-                                                        }}
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                </td>
-                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                    <input
-                                        type="number"
-                                        value={inProfile.temperature}
-                                        onChange={(e) => setInProfile({...inProfile, temperature: parseFloat(e.target.value) || 0})}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px',
-                                            border: '1px solid #ddd',
-                                            borderRadius: '4px',
-                                            fontSize: '14px'
-                                        }}
-                                    />
-                                </td>
-                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                    <input
-                                        type="number"
-                                        value={inProfile.density}
-                                        onChange={(e) => setInProfile({...inProfile, density: parseFloat(e.target.value) || 0})}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px',
-                                            border: '1px solid #ddd',
-                                            borderRadius: '4px',
-                                            fontSize: '14px'
-                                        }}
-                                    />
-                                </td>
-                                <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                    <input
-                                        type="text"
-                                        value={inProfile.material}
-                                        onChange={(e) => setInProfile({...inProfile, material: e.target.value})}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px',
-                                            border: '1px solid #ddd',
-                                            borderRadius: '4px',
-                                            fontSize: '14px'
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
-
-            {/* PassDesign Tab */}
-            {activeTab === 'passdesign' && (
-                <div>
-                    <h2 style={{color: '#555'}}>Pass Design Configuration and Mill Layout</h2>
-
-                    <div style={{overflowX: 'auto'}}>
-                        <table style={{
-                            width: '100%',
-                            borderCollapse: 'collapse',
-                            marginTop: '20px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                            minWidth: '800px'
-                        }}>
-                            <thead>
-                            <tr style={{background: '#4CAF50', color: 'white'}}>
-                                <th style={{
-                                    padding: '12px',
-                                    textAlign: 'left',
-                                    borderBottom: '2px solid #ddd',
-                                    minWidth: '60px'
-                                }}>Unit Nr.
-                                </th>
-                                <th style={{
-                                    padding: '12px',
-                                    textAlign: 'left',
-                                    borderBottom: '2px solid #ddd',
-                                    minWidth: '150px'
-                                }}>Type
-                                </th>
-                                <th style={{
-                                    padding: '12px',
-                                    textAlign: 'left',
-                                    borderBottom: '2px solid #ddd'
-                                }}>Parameters
-                                </th>
-                                <th style={{
-                                    padding: '12px',
-                                    textAlign: 'center',
-                                    borderBottom: '2px solid #ddd',
-                                    minWidth: '80px'
-                                }}>Action
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {tableData.map((row, index) => {
-                                const fields = getFieldsForType(row.type);
-                                return (
-                                    <tr key={row.id} style={{background: index % 2 === 0 ? '#f9f9f9' : 'white'}}>
-                                        <td style={{
-                                            padding: '10px',
-                                            borderBottom: '1px solid #ddd',
-                                            fontWeight: 'bold'
-                                        }}>
-                                            {row.id}
-                                        </td>
-                                        <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                            <select
-                                                value={row.type}
-                                                onChange={(e) => handleTypeChange(row.id, e.target.value)}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '8px',
-                                                    border: '1px solid #ddd',
-                                                    borderRadius: '4px',
-                                                    fontSize: '14px',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {typeOptions.map(option => (
-                                                    <option key={option} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                        </td>
-                                        <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                                            <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                                                {fields.map(field => {
-                                                    if (field.type === 'groove') {
-                                                        const grooveFields = getGrooveFields(row.grooveType);
-                                                        const activeOptionalCount = grooveFields.optional.filter(
-                                                            f => row.groove && row.groove[f.key] !== undefined
-                                                        ).length;
-
-                                                        return (
-                                                            <div key={field.key} style={{
-                                                                width: '100%',
-                                                                padding: '10px',
-                                                                background: '#f0f8ff',
-                                                                borderRadius: '8px',
-                                                                border: '1px solid #ccc'
-                                                            }}>
-                                                                <div style={{
-                                                                    marginBottom: '10px',
-                                                                    fontSize: '13px',
-                                                                    color: '#666',
-                                                                    fontStyle: 'italic'
-                                                                }}>
-                                                                    {grooveFields.rule}
-                                                                </div>
-
-                                                                <div style={{
-                                                                    fontWeight: 'bold',
-                                                                    marginBottom: '8px',
-                                                                    color: '#333'
-                                                                }}>
-                                                                    Required Parameters:
-                                                                </div>
-                                                                <div style={{
-                                                                    display: 'flex',
-                                                                    gap: '10px',
-                                                                    flexWrap: 'wrap',
-                                                                    marginBottom: '15px'
-                                                                }}>
-                                                                    {grooveFields.required.map(gf => (
-                                                                        <div key={gf.key} style={{minWidth: '140px'}}>
-                                                                            <label style={{
-                                                                                fontSize: '12px',
-                                                                                color: '#666',
-                                                                                display: 'block',
-                                                                                marginBottom: '4px'
-                                                                            }}>
-                                                                                {gf.label}
-                                                                            </label>
-                                                                            <input
-                                                                                type="number"
-                                                                                value={row.groove?.[gf.key] ?? (gf.default || 0)}
-                                                                                onChange={(e) => handleGrooveParamChange(row.id, gf.key, parseFloat(e.target.value) || 0)}
-                                                                                style={{
-                                                                                    width: '100%',
-                                                                                    padding: '6px',
-                                                                                    border: '1px solid #ddd',
-                                                                                    borderRadius: '4px',
-                                                                                    fontSize: '14px'
-                                                                                }}
-                                                                            />
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-
-                                                                <div style={{
-                                                                    fontWeight: 'bold',
-                                                                    marginBottom: '8px',
-                                                                    color: '#333'
-                                                                }}>
-                                                                    Optional Parameters:
-                                                                </div>
-                                                                <div style={{
-                                                                    display: 'flex',
-                                                                    gap: '10px',
-                                                                    flexWrap: 'wrap'
-                                                                }}>
-                                                                    {grooveFields.optional.map(gf => {
-                                                                        const isActive = row.groove?.[gf.key] !== undefined;
-                                                                        return (
-                                                                            <div key={gf.key} style={{
-                                                                                minWidth: '140px',
-                                                                                opacity: isActive ? 1 : 0.6
-                                                                            }}>
-                                                                                <div style={{
-                                                                                    display: 'flex',
-                                                                                    alignItems: 'center',
-                                                                                    marginBottom: '4px'
-                                                                                }}>
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        checked={isActive}
-                                                                                        onChange={() => toggleGrooveOptionalParam(row.id, gf.key)}
-                                                                                        style={{
-                                                                                            marginRight: '6px',
-                                                                                            cursor: 'pointer'
-                                                                                        }}
-                                                                                    />
-                                                                                    <label style={{
-                                                                                        fontSize: '12px',
-                                                                                        color: '#666',
-                                                                                        cursor: 'pointer'
-                                                                                    }}>
-                                                                                        {gf.label}
-                                                                                    </label>
-                                                                                </div>
-                                                                                {isActive && (
-                                                                                    <input
-                                                                                        type="number"
-                                                                                        value={row.groove[gf.key] || 0}
-                                                                                        onChange={(e) => handleGrooveParamChange(row.id, gf.key, parseFloat(e.target.value) || 0)}
-                                                                                        style={{
-                                                                                            width: '100%',
-                                                                                            padding: '6px',
-                                                                                            border: '1px solid #ddd',
-                                                                                            borderRadius: '4px',
-                                                                                            fontSize: '14px'
-                                                                                        }}
-                                                                                    />
-                                                                                )}
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                </div>
-
-                                                                <div style={{
-                                                                    marginTop: '10px',
-                                                                    padding: '8px',
-                                                                    background: activeOptionalCount === 2 ? '#d4edda' : '#f8d7da',
-                                                                    borderRadius: '4px',
-                                                                    fontSize: '12px',
-                                                                    color: activeOptionalCount === 2 ? '#155724' : '#721c24'
-                                                                }}>
-                                                                    {activeOptionalCount === 2
-                                                                        ? '✓ Valid: Exactly 2 optional parameters selected'
-                                                                        : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly 2)`
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    }
-
-                                                    return (
-                                                        <div key={field.key} style={{
-                                                            display: 'flex',
-                                                            flexDirection: 'column',
-                                                            minWidth: '150px'
-                                                        }}>
-                                                            <label style={{
-                                                                fontSize: '12px',
-                                                                color: '#666',
-                                                                marginBottom: '4px'
-                                                            }}>
-                                                                {field.label} {field.key === 'transportValue' || field.key === 'coolingValue' ? `(${getUnitForField(row, field)})` : ''}
-                                                            </label>
-                                                            {field.type === 'select' ? (
-                                                                <select
-                                                                    value={field.key === 'grooveType' ? row.grooveType : (row[field.key] || field.options[0])}
-                                                                    onChange={(e) => {
-                                                                        if (field.key === 'grooveType') {
-                                                                            handleGrooveTypeChange(row.id, e.target.value);
-                                                                        } else {
-                                                                            handleInputChange(row.id, field.key, e.target.value);
-                                                                        }
-                                                                    }}
-                                                                    style={{
-                                                                        padding: '6px',
-                                                                        border: '1px solid #ddd',
-                                                                        borderRadius: '4px',
-                                                                        fontSize: '14px',
-                                                                        cursor: 'pointer'
-                                                                    }}
-                                                                >
-                                                                    {field.options.map(option => (
-                                                                        <option key={option} value={option}>
-                                                                            {option.charAt(0).toUpperCase() + option.slice(1)}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            ) : (
-                                                                <input
-                                                                    type={field.type}
-                                                                    value={row[field.key] || 0}
-                                                                    onChange={(e) => handleInputChange(row.id, field.key, parseFloat(e.target.value) || 0)}
-                                                                    style={{
-                                                                        padding: '6px',
-                                                                        border: '1px solid #ddd',
-                                                                        borderRadius: '4px',
-                                                                        fontSize: '14px'
-                                                                    }}
-                                                                />
-                                                            )}
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </td>
-                                        <td style={{
-                                            padding: '10px',
-                                            borderBottom: '1px solid #ddd',
-                                            textAlign: 'center'
-                                        }}>
-                                            <button
-                                                onClick={() => deleteRow(row.id)}
-                                                disabled={tableData.length === 1}
-                                                style={{
-                                                    padding: '6px 12px',
-                                                    background: tableData.length === 1 ? '#ccc' : '#f44336',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: tableData.length === 1 ? 'not-allowed' : 'pointer',
-                                                    fontSize: '14px'
-                                                }}
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style={{marginTop: '20px', display: 'flex', gap: '10px'}}>
-                        <button
-                            onClick={addRow}
-                            style={{
-                                padding: '10px 20px',
-                                background: '#2196F3',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                                cursor: 'pointer',
-                                transition: 'background 0.3s'
-                            }}
-                        >
-                            + Add Unit
-                        </button>
-
-                        <button
-                            onClick={runSimulation}
-                            disabled={loading}
-                            style={{
-                                padding: '12px 32px',
-                                background: loading ? '#ccc' : '#4CAF50',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                fontSize: '16px',
-                                fontWeight: 'bold',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                                transition: 'background 0.3s'
-                            }}
-                        >
-                            {loading ? 'Simulation running' : 'Start Simulation'}
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Results Tab */}
-            {activeTab === 'results' && (
-                <div>
-                    <h2 style={{color: '#555'}}>Simulation Results</h2>
-
-                    {results ? (
-                        <div style={{
-                            background: '#f9f9f9',
-                            padding: '20px',
-                            borderRadius: '8px',
-                            marginTop: '20px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}>
-                            <h3 style={{color: '#4CAF50'}}>Result:</h3>
-                            <pre style={{
-                                background: 'white',
-                                padding: '15px',
-                                borderRadius: '5px',
-                                overflow: 'auto',
-                                maxHeight: '600px'
-                            }}>
-                {JSON.stringify(results, null, 2)}
-              </pre>
-                        </div>
-                    ) : (
-                        <div style={{
-                            background: '#fff3cd',
-                            padding: '20px',
-                            borderRadius: '8px',
-                            marginTop: '20px',
-                            border: '1px solid #ffc107'
-                        }}>
-                            <p style={{margin: 0, color: '#856404'}}>
-                                No Results ready. Run Simulation.
-                            </p>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+      {activeTab === 'results' && (
+        <ResultsTab results={results} />
+      )}
+    </div>
+  );
 }
 
 export default App;

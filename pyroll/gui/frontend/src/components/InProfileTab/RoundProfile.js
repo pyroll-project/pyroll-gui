@@ -1,0 +1,13 @@
+import React from "react";
+import InputField from "./InputField";
+
+export default function RoundProfile({ inProfile, setInProfile }) {
+  return (
+    <InputField
+      label="Diameter (mm)"
+      type="number"
+      value={inProfile.diameter || 0}
+      onChange={(value) => setInProfile({...inProfile, diameter: value})}
+    />
+  );
+}
