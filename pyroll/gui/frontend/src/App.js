@@ -156,7 +156,7 @@ function App() {
             </g>
           </g>
         </svg>
-        PyRoll Simulation
+        PyRolL Basic WebGUI - Beta
       </h1>
 
       {/* Tab Navigation */}
