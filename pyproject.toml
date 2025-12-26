@@ -22,8 +22,9 @@ classifiers = [
 requires-python = ">=3.9, <4.0"
 dependencies = [
     "pyroll-basic",
-    "PySide6",
-    "pyinstaller"
+    "uvicorn",
+    "fastapi",
+    "pydantic",
 ]
 
 dynamic = ["version"]

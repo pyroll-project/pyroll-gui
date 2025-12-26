@@ -1,0 +1,27 @@
+import React from "react";
+import InputField from "./InputField";
+
+export default function BoxProfile({ inProfile, setInProfile }) {
+  return (
+    <>
+      <InputField
+        label="Height"
+        type="number"
+        value={inProfile.height || 0}
+        onChange={(value) => setInProfile({...inProfile, height: value})}
+      />
+      <InputField
+        label="Width"
+        type="number"
+        value={inProfile.width || 0}
+        onChange={(value) => setInProfile({...inProfile, width: value})}
+      />
+      <InputField
+        label="Corner Radius"
+        type="number"
+        value={inProfile.corner_radius || 0}
+        onChange={(value) => setInProfile({...inProfile, corner_radius: value})}
+      />
+    </>
+  );
+}
