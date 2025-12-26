@@ -168,8 +168,8 @@ export default function PassDesignLoader({ setTableData, onNotification }) {
         onClick={handleClick}
         style={{
           padding: '10px 20px',
-          background: '#2196F3',
-          color: 'white',
+          background: '#FFDD00',
+          color: 'black',
           border: 'none',
           borderRadius: '5px',
           fontSize: '14px',
@@ -180,8 +180,8 @@ export default function PassDesignLoader({ setTableData, onNotification }) {
           alignItems: 'center',
           gap: '8px'
         }}
-        onMouseOver={(e) => e.currentTarget.style.background = '#1976D2'}
-        onMouseOut={(e) => e.currentTarget.style.background = '#2196F3'}
+        onMouseOver={(e) => e.currentTarget.style.background = '#FFEE77'}
+        onMouseOut={(e) => e.currentTarget.style.background = '#FFDD00'}
         title="Load Pass Design from XML-file."
       >
         Load from XML

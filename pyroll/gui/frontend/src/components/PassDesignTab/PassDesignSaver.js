@@ -133,8 +133,8 @@ export default function PassDesignSaver({ tableData, onNotification }) {
       onClick={handleExport}
       style={{
         padding: '10px 20px',
-        background: '#4CAF50',
-        color: 'white',
+        background: '#FFDD00',
+        color: 'black',
         border: 'none',
         borderRadius: '5px',
         fontSize: '14px',
@@ -145,8 +145,8 @@ export default function PassDesignSaver({ tableData, onNotification }) {
         alignItems: 'center',
         gap: '8px'
       }}
-      onMouseOver={(e) => e.currentTarget.style.background = '#45a049'}
-      onMouseOut={(e) => e.currentTarget.style.background = '#4CAF50'}
+      onMouseOver={(e) => e.currentTarget.style.background = '#FFEE77'}
+      onMouseOut={(e) => e.currentTarget.style.background = '#FFDD00'}
       title="Save Pass Design as XML."
     >
       Save as XML

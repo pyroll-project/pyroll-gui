@@ -19,8 +19,8 @@ export default function InProfileTab({ inProfile, setInProfile }) {
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         }}>
           <thead>
-            <tr style={{background: '#2196F3', color: 'white'}}>
-              <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Shape</th>
+            <tr style={{background: '#FFDD00', color: 'black'}}>
+              <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', minWidth: '150px'}}>Type</th>
               <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd'}}>Parameters</th>
             </tr>
           </thead>

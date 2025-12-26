@@ -80,8 +80,8 @@ export default function PassDesignTab({
           onClick={addRow}
           style={{
             padding: '10px 20px',
-            background: '#9C27B0',
-            color: 'white',
+            background: '#FFDD00',
+            color: 'black',
             border: 'none',
             borderRadius: '5px',
             fontSize: '14px',
@@ -92,10 +92,9 @@ export default function PassDesignTab({
             alignItems: 'center',
             gap: '8px'
           }}
-          onMouseOver={(e) => e.currentTarget.style.background = '#7B1FA2'}
-          onMouseOut={(e) => e.currentTarget.style.background = '#9C27B0'}
+          onMouseOver={(e) => e.currentTarget.style.background = '#FFEE77'}
+          onMouseOut={(e) => e.currentTarget.style.background = '#FFDD00'}
         >
-          <span>➕</span>
           Add Unit
         </button>
 
@@ -123,7 +122,7 @@ export default function PassDesignTab({
           onClick={runSimulation}
           disabled={loading}
           style={{
-            padding: '12px 32px',
+            padding: '10px 20px',
             background: loading ? '#ccc' : '#FFDD00',
             color: loading ? '#666' : '#333',
             border: 'none',
@@ -137,7 +136,7 @@ export default function PassDesignTab({
             gap: '8px'
           }}
           onMouseOver={(e) => {
-            if (!loading) e.currentTarget.style.background = '#FFD700';
+            if (!loading) e.currentTarget.style.background = '#FFEE77';
           }}
           onMouseOut={(e) => {
             if (!loading) e.currentTarget.style.background = '#FFDD00';
