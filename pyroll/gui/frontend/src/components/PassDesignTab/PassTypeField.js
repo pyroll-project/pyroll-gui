@@ -4,6 +4,45 @@ import { getGrooveFields } from '../../data/GrooveDefinitions';
 import GrooveParametersBox from './GrooveParameterBox';
 import RollPassPlot from './RollPassPlot';
 
+// KORRIGIERTE Validierungsfunktion - erlaubt alle Zwischenschritte beim Tippen
+const isValidNumberInput = (value) => {
+  // Leere Eingabe erlauben
+  if (value === '') {
+    return true;
+  }
+
+  // Einzelne Zeichen erlauben
+  if (value === '-' || value === '+' || value === '.') {
+    return true;
+  }
+
+  // Pattern erlaubt unvollständige wissenschaftliche Notation
+  // Das '?' nach \d am Ende macht die Ziffer nach +/- optional
+  const pattern = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d*)?$/;
+
+  return pattern.test(value);
+};
+
+// Hilfsfunktion zum Parsen - nur für onBlur
+const parseNumberInput = (value) => {
+  if (!value || value === '-' || value === '.' || value === '+') {
+    return 0;
+  }
+
+  // Unvollständige Eingaben wie "100e" oder "100e-" abfangen
+  if (value.endsWith('e') || value.endsWith('e-') || value.endsWith('e+') ||
+      value.endsWith('E') || value.endsWith('E-') || value.endsWith('E+')) {
+    return 0;
+  }
+
+  try {
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
+  } catch (error) {
+    return 0;
+  }
+};
+
 export default function PassTypeFields({ row, fields, tableData, setTableData }) {
   const handleInputChange = (field, value) => {
     setTableData(prevData =>
@@ -77,11 +116,37 @@ export default function PassTypeFields({ row, fields, tableData, setTableData })
                     </option>
                   ))}
                 </select>
+              ) : field.type === 'number' ? (
+                <input
+                  type="text"
+                  value={row[field.key] !== undefined && row[field.key] !== null ? row[field.key] : ''}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+
+                    // Validierung - erlaubt wissenschaftliche Notation während des Tippens
+                    if (isValidNumberInput(inputValue)) {
+                      handleInputChange(field.key, inputValue);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    // Bei Blur: Konvertiere zu Nummer
+                    const inputValue = e.target.value;
+                    const numValue = parseNumberInput(inputValue);
+                    handleInputChange(field.key, numValue);
+                  }}
+                  placeholder="z.B. 100e-3"
+                  style={{
+                    padding: '6px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
               ) : (
                 <input
                   type={field.type}
-                  value={row[field.key] || 0}
-                  onChange={(e) => handleInputChange(field.key, parseFloat(e.target.value) || 0)}
+                  value={row[field.key] || ''}
+                  onChange={(e) => handleInputChange(field.key, e.target.value)}
                   style={{
                     padding: '6px',
                     border: '1px solid #ddd',
@@ -95,7 +160,6 @@ export default function PassTypeFields({ row, fields, tableData, setTableData })
         })}
       </div>
 
-      {/* Roll Pass Visualization - nur für TwoRollPass und ThreeRollPass */}
       {isRollPass && <RollPassPlot row={row} />}
     </div>
   );
