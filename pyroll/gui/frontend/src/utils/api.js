@@ -12,39 +12,29 @@ export const runSimulation = async (inProfile, passDesignData) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.errors || `HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    return { success: true, data };
+    const result = await response.json();
+
+    if (result.success) {
+      return {
+        success: true,
+        data: result.pyroll_results
+      };
+    } else {
+      return {
+        success: false,
+        error: result.errors || 'Unknown simulation error'
+      };
+    }
+
   } catch (error) {
     console.error('Simulation API Error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-export const getDefaultParameters = async () => {
-  try {
-    const response = await fetch('http://localhost:8000/api/parameters');
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return { success: true, data };
-  } catch (error) {
-    console.error('API Error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Optional: Health Check
-export const checkBackendHealth = async () => {
-  try {
-    const response = await fetch('http://localhost:8000/health');
-    return response.ok;
-  } catch (error) {
-    return false;
+    return {
+      success: false,
+      error: error.message || 'Network error - Check if backend is running'
+    };
   }
 };

@@ -22,14 +22,12 @@ export default function ProfilePlot({ inProfile }) {
     // Clear previous plot
     d3.select(plotRef.current).selectAll("*").remove();
 
-    // Dimensions
     const width = 600;
     const height = 500;
     const margin = { top: 40, right: 40, bottom: 50, left: 60 };
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3.select(plotRef.current)
       .append("svg")
       .attr("width", width)
@@ -82,14 +80,12 @@ export default function ProfilePlot({ inProfile }) {
       .attr("stroke", "#e0e0e0")
       .attr("stroke-dasharray", "2,2");
 
-    // Line generator
     const line = d3.line()
       .x((d, i) => xScale(contour.x[i]))
       .y((d, i) => yScale(contour.y[i]));
 
     const indices = d3.range(contour.x.length);
 
-    // Draw profile with matplotlib C0 color
     g.append("path")
       .datum(indices)
       .attr("d", line)
@@ -98,7 +94,6 @@ export default function ProfilePlot({ inProfile }) {
       .attr("stroke", "#1f77b4")
       .attr("stroke-width", 2.5);
 
-    // Axes
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
@@ -111,7 +106,6 @@ export default function ProfilePlot({ inProfile }) {
       .call(yAxis)
       .attr("stroke", "#333");
 
-    // Labels
     svg.append("text")
       .attr("x", width / 2)
       .attr("y", height - 10)

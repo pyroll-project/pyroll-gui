@@ -1,23 +1,88 @@
-from typing import Dict, List, Any
-import numpy as np
+from typing import Dict, Any
 
-from pyroll.core import Profile, PassSequence, Roll, RollPass, Transport, CoolingPipe, ThreeRollPass
+from pyroll.core import Profile, Roll, RollPass, Transport, CoolingPipe, ThreeRollPass
 from pyroll.core import grooves
-from pyroll.core.roll.hookimpls import nominal_radius
+from pyroll.freiberg_flow_stress import FreibergFlowStressCoefficients
 
-def create_profile(groove_type: str, groove_params: Dict[str, Any]):
-    try:
-        groove_class = getattr(grooves, groove_type)
-    except AttributeError:
-        raise ValueError(f"Unknown groove type: {groove_type}")
 
-    clean_params = {k: v for k, v in groove_params.items() if v is not None}
+def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
+    shape = in_profile_data.get('shape')
+    flow_stress_params = in_profile_data.get('flowStressParams', {})
 
-    try:
-        groove = groove_class(**clean_params)
-        return groove
-    except Exception as e:
-        raise ValueError(f"Error creating {groove_type}: {str(e)}")
+    if shape == 'round':
+
+        in_profile = Profile.round(
+            diameter=in_profile_data.get('diameter'),
+            temperature=in_profile_data.get('temperature'),
+            strain=in_profile_data.get('strain'),
+            material=in_profile_data.get('material'),
+            density=in_profile_data.get('density'),
+            specific_heat_capacity=in_profile_data.get('specific_heat_capacity'),
+            thermal_conductivity=in_profile_data.get('thermal_conductivity'),
+        )
+
+        if flow_stress_params and any(flow_stress_params.values()):
+            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
+                in_profile.get(flow_stress_params))
+
+        return in_profile
+
+    elif shape == 'square':
+        in_profile = Profile.square(
+            side=in_profile_data.get('side'),
+            corner_radius=in_profile_data.get('corner_radius'),
+            temperature=in_profile_data.get('temperature'),
+            strain=in_profile_data.get('strain'),
+            material=in_profile_data.get('material'),
+            density=in_profile_data.get('density'),
+            specific_heat_capacity=in_profile_data.get('specific_heat_capacity'),
+            thermal_conductivity=in_profile_data.get('thermal_conductivity'),
+        )
+
+        if flow_stress_params and any(flow_stress_params.values()):
+            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
+                in_profile.get(flow_stress_params))
+
+        return in_profile
+
+    elif shape == 'box':
+
+        in_profile = Profile.box(
+            height=in_profile_data.get('height'),
+            width=in_profile_data.get('width'),
+            corner_radius=in_profile_data.get('corner_radius'),
+            temperature=in_profile_data.get('temperature'),
+            strain=in_profile_data.get('strain'),
+            material=in_profile_data.get('material'),
+            density=in_profile_data.get('density'),
+            specific_heat_capacity=in_profile_data.get('specific_heat_capacity'),
+            thermal_conductivity=in_profile_data.get('thermal_conductivity'),
+        )
+
+        if flow_stress_params and any(flow_stress_params.values()):
+            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
+                in_profile.get(flow_stress_params))
+
+        return in_profile
+
+    elif shape == 'hexagon':
+
+        in_profile = Profile.box(
+            side=in_profile_data.get('side'),
+            corner_radius=in_profile_data.get('corner_radius'),
+            temperature=in_profile_data.get('temperature'),
+            strain=in_profile_data.get('strain'),
+            material=in_profile_data.get('material'),
+            density=in_profile_data.get('density'),
+            specific_heat_capacity=in_profile_data.get('specific_heat_capacity'),
+            thermal_conductivity=in_profile_data.get('thermal_conductivity'),
+        )
+
+        if flow_stress_params and any(flow_stress_params.values()):
+            in_profile.freiberg_flow_stress_coefficients = FreibergFlowStressCoefficients(
+                in_profile.get(flow_stress_params))
+
+        return in_profile
 
 
 def create_groove(groove_type: str, groove_params: Dict[str, Any]):

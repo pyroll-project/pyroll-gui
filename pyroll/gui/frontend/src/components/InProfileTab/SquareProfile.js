@@ -5,7 +5,7 @@ export default function SquareProfile({ inProfile, setInProfile }) {
   return (
     <>
       <InputField
-        label="Side"
+        label="Side Length"
         type="number"
         value={inProfile.side || 0}
         onChange={(value) => setInProfile({...inProfile, side: value})}

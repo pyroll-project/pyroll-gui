@@ -4,11 +4,13 @@ import pyroll.basic
 from typing import Dict, List, Any
 from pyroll.core import Profile, PassSequence, RollPass, Transport, CoolingPipe
 
-from .helpers import create_roll_pass, create_transport, create_cooling_pipe
+from .helpers import create_roll_pass, create_transport, create_cooling_pipe, create_initial_profile
 
 
-def run_pyroll_simulation(units: List[Dict[str, Any]]) -> Dict[str, Any]:
-
+def run_pyroll_simulation(
+        units: List[Dict[str, Any]],
+        in_profile_data: Dict[str, Any]
+) -> Dict[str, Any]:
     try:
         sequence = PassSequence([])
 
@@ -26,14 +28,7 @@ def run_pyroll_simulation(units: List[Dict[str, Any]]) -> Dict[str, Any]:
 
         sequence.flatten()
 
-        # Initiales Profil definieren
-        # TODO: Diese Werte sollten vom Frontend kommen oder konfigurierbar sein
-        initial_profile = Profile(
-            # Beispiel für rundes Profil
-            # temperature=1200,  # °C
-            # strain=0,
-            # ... weitere Initialisierungswerte
-        )
+        initial_profile = create_initial_profile(in_profile_data)
 
         sequence.solve(initial_profile)
 
@@ -49,7 +44,6 @@ def run_pyroll_simulation(units: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
-
     results = {
         "success": True,
         "units": len(pass_sequence),
@@ -70,7 +64,6 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
         if hasattr(unit, 'power'):
             pass_result['power'] = float(unit.roll.power)
 
-        # Profil-Informationen
         if hasattr(unit, 'out_profile'):
             profile = unit.out_profile
             if hasattr(profile, 'temperature'):
@@ -84,7 +77,17 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
 
     return results
 
+
 def validate_parameters(units: List[Dict[str, Any]]) -> tuple[bool, str]:
+    """
+    Validiert die Pass Design Parameter.
+
+    Args:
+        units: Liste der Pass Design Units
+
+    Returns:
+        Tuple (is_valid, error_message)
+    """
     if not units or len(units) == 0:
         return False, "No Units defined"
 
@@ -103,6 +106,6 @@ def validate_parameters(units: List[Dict[str, Any]]) -> tuple[bool, str]:
             # Validiere Groove-Parameter
             groove_params = unit['groove']
             if groove_params.get('r1', 0) <= 0:
-                return False, f"Unit {i + 1}: R1 muss größer als 0 sein"
+                return False, f"Unit {i + 1}: R1 must be greater than 0"
 
     return True, ""
