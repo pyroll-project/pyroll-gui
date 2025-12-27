@@ -7,10 +7,8 @@ export default function ResultTemperaturePlot({ results }) {
   useEffect(() => {
     if (!results || !results.passes || results.passes.length === 0) return;
 
-    // Daten extrahieren - ähnlich wie die Python-Funktion gen_seq()
     const data = [];
 
-    // Erster Punkt: in_temperature vom ersten Pass
     if (results.passes[0].in_temperature !== undefined) {
       data.push({
         x: -0.5,
@@ -31,12 +29,10 @@ export default function ResultTemperaturePlot({ results }) {
 
     if (data.length === 0) return;
 
-    // SVG Setup
-    const margin = { top: 20, right: 30, bottom: 70, left: 60 };
+    const margin = { top: 20, right: 30, bottom: 90, left: 60 };
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    // Clear previous chart
     d3.select(svgRef.current).selectAll('*').remove();
 
     const svg = d3.select(svgRef.current)
@@ -45,7 +41,6 @@ export default function ResultTemperaturePlot({ results }) {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Scales
     const xScale = d3.scaleLinear()
       .domain([d3.min(data, d => d.x), d3.max(data, d => d.x)])
       .range([0, width]);
@@ -57,7 +52,6 @@ export default function ResultTemperaturePlot({ results }) {
       ])
       .range([height, 0]);
 
-    // Add grid lines
     svg.append('g')
       .attr('class', 'grid')
       .attr('opacity', 0.2)
@@ -75,35 +69,31 @@ export default function ResultTemperaturePlot({ results }) {
         .tickFormat('')
       );
 
-    // Add X axis
     const xAxis = svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(xScale).ticks(results.passes.length + 1));
 
-    // Custom X-axis labels
     xAxis.selectAll('text').remove();
 
     data.forEach(d => {
       svg.append('text')
         .attr('x', xScale(d.x))
-        .attr('y', height + 15)
-        .attr('text-anchor', 'middle')
+        .attr('y', height + 20)
+        .attr('text-anchor', 'end')
         .attr('fill', '#555')
-        .attr('font-size', '11px')
-        .attr('transform', `rotate(-45, ${xScale(d.x)}, ${height + 15})`)
+        .attr('font-size', '13px')
+        .attr('transform', `rotate(-45, ${xScale(d.x)}, ${height + 20})`)
         .text(d.label);
     });
 
-    // X axis title
     svg.append('text')
       .attr('x', width / 2)
       .attr('y', height + margin.bottom - 5)
       .attr('fill', '#555')
-      .attr('font-size', '14px')
+      .attr('font-size', '16px')
       .attr('text-anchor', 'middle')
       .text('Pass');
 
-    // Add Y axis
     svg.append('g')
       .call(d3.axisLeft(yScale))
       .append('text')
@@ -111,16 +101,14 @@ export default function ResultTemperaturePlot({ results }) {
       .attr('x', -height / 2)
       .attr('y', -45)
       .attr('fill', '#555')
-      .attr('font-size', '14px')
+      .attr('font-size', '16px')
       .attr('text-anchor', 'middle')
       .text('Temperature T');
 
-    // Line generator
     const line = d3.line()
       .x(d => xScale(d.x))
       .y(d => yScale(d.temperature));
 
-    // Add line
     svg.append('path')
       .datum(data)
       .attr('fill', 'none')
@@ -128,13 +116,12 @@ export default function ResultTemperaturePlot({ results }) {
       .attr('stroke-width', 2.5)
       .attr('d', line);
 
-    // Add data points (marker="x" im Original)
     svg.selectAll('.dot')
       .data(data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
-      .attr('cx', d => xScale(d.label))
+      .attr('cx', d => xScale(d.x))
       .attr('cy', d => yScale(d.temperature))
       .attr('r', 5)
       .attr('fill', '#FFDD00')
@@ -143,28 +130,26 @@ export default function ResultTemperaturePlot({ results }) {
       .on('mouseover', function(event, d) {
         d3.select(this).attr('r', 7);
 
-        // Tooltip
         svg.append('text')
           .attr('class', 'tooltip')
           .attr('x', xScale(d.x))
           .attr('y', yScale(d.temperature) - 20)
           .attr('text-anchor', 'middle')
           .attr('fill', '#333')
-          .attr('font-size', '12px')
+          .attr('font-size', '14px')
           .attr('font-weight', 'bold')
           .text(`${d.temperature.toFixed(4)}`);
       })
       .on('mouseout', function() {
-        d3.select(this).attr('font-size', '16px');
+        d3.select(this).attr('r', 5);
         svg.selectAll('.tooltip').remove();
       });
 
-    // Add title
     svg.append('text')
       .attr('x', width / 2)
       .attr('y', -5)
       .attr('text-anchor', 'middle')
-      .attr('font-size', '16px')
+      .attr('font-size', '18px')
       .attr('font-weight', 'bold')
       .attr('fill', '#555')
       .text('Mean Profile Temperatures');
