@@ -19,7 +19,6 @@ export default function ProfilePlot({ inProfile }) {
       return;
     }
 
-    // Clear previous plot
     d3.select(plotRef.current).selectAll("*").remove();
 
     const width = 600;
@@ -110,7 +109,7 @@ export default function ProfilePlot({ inProfile }) {
       .attr("text-anchor", "middle")
       .style("font-size", "12px")
       .style("fill", "#666")
-      .text("x (mm)");
+      .text("z");
 
     svg.append("text")
       .attr("transform", "rotate(-90)")
@@ -119,9 +118,8 @@ export default function ProfilePlot({ inProfile }) {
       .attr("text-anchor", "middle")
       .style("font-size", "12px")
       .style("fill", "#666")
-      .text("y (mm)");
+      .text("y");
 
-    // Title
     svg.append("text")
       .attr("x", width / 2)
       .attr("y", 20)
