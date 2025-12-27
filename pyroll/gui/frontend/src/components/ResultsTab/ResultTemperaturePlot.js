@@ -159,6 +159,7 @@ export default function ResultTemperaturePlot({results}) {
     return (
         <div style={{
             background: '#f9f9f9',
+
             padding: '20px',
             borderRadius: '8px',
             marginTop: '20px',

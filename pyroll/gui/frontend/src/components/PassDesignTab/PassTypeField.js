@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getGrooveFields } from '../../data/GrooveDefinitions';
 import GrooveParametersBox from './GrooveParameterBox';
 import RollPassPlot from './RollPassPlot';
@@ -36,6 +36,9 @@ const parseNumberInput = (value) => {
 };
 
 export default function PassTypeFields({ row, fields, tableData, setTableData }) {
+  const [isGrooveExpanded, setIsGrooveExpanded] = useState(true);
+  const [isPlotExpanded, setIsPlotExpanded] = useState(true);
+
   const handleInputChange = (field, value) => {
     setTableData(prevData =>
       prevData.map(r =>
@@ -70,12 +73,46 @@ export default function PassTypeFields({ row, fields, tableData, setTableData })
         {fields.map(field => {
           if (field.type === 'groove') {
             return (
-              <GrooveParametersBox
-                key={field.key}
-                row={row}
-                tableData={tableData}
-                setTableData={setTableData}
-              />
+              <div key={field.key} style={{ width: '100%' }}>
+                <div
+                  onClick={() => setIsGrooveExpanded(!isGrooveExpanded)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 12px',
+                    background: '#f5f5f5',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    marginBottom: isGrooveExpanded ? '10px' : '0',
+                    userSelect: 'none',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#ebebeb'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#f5f5f5'}
+                >
+                  <span style={{
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    transition: 'transform 0.2s',
+                    transform: isGrooveExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                    display: 'inline-block'
+                  }}>
+                    ▶
+                  </span>
+                  <span style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                    Groove Parameters
+                  </span>
+                </div>
+                {isGrooveExpanded && (
+                  <GrooveParametersBox
+                    row={row}
+                    tableData={tableData}
+                    setTableData={setTableData}
+                  />
+                )}
+              </div>
             );
           }
 
@@ -150,7 +187,42 @@ export default function PassTypeFields({ row, fields, tableData, setTableData })
         })}
       </div>
 
-      {isRollPass && <RollPassPlot row={row} />}
+      {isRollPass && (
+        <div style={{ marginTop: '20px', width: '100%' }}>
+          <div
+            onClick={() => setIsPlotExpanded(!isPlotExpanded)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 12px',
+              background: '#f5f5f5',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginBottom: isPlotExpanded ? '10px' : '0',
+              userSelect: 'none',
+              transition: 'background 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = '#ebebeb'}
+            onMouseOut={(e) => e.currentTarget.style.background = '#f5f5f5'}
+          >
+            <span style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              transition: 'transform 0.2s',
+              transform: isPlotExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+              display: 'inline-block'
+            }}>
+              ▶
+            </span>
+            <span style={{ fontWeight: 'bold', fontSize: '14px' }}>
+              Roll Pass Visualization
+            </span>
+          </div>
+          {isPlotExpanded && <RollPassPlot row={row} />}
+        </div>
+      )}
     </div>
   );
 }

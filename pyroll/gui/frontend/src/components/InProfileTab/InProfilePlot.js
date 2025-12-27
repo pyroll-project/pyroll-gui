@@ -97,18 +97,20 @@ export default function ProfilePlot({ inProfile }) {
     g.append("g")
       .attr("transform", `translate(0,${plotHeight})`)
       .call(xAxis)
-      .attr("stroke", "#333");
+      .select(".domain")
+      .attr("stroke-width", 2.5);
 
     g.append("g")
       .call(yAxis)
-      .attr("stroke", "#333");
+      .select(".domain")
+      .attr("stroke-width", 2.5);
 
     svg.append("text")
       .attr("x", width / 2)
       .attr("y", height - 10)
       .attr("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("fill", "#666")
+      .style("font-size", "13px")
+      .style("font-weight", "bold")
       .text("z");
 
     svg.append("text")
@@ -116,8 +118,8 @@ export default function ProfilePlot({ inProfile }) {
       .attr("x", -height / 2)
       .attr("y", 15)
       .attr("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("fill", "#666")
+      .style("font-size", "13px")
+      .style("font-weight", "bold")
       .text("y");
 
     svg.append("text")
@@ -127,7 +129,7 @@ export default function ProfilePlot({ inProfile }) {
       .style("font-size", "16px")
       .style("font-weight", "bold")
       .text("Input Profile");
-  }, [inProfile]); // ← NUR inProfile als Dependency
+  }, [inProfile]);
 
   useEffect(() => {
     renderProfilePlot();
