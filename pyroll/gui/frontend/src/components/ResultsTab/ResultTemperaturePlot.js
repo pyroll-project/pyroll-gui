@@ -19,7 +19,6 @@ export default function ResultTemperaturePlot({ results }) {
       });
     }
 
-    // Alle out_temperatures
     results.passes.forEach((pass, i) => {
       if (pass.out_temperature !== undefined) {
         data.push({

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PassDesignTable from './PassDesignTable';
 import PassDesignLoader from './PassDesignLoader';
 import PassDesignSaver from './PassDesignSaver';
-import Notification from './Notification';
+import Notification from '../../helpers/Notification';
 
 export default function PassDesignTab({
   tableData,
@@ -60,9 +60,33 @@ export default function PassDesignTab({
         duration={3000}
       />
 
-      <h2 style={{ color: '#555', marginBottom: '20px' }}>
-        Pass Design and Mill Layout
-      </h2>
+      {/* Header mit Buttons */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '10px'
+      }}>
+        <h2 style={{ color: '#555', margin: 0 }}>
+          Pass Design and Mill Layout
+        </h2>
+
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {/* XML Loader */}
+          <PassDesignLoader
+            setTableData={setTableData}
+            onNotification={showNotification}
+          />
+
+          {/* XML Saver */}
+          <PassDesignSaver
+            tableData={tableData}
+            onNotification={showNotification}
+          />
+        </div>
+      </div>
 
       <PassDesignTable
         tableData={tableData}
@@ -97,18 +121,6 @@ export default function PassDesignTab({
         >
           Add Unit
         </button>
-
-        {/* XML Loader */}
-        <PassDesignLoader
-          setTableData={setTableData}
-          onNotification={showNotification}
-        />
-
-        {/* XML Saver */}
-        <PassDesignSaver
-          tableData={tableData}
-          onNotification={showNotification}
-        />
 
         {/* Separator */}
         <div style={{

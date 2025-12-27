@@ -1,15 +1,80 @@
-import React from "react";
+import React, { useState } from "react";
 import RoundProfile from "./RoundProfile";
 import SquareProfile from "./SquareProfile";
 import BoxProfile from "./BoxProfile";
 import HexagonProfile from "./HexagonProfile";
 import CommonParameters from "./CommonParameters";
 import ProfilePlot from './InProfilePlot';
+import InProfileLoader from './InProfileLoader';
+import InProfileSaver from './InProfileSaver';
+import Notification from '../../helpers/Notification';
 
 export default function InProfileTab({ inProfile, setInProfile }) {
+  // Notification State
+  const [notification, setNotification] = useState({
+    show: false,
+    message: '',
+    type: 'success'
+  });
+
+  /**
+   * Zeigt eine Benachrichtigung an
+   */
+  const showNotification = (message, type = 'success') => {
+    setNotification({
+      show: true,
+      message,
+      type
+    });
+  };
+
+  /**
+   * Schließt die Benachrichtigung
+   */
+  const closeNotification = () => {
+    setNotification({
+      show: false,
+      message: '',
+      type: 'success'
+    });
+  };
+
   return (
     <div>
-      <h2 style={{color: '#555'}}>Initial Profile Configuration</h2>
+      {/* Notification */}
+      <Notification
+        show={notification.show}
+        message={notification.message}
+        type={notification.type}
+        onClose={closeNotification}
+        duration={3000}
+      />
+
+      {/* Header mit Buttons */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '10px'
+      }}>
+        <h2 style={{ color: '#555', margin: 0 }}>Initial Profile Configuration</h2>
+
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {/* XML Loader */}
+          <InProfileLoader
+            setInProfile={setInProfile}
+            onNotification={showNotification}
+          />
+
+          {/* XML Saver */}
+          <InProfileSaver
+            inProfile={inProfile}
+            onNotification={showNotification}
+          />
+        </div>
+      </div>
 
       <div style={{overflowX: 'auto'}}>
         <table style={{
