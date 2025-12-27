@@ -8,11 +8,10 @@ export default function ResultCrossSectionPlot({results}) {
         if (!results || !results.passes || results.passes.length === 0) return;
 
         const data = results.passes
-            .filter(pass => pass.out_strain !== undefined)
+            .filter(pass => pass.filling_ratio !== undefined)
             .map(pass => ({
-                pass: pass.pass,
                 label: pass.label || `Pass ${pass.pass}`,
-                strain: pass.out_strain
+                filling_ratio: Array.isArray(pass.filling_ratio) ? pass.filling_ratio[0] : pass.filling_ratio
             }));
 
         if (data.length === 0) return;
@@ -35,7 +34,7 @@ export default function ResultCrossSectionPlot({results}) {
             .padding(0.5);
 
         const yScale = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.strain) * 1.1])
+            .domain([0, d3.max(data, d => d.filling_ratio) * 1.1])
             .range([height, 0]);
 
         svg.append('g')
@@ -74,11 +73,11 @@ export default function ResultCrossSectionPlot({results}) {
             .attr('fill', '#555')
             .attr('font-size', '14px')
             .attr('text-anchor', 'middle')
-            .text('Strain');
+            .text('Filling Ratio i');
 
         const line = d3.line()
             .x(d => xScale(d.label))
-            .y(d => yScale(d.strain))
+            .y(d => yScale(d.filling_ratio))
             .curve(d3.curveMonotoneX);
 
         svg.append('path')
@@ -94,7 +93,7 @@ export default function ResultCrossSectionPlot({results}) {
             .append('circle')
             .attr('class', 'dot')
             .attr('cx', d => xScale(d.label))
-            .attr('cy', d => yScale(d.strain))
+            .attr('cy', d => yScale(d.filling_ratio))
             .attr('r', 5)
             .attr('fill', '#FFDD00')
             .attr('stroke', 'white')
@@ -105,12 +104,12 @@ export default function ResultCrossSectionPlot({results}) {
                 svg.append('text')
                     .attr('class', 'tooltip')
                     .attr('x', xScale(d.label))
-                    .attr('y', yScale(d.strain) - 15)
+                    .attr('y', yScale(d.filling_ratio) - 15)
                     .attr('text-anchor', 'middle')
                     .attr('fill', '#333')
                     .attr('font-size', '12px')
                     .attr('font-weight', 'bold')
-                    .text(`${d.strain.toFixed(4)}`);
+                    .text(`${d.filling_ratio.toFixed(4)}`);
             })
             .on('mouseout', function () {
                 d3.select(this).attr('r', 5);
@@ -124,7 +123,7 @@ export default function ResultCrossSectionPlot({results}) {
             .attr('font-size', '18px')
             .attr('font-weight', 'bold')
             .attr('fill', '#555')
-            .text('Equivalent Strain');
+            .text('Roll Pass Filling Ratios');
 
     }, [results]);
 

@@ -60,6 +60,8 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
             pass_result['roll_force'] = float(unit.roll_force),
             pass_result['roll_torque'] = float(unit.roll.roll_torque),
             pass_result['power'] = float(unit.power)
+            pass_result['filling_ratio'] = float(unit.out_profile.filling_ratio)
+
 
         pass_result['in_strain'] = float(unit.in_profile.strain)
         pass_result['in_temperature'] =  float(unit.in_profile.temperature)
@@ -69,7 +71,6 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
         pass_result['out_height'] = float(unit.out_profile.height)
         pass_result['out_width'] = float(unit.out_profile.width)
         pass_result['out_cross_section_area'] = float(unit.out_profile.cross_section.area)
-        pass_result['filling_ratio'] = float(unit.out_profile.filling_ratio)
 
 
         results['passes'].append(pass_result)

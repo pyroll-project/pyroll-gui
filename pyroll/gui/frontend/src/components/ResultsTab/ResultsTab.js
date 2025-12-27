@@ -1,5 +1,6 @@
 import React from 'react';
 import ResultCrossSectionPlot from './ResultCrossSectionPlot';
+import ResultFillingRatioPlot from './ResultFillingRatioPlot';
 import ResultStrainPlot from './ResultStrainPlot';
 import ResultTemperaturePlot from "./ResultTemperaturePlot";
 import ResultRollForcePlot from "./ResultRollForcePlot";
@@ -16,6 +17,7 @@ export default function ResultsTab({results}) {
                     {/* Chart */}
                     <ResultCrossSectionPlot results={results}/>
                     <ResultStrainPlot results={results}/>
+                    <ResultFillingRatioPlot results={results}/>
                      <ResultTemperaturePlot results={results} />
                     <ResultRollForcePlot results={results} />
                     <ResultRollTorquePlot results={results} />
