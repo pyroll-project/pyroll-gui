@@ -14,7 +14,6 @@ export default function RollPassPlot({ row }) {
       setLoading(true);
       setError(null);
 
-      // Clear previous plot
       d3.select(svgRef.current).selectAll('*').remove();
 
       const width = 500;
@@ -31,7 +30,6 @@ export default function RollPassPlot({ row }) {
       const plotWidth = width - margin.left - margin.right;
       const plotHeight = height - margin.top - margin.bottom;
 
-      // Fetch contour from backend
       const contourData = await getRollPassContour({
         grooveType: row.grooveType,
         groove: row.groove,
@@ -63,7 +61,6 @@ export default function RollPassPlot({ row }) {
         return;
       }
 
-      // Prepare data points
       const upperPoints = contourData.upper.x.map((x, i) => ({
         x: x,
         y: contourData.upper.y[i]
@@ -174,7 +171,7 @@ export default function RollPassPlot({ row }) {
         .style('font-size', '12px')
         .style('fill', '#333')
         .style('font-weight', 'bold')
-        .text(`Gap: ${contourData.gap?.toFixed(2) || 0}`);
+        .text(`Gap: ${contourData.gap?.toFixed(4)}`);
 
       if (contourData.usable_width) {
         g.append('text')
@@ -183,7 +180,7 @@ export default function RollPassPlot({ row }) {
           .attr('text-anchor', 'end')
           .style('font-size', '11px')
           .style('fill', '#666')
-          .text(`Usable Width: ${contourData.usable_width.toFixed(2)}`);
+          .text(`Usable Width: ${contourData.usable_width.toFixed(4)}`);
       }
 
       if (contourData.depth) {
@@ -193,7 +190,7 @@ export default function RollPassPlot({ row }) {
           .attr('text-anchor', 'end')
           .style('font-size', '11px')
           .style('fill', '#666')
-          .text(`Depth: ${contourData.depth.toFixed(2)}`);
+          .text(`Depth: ${contourData.depth.toFixed(4)}`);
       }
 
       // Title

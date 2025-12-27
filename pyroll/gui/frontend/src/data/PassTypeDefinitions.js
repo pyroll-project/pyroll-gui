@@ -66,13 +66,3 @@ export const getFieldsForType = (type) => {
             return [];
     }
 };
-
-export const getUnitForField = (row, field) => {
-    if (row.type === 'Transport' && field.key === 'transportValue') {
-        return row.transportDefineBy === 'length' ? 'mm' : 's';
-    }
-    if (row.type === 'CoolingPipe' && field.key === 'coolingValue') {
-        return row.coolingDefineBy === 'length' ? 'mm' : '°C/s';
-    }
-    return '';
-};

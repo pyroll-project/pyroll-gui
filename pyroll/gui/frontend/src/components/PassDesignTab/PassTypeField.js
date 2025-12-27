@@ -1,11 +1,9 @@
 import React from 'react';
-import { getUnitForField } from '../../data/PassTypeDefinitions';
 import { getGrooveFields } from '../../data/GrooveDefinitions';
 import GrooveParametersBox from './GrooveParameterBox';
 import RollPassPlot from './RollPassPlot';
 
 const isValidNumberInput = (value) => {
-  // Leere Eingabe erlauben
   if (value === '') {
     return true;
   }
@@ -19,7 +17,6 @@ const isValidNumberInput = (value) => {
   return pattern.test(value);
 };
 
-// Hilfsfunktion zum Parsen - nur für onBlur
 const parseNumberInput = (value) => {
   if (!value || value === '-' || value === '.' || value === '+') {
     return 0;
@@ -85,7 +82,7 @@ export default function PassTypeFields({ row, fields, tableData, setTableData })
           return (
             <div key={field.key} style={{display: 'flex', flexDirection: 'column', minWidth: '150px'}}>
               <label style={{fontSize: '12px', color: '#666', marginBottom: '4px'}}>
-                {field.label} {field.key === 'transportValue' || field.key === 'coolingValue' ? `(${getUnitForField(row, field)})` : ''}
+                {field.label}
               </label>
               {field.type === 'select' ? (
                 <select
@@ -118,13 +115,11 @@ export default function PassTypeFields({ row, fields, tableData, setTableData })
                   onChange={(e) => {
                     const inputValue = e.target.value;
 
-                    // Validierung - erlaubt wissenschaftliche Notation während des Tippens
                     if (isValidNumberInput(inputValue)) {
                       handleInputChange(field.key, inputValue);
                     }
                   }}
                   onBlur={(e) => {
-                    // Bei Blur: Konvertiere zu Nummer
                     const inputValue = e.target.value;
                     const numValue = parseNumberInput(inputValue);
                     handleInputChange(field.key, numValue);

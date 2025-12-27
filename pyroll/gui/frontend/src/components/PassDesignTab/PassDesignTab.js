@@ -60,7 +60,6 @@ export default function PassDesignTab({
         duration={3000}
       />
 
-      {/* Header mit Buttons */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
