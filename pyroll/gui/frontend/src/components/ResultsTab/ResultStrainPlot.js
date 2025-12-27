@@ -110,7 +110,7 @@ export default function ResultCrossSectionPlot({ results }) {
           .attr('fill', '#333')
           .attr('font-size', '12px')
           .attr('font-weight', 'bold')
-          .text(`${d.strain.toFixed(2)}`);
+          .text(`${d.strain.toFixed(4)}`);
       })
       .on('mouseout', function() {
         d3.select(this).attr('r', 5);

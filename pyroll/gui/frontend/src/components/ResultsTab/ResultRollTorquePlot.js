@@ -7,7 +7,6 @@ export default function ResultRollForcePlot({ results }) {
   useEffect(() => {
     if (!results || !results.passes || results.passes.length === 0) return;
 
-    // Daten extrahieren - nur Passes mit roll_force
     const data = results.passes
       .filter(pass => pass.roll_torque !== undefined)
       .map(pass => ({
@@ -71,7 +70,7 @@ export default function ResultRollForcePlot({ results }) {
 
     // Add Y axis
     svg.append('g')
-      .call(d3.axisLeft(yScale).tickFormat(d => (d / 1e6).toFixed(1)))
+      .call(d3.axisLeft(yScale).tickFormat(d => (d).toFixed(1)))
       .append('text')
       .attr('transform', 'rotate(-90)')
       .attr('x', -height / 2)
@@ -107,7 +106,7 @@ export default function ResultRollForcePlot({ results }) {
           .attr('fill', '#333')
           .attr('font-size', '12px')
           .attr('font-weight', 'bold')
-          .text(`${(d.force / 1e6).toFixed(2)}`);
+          .text(`${(d.force).toFixed(2)}`);
       })
       .on('mouseout', function() {
         d3.select(this)
