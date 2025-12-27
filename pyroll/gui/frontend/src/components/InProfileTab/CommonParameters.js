@@ -15,7 +15,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         <input
           type="number"
           value={inProfile.temperature}
-          onChange={(e) => setInProfile({...inProfile, temperature: parseFloat(e.target.value) || 0})}
+          onChange={(e) => setInProfile({...inProfile, temperature: parseFloat(e.target.value) })}
           style={{
             width: '250px',
             padding: '8px',
@@ -32,8 +32,8 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.strain || 0}
-          onChange={(e) => setInProfile({...inProfile, strain: parseFloat(e.target.value) || 0})}
+          value={inProfile.strain}
+          onChange={(e) => setInProfile({...inProfile, strain: parseFloat(e.target.value) })}
           style={{
             width: '250px',
             padding: '8px',
@@ -49,8 +49,8 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.density || 0}
-          onChange={(e) => setInProfile({...inProfile, density: parseFloat(e.target.value) || 0})}
+          value={inProfile.density}
+          onChange={(e) => setInProfile({...inProfile, density: parseFloat(e.target.value) })}
           style={{
             width: '250px',
             padding: '8px',
@@ -65,8 +65,8 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.specific_heat_capacity || 0}
-          onChange={(e) => setInProfile({...inProfile, specific_heat_capacity: parseFloat(e.target.value) || 0})}
+          value={inProfile.specific_heat_capacity}
+          onChange={(e) => setInProfile({...inProfile, specific_heat_capacity: parseFloat(e.target.value) })}
           style={{
             width: '250px',
             padding: '8px',
@@ -81,8 +81,8 @@ export default function CommonParameters({ inProfile, setInProfile }) {
         </label>
         <input
           type="number"
-          value={inProfile.thermal_conductivity || 0}
-          onChange={(e) => setInProfile({...inProfile, thermal_conductivity: parseFloat(e.target.value) || 0})}
+          value={inProfile.thermal_conductivity}
+          onChange={(e) => setInProfile({...inProfile, thermal_conductivity: parseFloat(e.target.value)})}
           style={{
             width: '250px',
             padding: '8px',
@@ -155,7 +155,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="A"
                 type="number"
-                value={inProfile.flowStressParams?.a || 0}
+                value={inProfile.flowStressParams?.a }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, a: value}
@@ -164,7 +164,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m1"
                 type="number"
-                value={inProfile.flowStressParams?.m1 || 0}
+                value={inProfile.flowStressParams?.m1 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m1: value}
@@ -173,7 +173,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m2"
                 type="number"
-                value={inProfile.flowStressParams?.m2 || 0}
+                value={inProfile.flowStressParams?.m2 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m2: value}
@@ -182,7 +182,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m3"
                 type="number"
-                value={inProfile.flowStressParams?.m3 || 0}
+                value={inProfile.flowStressParams?.m3 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m3: value}
@@ -191,7 +191,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m4"
                 type="number"
-                value={inProfile.flowStressParams?.m4 || 0}
+                value={inProfile.flowStressParams?.m4 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m4: value}
@@ -200,7 +200,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m5"
                 type="number"
-                value={inProfile.flowStressParams?.m5 || 0}
+                value={inProfile.flowStressParams?.m5 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m5: value}
@@ -209,7 +209,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m6"
                 type="number"
-                value={inProfile.flowStressParams?.m6 || 0}
+                value={inProfile.flowStressParams?.m6 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m6: value}
@@ -218,7 +218,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m7"
                 type="number"
-                value={inProfile.flowStressParams?.m7 || 0}
+                value={inProfile.flowStressParams?.m7 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m7: value}
@@ -227,7 +227,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m8"
                 type="number"
-                value={inProfile.flowStressParams?.m8 || 0}
+                value={inProfile.flowStressParams?.m8 }
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m8: value}
@@ -236,7 +236,7 @@ export default function CommonParameters({ inProfile, setInProfile }) {
               <InputField
                 label="m9"
                 type="number"
-                value={inProfile.flowStressParams?.m9 || 0}
+                value={inProfile.flowStressParams?.m9}
                 onChange={(value) => setInProfile({
                   ...inProfile,
                   flowStressParams: {...inProfile.flowStressParams, m9: value}

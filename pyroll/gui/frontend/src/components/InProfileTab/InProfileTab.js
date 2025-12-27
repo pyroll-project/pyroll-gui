@@ -124,8 +124,6 @@ export default function InProfileTab({ inProfile, setInProfile }) {
                   {inProfile.shape === 'hexagon' && (
                     <HexagonProfile inProfile={inProfile} setInProfile={setInProfile} />
                   )}
-
-                  {/* Common parameters for all shapes */}
                   <CommonParameters inProfile={inProfile} setInProfile={setInProfile} />
                 </div>
               </td>

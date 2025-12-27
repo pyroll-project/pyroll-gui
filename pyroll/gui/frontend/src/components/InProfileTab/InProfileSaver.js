@@ -1,14 +1,6 @@
-/**
- * InProfileSaver.js
- * Komponente für den Export von Input-Profilen als XML-Datei
- */
-
 import React from 'react';
 
 export default function InProfileSaver({ inProfile, onNotification }) {
-  /**
-   * Escaped XML-Sonderzeichen für sichere XML-Generierung
-   */
   const escapeXML = (text) => {
     return String(text)
       .replace(/&/g, '&amp;')
@@ -18,26 +10,6 @@ export default function InProfileSaver({ inProfile, onNotification }) {
       .replace(/'/g, '&apos;');
   };
 
-  /**
-   * Generiert Groove-Parameter XML
-   */
-  const generateGrooveXML = (groove, indent = '    ') => {
-    if (!groove || typeof groove !== 'object') return '';
-
-    let xml = `${indent}<Groove>\n`;
-    Object.keys(groove).forEach(key => {
-      const value = groove[key];
-      if (value !== undefined && value !== null && value !== '') {
-        xml += `${indent}  <${escapeXML(key)}>${escapeXML(String(value))}</${escapeXML(key)}>\n`;
-      }
-    });
-    xml += `${indent}</Groove>\n`;
-    return xml;
-  };
-
-  /**
-   * Generiert vollständiges XML aus inProfile
-   */
   const generateXML = (profile) => {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<InProfile>\n';
@@ -82,18 +54,17 @@ export default function InProfileSaver({ inProfile, onNotification }) {
       xml += `  <ThermalCapacity>${escapeXML(String(profile.thermal_capacity))}</ThermalCapacity>\n`;
     }
 
-    // Groove Type (falls vorhanden)
-    if (profile.grooveType) {
-      xml += `  <GrooveType>${escapeXML(profile.grooveType)}</GrooveType>\n`;
+    // Specific Heat Capacity
+    if (profile.specific_heat_capacity !== undefined && profile.specific_heat_capacity !== null && profile.specific_heat_capacity !== '') {
+      xml += `  <SpecificHeatCapacity>${escapeXML(String(profile.specific_heat_capacity))}</SpecificHeatCapacity>\n`;
     }
 
-    // Groove (falls vorhanden)
-    if (profile.groove) {
-      xml += generateGrooveXML(profile.groove, '  ');
+    // Thermal Conductivity
+    if (profile.thermal_conductivity !== undefined && profile.thermal_conductivity !== null && profile.thermal_conductivity !== '') {
+      xml += `  <ThermalConductivity>${escapeXML(String(profile.thermal_conductivity))}</ThermalConductivity>\n`;
     }
 
-    // Geometry-spezifische Parameter
-    const geometryFields = ['width', 'height', 'diameter', 'corner_radius', 'fillet_radius'];
+    const geometryFields = ['width', 'height', 'diameter', 'corner_radius'];
     const hasGeometry = geometryFields.some(field =>
       profile[field] !== undefined && profile[field] !== null && profile[field] !== ''
     );
@@ -117,9 +88,6 @@ export default function InProfileSaver({ inProfile, onNotification }) {
     return xml;
   };
 
-  /**
-   * Exportiert inProfile als XML-Datei
-   */
   const handleExport = () => {
     try {
       if (!inProfile || Object.keys(inProfile).length === 0) {
@@ -129,26 +97,21 @@ export default function InProfileSaver({ inProfile, onNotification }) {
         return;
       }
 
-      // Frage nach Dateinamen
       const defaultName = `in-profile-${new Date().toISOString().slice(0, 10)}`;
       const fileName = prompt('File name for XML export:', defaultName);
 
-      // Abbruch wenn Dialog geschlossen wurde
       if (fileName === null) {
         return;
       }
 
-      // Verwende Default wenn leer
       const finalFileName = fileName.trim() || defaultName;
 
-      // Stelle sicher dass .xml Endung vorhanden ist
       const fileNameWithExt = finalFileName.endsWith('.xml')
         ? finalFileName
         : `${finalFileName}.xml`;
 
       const xmlContent = generateXML(inProfile);
 
-      // XML-Datei erstellen und herunterladen
       const blob = new Blob([xmlContent], { type: 'application/xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
