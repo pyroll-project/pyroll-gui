@@ -17,7 +17,7 @@ export default function RollPassPlot({row}) {
             d3.select(svgRef.current).selectAll('*').remove();
 
             const width = 500;
-            const height = 500;  // Gleiche Höhe wie Breite für quadratischen Plot
+            const height = 500;
             const margin = {top: 40, right: 40, bottom: 50, left: 60};
 
             const svg = d3.select(svgRef.current)
@@ -29,8 +29,6 @@ export default function RollPassPlot({row}) {
 
             const plotWidth = width - margin.left - margin.right;
             const plotHeight = height - margin.top - margin.bottom;
-
-            // Ensure square plot area
             const plotSize = Math.min(plotWidth, plotHeight);
 
             const contourData = await getRollPassContour({
@@ -38,8 +36,11 @@ export default function RollPassPlot({row}) {
                 groove: row.groove,
                 gap: row.gap || 0,
                 orientation: row.orientation,
+                type: row.type,
                 label: row.label,
             });
+
+            console.log('Contour data received:', contourData);
 
             if (!contourData.success) {
                 setError(contourData.error || 'Failed to load roll pass contour');
@@ -54,7 +55,39 @@ export default function RollPassPlot({row}) {
                 return;
             }
 
-            if (!contourData.upper || !contourData.upper.x || contourData.upper.x.length === 0) {
+            let allPoints = [];
+
+            // Handle ThreeRollPass with multiple contours
+            if (contourData.pass_type === 'ThreeRollPass' && contourData.contours) {
+                console.log('Processing ThreeRollPass with', contourData.contours.length, 'contours');
+                contourData.contours.forEach(contour => {
+                    contour.x.forEach((x, i) => {
+                        allPoints.push({x: x, y: contour.y[i]});
+                    });
+                });
+            }
+            // Handle TwoRollPass with upper/lower
+            else if (contourData.upper && contourData.lower) {
+                console.log('Processing TwoRollPass');
+                contourData.upper.x.forEach((x, i) => {
+                    allPoints.push({x: x, y: contourData.upper.y[i]});
+                });
+                contourData.lower.x.forEach((x, i) => {
+                    allPoints.push({x: x, y: contourData.lower.y[i]});
+                });
+            } else {
+                console.log('No valid contour data found');
+                g.append('text')
+                    .attr('x', plotSize / 2)
+                    .attr('y', plotSize / 2)
+                    .attr('text-anchor', 'middle')
+                    .style('fill', '#999')
+                    .text('Enter groove parameters to see roll pass');
+                setLoading(false);
+                return;
+            }
+
+            if (allPoints.length === 0) {
                 g.append('text')
                     .attr('x', plotSize / 2)
                     .attr('y', plotSize / 2)
@@ -66,26 +99,18 @@ export default function RollPassPlot({row}) {
             }
 
             // Calculate center of mass to shift to (0,0)
-            const allX = [...contourData.upper.x, ...contourData.lower.x];
-            const allY = [...contourData.upper.y, ...contourData.lower.y];
-
-            const xCenter = d3.mean(allX);
-            const yCenter = d3.mean(allY);
+            const xCenter = d3.mean(allPoints.map(p => p.x));
+            const yCenter = d3.mean(allPoints.map(p => p.y));
 
             // Shift all points to center at (0,0)
-            const upperPoints = contourData.upper.x.map((x, i) => ({
-                x: x - xCenter,
-                y: contourData.upper.y[i] - yCenter
-            }));
-
-            const lowerPoints = contourData.lower.x.map((x, i) => ({
-                x: x - xCenter,
-                y: contourData.lower.y[i] - yCenter
+            allPoints = allPoints.map(p => ({
+                x: p.x - xCenter,
+                y: p.y - yCenter
             }));
 
             // Recalculate extents after centering
-            const centeredX = upperPoints.map(p => p.x).concat(lowerPoints.map(p => p.x));
-            const centeredY = upperPoints.map(p => p.y).concat(lowerPoints.map(p => p.y));
+            const centeredX = allPoints.map(p => p.x);
+            const centeredY = allPoints.map(p => p.y);
 
             const xExtent = d3.extent(centeredX);
             const yExtent = d3.extent(centeredY);
@@ -101,7 +126,6 @@ export default function RollPassPlot({row}) {
             const maxDataRange = Math.max(dataWidth + 2 * xPadding, dataHeight + 2 * yPadding);
 
             // Use the same domain range for both axes centered at (0,0)
-            // and use plotSize for both ranges to ensure 1:1 aspect ratio
             const xScale = d3.scaleLinear()
                 .domain([-maxDataRange / 2, maxDataRange / 2])
                 .range([0, plotSize]);
@@ -158,43 +182,83 @@ export default function RollPassPlot({row}) {
                 .x(d => xScale(d.x))
                 .y(d => yScale(d.y));
 
-            g.append('path')
-                .datum(upperPoints)
-                .attr('fill', 'none')
-                .attr('stroke', '#000000')
-                .attr('stroke-width', 2.5)
-                .attr('d', line);
+            // Plot contours
+            if (contourData.pass_type === 'ThreeRollPass' && contourData.contours) {
+                // Plot all three contours
+                contourData.contours.forEach((contour) => {
+                    const shiftedPoints = contour.x.map((x, i) => ({
+                        x: x - xCenter,
+                        y: contour.y[i] - yCenter
+                    }));
 
-            g.append('path')
-                .datum(lowerPoints)
-                .attr('fill', 'none')
-                .attr('stroke', '#000000')
-                .attr('stroke-width', 2.5)
-                .attr('d', line);
+                    g.append('path')
+                        .datum(shiftedPoints)
+                        .attr('fill', 'none')
+                        .attr('stroke', '#000000')
+                        .attr('stroke-width', 2.5)
+                        .attr('d', line);
+                });
+            } else {
+                // Plot upper and lower contours for TwoRollPass
+                const upperPoints = contourData.upper.x.map((x, i) => ({
+                    x: x - xCenter,
+                    y: contourData.upper.y[i] - yCenter
+                }));
 
-            // Gap line at y=0
-            const gapY = yScale(0);
-            g.append('line')
-                .attr('x1', 0)
-                .attr('x2', plotSize)
-                .attr('y1', gapY)
-                .attr('y2', gapY)
-                .attr('stroke', '#f44336')
-                .attr('stroke-width', 1)
-                .attr('stroke-dasharray', '5,5');
+                const lowerPoints = contourData.lower.x.map((x, i) => ({
+                    x: x - xCenter,
+                    y: contourData.lower.y[i] - yCenter
+                }));
+
+                g.append('path')
+                    .datum(upperPoints)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#000000')
+                    .attr('stroke-width', 2.5)
+                    .attr('d', line);
+
+                g.append('path')
+                    .datum(lowerPoints)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#000000')
+                    .attr('stroke-width', 2.5)
+                    .attr('d', line);
+
+                // Gap line at y=0 only for TwoRollPass
+                const gapY = yScale(0);
+                g.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', plotSize)
+                    .attr('y1', gapY)
+                    .attr('y2', gapY)
+                    .attr('stroke', '#f44336')
+                    .attr('stroke-width', 1)
+                    .attr('stroke-dasharray', '5,5');
+            }
 
             // Info text
             const infoX = plotSize - 5;
             const infoY = 15;
 
-            g.append('text')
-                .attr('x', infoX)
-                .attr('y', infoY)
-                .attr('text-anchor', 'end')
-                .style('font-size', '12px')
-                .style('fill', '#333')
-                .style('font-weight', 'bold')
-                .text(`Gap: ${contourData.gap?.toFixed(4)}`);
+            if (contourData.pass_type === 'ThreeRollPass') {
+                g.append('text')
+                    .attr('x', infoX)
+                    .attr('y', infoY)
+                    .attr('text-anchor', 'end')
+                    .style('font-size', '12px')
+                    .style('fill', '#333')
+                    .style('font-weight', 'bold')
+                    .text(`ICD: ${contourData.inscribed_circle_diameter?.toFixed(4)}`);
+            } else {
+                g.append('text')
+                    .attr('x', infoX)
+                    .attr('y', infoY)
+                    .attr('text-anchor', 'end')
+                    .style('font-size', '12px')
+                    .style('fill', '#333')
+                    .style('font-weight', 'bold')
+                    .text(`Gap: ${contourData.gap?.toFixed(4)}`);
+            }
 
             if (contourData.usable_width) {
                 g.append('text')

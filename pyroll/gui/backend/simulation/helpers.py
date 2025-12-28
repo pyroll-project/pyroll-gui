@@ -106,41 +106,67 @@ def create_groove(groove_type: str, groove_params: Dict[str, Any]):
 
 
 def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
-
     groove = create_groove(
-        unit.get('grooveType', 'BoxGroove'),
-        unit.get('groove', {})
+        unit.get('grooveType'),
+        unit.get('groove')
     )
 
+    velocity_define_by = unit.get('velocityDefineBy', 'velocity')
 
     if unit['type'] == 'TwoRollPass':
-        roll_pass = RollPass(
-            label=unit.get('label', ''),
-            roll=Roll(
-                groove=groove,
-                nominal_radius=unit.get('nominal_radius'),
-            ),
-            gap=unit.get('gap'),
-            velocity=unit.get('velocity'),
-            coulomb_friction_coefficient = unit.get('coulomb_friction_coefficient'),
-        )
+        if velocity_define_by == 'velocity':
+            roll_pass = RollPass(
+                label=unit.get('label', ''),
+                roll=Roll(
+                    groove=groove,
+                    nominal_radius = unit.get('nominal_radius')
+                    ),
+                velocity=unit.get('velocityValue'),
+                gap=unit.get('gap'),
+                coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),
+            )
+        else:
+            roll_pass = RollPass(
+                label=unit.get('label', ''),
+                roll=Roll(
+                    groove=groove,
+                    nominal_radius=unit.get('nominal_radius'),
+                    rotational_frequency=unit.get('coulomb_friction_coefficient')
+                ),
+                gap=unit.get('gap'),
+                coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),
+            )
+
     elif unit['type'] == 'ThreeRollPass':
-        roll_pass = ThreeRollPass(
-            label=unit.get('label', ''),
-            orientation=unit.get('orientation'),
-            roll=Roll(
-                groove=groove,
-                nominal_radius=unit.get('nominal_radius'),
-            ),
-            inscribed_circle_diameter=unit.get('inscribed_circle_diameter'),
-            velocity=unit.get('velocity'),
-            coulomb_friction_coefficient = unit.get('coulomb_friction_coefficient'),
-        )
+        if velocity_define_by == 'velocity':
+            roll_pass = ThreeRollPass(
+                label=unit.get('label', ''),
+                orientation=unit.get('orientation'),
+                roll=Roll(
+                    groove=groove,
+                    nominal_radius=unit.get('nominal_radius')
+                ),
+                velocity=unit.get('velocityValue'),
+                inscribed_circle_diameter=unit.get('inscribed_circle_diameter'),
+                coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),
+            )
+        else:
+            roll_pass = ThreeRollPass(
+                label=unit.get('label', ''),
+                orientation=unit.get('orientation'),
+                roll=Roll(
+                    groove=groove,
+                    nominal_radius=unit.get('nominal_radius'),
+                    rotational_frequency = unit.get('coulomb_friction_coefficient')
+                ),
+                inscribed_circle_diameter=unit.get('inscribed_circle_diameter'),
+                coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),
+            )
+
     return roll_pass
 
 
 def create_transport(unit: Dict[str, Any]) -> Transport:
-
     define_by = unit.get('transportDefineBy', 'length')
 
     if define_by == 'length':
@@ -154,8 +180,8 @@ def create_transport(unit: Dict[str, Any]) -> Transport:
         transport = Transport(
             label=unit.get('label', ''),
             duration=unit.get('transportValue'),
-            environment_temperature = unit.get('environment_temperature', 293.15),
-            heat_transfer_coefficient = unit.get('heat_transfer_coefficient', 15)
+            environment_temperature=unit.get('environment_temperature', 293.15),
+            heat_transfer_coefficient=unit.get('heat_transfer_coefficient', 15)
         )
 
     return transport
@@ -168,9 +194,9 @@ def create_cooling_pipe(unit: Dict[str, Any]) -> CoolingPipe:
         cooling = CoolingPipe(
             label=unit.get('label', ''),
             length=unit.get('coolingValue', 0),
-            inner_radius = unit.get('inner_radius', 0),
-            coolant_temperature = unit.get('coolant_temperature', 0),
-            coolant_volume_flux = unit.get('coolant_volume_flux', 0)
+            inner_radius=unit.get('inner_radius', 0),
+            coolant_temperature=unit.get('coolant_temperature', 0),
+            coolant_volume_flux=unit.get('coolant_volume_flux', 0)
         )
     else:
         cooling = CoolingPipe(
