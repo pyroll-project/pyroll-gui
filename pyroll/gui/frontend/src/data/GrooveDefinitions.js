@@ -23,7 +23,7 @@ export const getGrooveFields = (grooveType) => {
                         {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
                         {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                     ],
-                    rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
+                    rule: 'Exactly 2 of the Other Parameters must be set (not Ground Width and Even Ground Width together)'
                 };
             case 'ConstrictedBoxGroove':
                 return {
@@ -50,7 +50,7 @@ export const getGrooveFields = (grooveType) => {
                         {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
                         {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                     ],
-                    rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
+                    rule: 'Exactly 2 of the Other Parameters must be set (not Ground Width and Even Ground Width together)'
                 };
             case 'DiamondGroove':
                 return {
@@ -89,9 +89,7 @@ export const getGrooveFields = (grooveType) => {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         }
-                    ],
-                optional: [],
-                    rule: ''
+                    ]
                 };
             case 'SquareGroove':
                 return {
@@ -151,9 +149,7 @@ export const getGrooveFields = (grooveType) => {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         },
-                    ],
-                    optional: [],
-                    rule: ''
+                    ]
                 };
             case 'ConstrictedSwedishOvalGroove':
                 return {
@@ -180,7 +176,7 @@ export const getGrooveFields = (grooveType) => {
                         {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
                         {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                     ],
-                    rule: 'Exactly 2 of the Optional Parameters must be set (not Ground Width and Even Ground Width together)'
+                    rule: 'Exactly 2 of the Other Parameters must be set (not Ground Width and Even Ground Width together)'
                 };
             case 'FlatOvalGroove':
                 return {
@@ -203,7 +199,7 @@ export const getGrooveFields = (grooveType) => {
                         },
                         {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
                     ],
-                    rule: 'Exactly one of the Optional Parameters must be set'
+                    rule: 'Exactly one of the Other Parameters must be set'
                 };
             case 'Oval3RadiiGroove':
                 return {
@@ -219,9 +215,7 @@ export const getGrooveFields = (grooveType) => {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         },
-                    ],
-                    optional: [],
-                    rule: ''
+                    ]
                 };
             case 'Oval3RadiiFlankedGroove':
                 return {
@@ -243,8 +237,7 @@ export const getGrooveFields = (grooveType) => {
                         {key: 'flank_width', label: 'Flank Width',tooltip: 'Horizontal extent of the flanks'},
                         {key: 'flank_height', label: 'Flank Height',tooltip: 'Vertical extent of the flanks'},
                         {key: 'flank_length', label: 'Flank Length',tooltip: 'Length of the flanks'},
-                    ],
-                    rule: ''
+                    ]
                 };
             case 'SwedishOvalGroove':
                 return {
@@ -281,9 +274,7 @@ export const getGrooveFields = (grooveType) => {
                             tooltip: 'Angle between z-axis and roll face padding',
                             default: 0
                         },
-                    ],
-                    optional: [],
-                    rule: ''
+                    ]
                 };
             case 'RoundGroove':
                 return {
@@ -324,6 +315,19 @@ export const getGrooveFields = (grooveType) => {
                         {key: 'flank_length', label: 'Flank Length',tooltip: 'Length of the flanks'},
                     ],
                     rule: 'Exactly two of R2, Depth or Usable Width must be set. Exactly one of Flank Angle, Width, Height or Length must be set.'
+                };
+                case 'FlatGroove':
+                return {
+                    required: [
+                        {key: 'r1', label: 'R1', tooltip: 'Radius 1 (face/flank)'},
+                        {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the rolls barrel width'},
+                        {
+                            key: 'pad_angle',
+                            label: 'Pad Angle (°)',
+                            tooltip: 'Angle between z-axis and roll face padding',
+                            default: 0
+                        }
+                    ]
                 };
             default:
                 return {required: [], optional: [], rule: ''};

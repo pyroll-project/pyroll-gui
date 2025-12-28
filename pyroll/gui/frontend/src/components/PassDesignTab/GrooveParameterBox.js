@@ -4,9 +4,44 @@ import {getGrooveFields} from '../../data/GrooveDefinitions';
 export default function GrooveParametersBox({row, tableData, setTableData}) {
     const grooveFields = getGrooveFields(row.grooveType);
 
-    const activeOptionalCount = grooveFields.optional.filter(
+    const activeOptionalCount = (grooveFields.optional || []).filter(
         f => row.groove && row.groove[f.key] !== undefined
     ).length;
+
+    // Validierung basierend auf dem Rule-Text
+    const getValidationStatus = () => {
+        if (!grooveFields.rule || !grooveFields.optional || grooveFields.optional.length === 0) {
+            return { isValid: true, message: '' };
+        }
+
+        const rule = grooveFields.rule.toLowerCase();
+
+        if (rule.includes('exactly 2') || rule.includes('exactly two')) {
+            return {
+                isValid: activeOptionalCount === 2,
+                message: activeOptionalCount === 2
+                    ? '✓ Valid: Exactly 2 optional parameters selected'
+                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly 2)`
+            };
+        }
+
+        if (rule.includes('exactly 1') || rule.includes('exactly one')) {
+            return {
+                isValid: activeOptionalCount === 1,
+                message: activeOptionalCount === 1
+                    ? '✓ Valid: Exactly 1 optional parameter selected'
+                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly 1)`
+            };
+        }
+
+        // Für komplexe Regeln einfach die Regel anzeigen
+        return {
+            isValid: null,
+            message: `Selected: ${activeOptionalCount} optional parameter(s)`
+        };
+    };
+
+    const validation = getValidationStatus();
 
     const handleGrooveParamChange = (paramKey, value) => {
         setTableData(prevData =>
@@ -50,9 +85,11 @@ export default function GrooveParametersBox({row, tableData, setTableData}) {
             borderRadius: '8px',
             border: '1px solid #ccc'
         }}>
-            <div style={{marginBottom: '10px', fontSize: '13px', color: '#666', fontStyle: 'italic'}}>
-                {grooveFields.rule}
-            </div>
+            {grooveFields.rule && (
+                <div style={{marginBottom: '10px', fontSize: '13px', color: '#666', fontStyle: 'italic'}}>
+                    {grooveFields.rule}
+                </div>
+            )}
 
             <div style={{fontWeight: 'bold', marginBottom: '8px', color: '#333'}}>
                 Required Parameters:
@@ -79,57 +116,64 @@ export default function GrooveParametersBox({row, tableData, setTableData}) {
                 ))}
             </div>
 
-            <div style={{fontWeight: 'bold', marginBottom: '8px', color: '#333'}}>
-                Optional Parameters:
-            </div>
-            <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                {grooveFields.optional.map(gf => {
-                    const isActive = row.groove?.[gf.key] !== undefined;
-                    return (
-                        <div key={gf.key} style={{minWidth: '140px', opacity: isActive ? 1 : 0.6}}>
-                            <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
-                                <input
-                                    type="checkbox"
-                                    checked={isActive}
-                                    onChange={() => toggleGrooveOptionalParam(gf.key)}
-                                    style={{marginRight: '6px', cursor: 'pointer'}}
-                                />
-                                <label style={{fontSize: '12px', color: '#666', cursor: 'pointer'}}>
-                                    {gf.label}
-                                </label>
-                            </div>
-                            {isActive && (
-                                <input
-                                    type="number"
-                                    value={row.groove[gf.key] || 0}
-                                    onChange={(e) => handleGrooveParamChange(gf.key, parseFloat(e.target.value) || 0)}
-                                    style={{
-                                        width: '100%',
-                                        padding: '6px',
-                                        border: '1px solid #ddd',
-                                        borderRadius: '4px',
-                                        fontSize: '14px'
-                                    }}
-                                />
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
+            {grooveFields.optional && grooveFields.optional.length > 0 && (
+                <>
+                    <div style={{fontWeight: 'bold', marginBottom: '8px', color: '#333'}}>
+                        Optional Parameters:
+                    </div>
+                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                        {grooveFields.optional.map(gf => {
+                            const isActive = row.groove?.[gf.key] !== undefined;
+                            return (
+                                <div key={gf.key} style={{minWidth: '140px', opacity: isActive ? 1 : 0.6}}>
+                                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
+                                        <input
+                                            type="checkbox"
+                                            checked={isActive}
+                                            onChange={() => toggleGrooveOptionalParam(gf.key)}
+                                            style={{marginRight: '6px', cursor: 'pointer'}}
+                                        />
+                                        <label style={{fontSize: '12px', color: '#666', cursor: 'pointer'}}>
+                                            {gf.label}
+                                        </label>
+                                    </div>
+                                    {isActive && (
+                                        <input
+                                            type="number"
+                                            value={row.groove[gf.key] || 0}
+                                            onChange={(e) => handleGrooveParamChange(gf.key, parseFloat(e.target.value) || 0)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '6px',
+                                                border: '1px solid #ddd',
+                                                borderRadius: '4px',
+                                                fontSize: '14px'
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
 
-            <div style={{
-                marginTop: '10px',
-                padding: '8px',
-                background: activeOptionalCount === 2 ? '#d4edda' : '#f8d7da',
-                borderRadius: '4px',
-                fontSize: '12px',
-                color: activeOptionalCount === 2 ? '#155724' : '#721c24'
-            }}>
-                {activeOptionalCount === 2
-                    ? '✓ Valid: Exactly 2 optional parameters selected'
-                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly 2)`
-                }
-            </div>
+                    {validation.message && (
+                        <div style={{
+                            marginTop: '10px',
+                            padding: '8px',
+                            background: validation.isValid === true ? '#d4edda'
+                                      : validation.isValid === false ? '#f8d7da'
+                                      : '#fff3cd',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            color: validation.isValid === true ? '#155724'
+                                  : validation.isValid === false ? '#721c24'
+                                  : '#856404'
+                        }}>
+                            {validation.message}
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }

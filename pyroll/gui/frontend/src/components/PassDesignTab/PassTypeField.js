@@ -41,9 +41,21 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
 
     const handleInputChange = (field, value) => {
         setTableData(prevData =>
-            prevData.map(r =>
-                r.id === row.id ? {...r, [field]: value} : r
-            )
+            prevData.map(r => {
+                if (r.id === row.id) {
+                    const newRow = {...r, [field]: value};
+
+                    // Finde das Feld-Objekt um zu prüfen ob es mutuallyExclusive ist
+                    const fieldObj = fields.find(f => f.key === field);
+                    if (fieldObj?.mutuallyExclusive && value !== '' && value !== 0 && value !== null) {
+                        // Lösche das andere Feld wenn ein Wert gesetzt wird
+                        delete newRow[fieldObj.mutuallyExclusive];
+                    }
+
+                    return newRow;
+                }
+                return r;
+            })
         );
     };
 
@@ -116,9 +128,20 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
                         );
                     }
 
+                    // Prüfe ob das Feld durch ein mutuallyExclusive Feld gesperrt sein sollte
+                    const isDisabled = field.mutuallyExclusive &&
+                                     row[field.mutuallyExclusive] !== undefined &&
+                                     row[field.mutuallyExclusive] !== null &&
+                                     row[field.mutuallyExclusive] !== '' &&
+                                     row[field.mutuallyExclusive] !== 0;
+
                     return (
                         <div key={field.key} style={{display: 'flex', flexDirection: 'column', minWidth: '150px'}}>
-                            <label style={{fontSize: '12px', color: '#666', marginBottom: '4px'}}>
+                            <label style={{
+                                fontSize: '12px',
+                                color: isDisabled ? '#999' : '#666',
+                                marginBottom: '4px'
+                            }}>
                                 {field.label}
                             </label>
                             {field.type === 'select' ? (
@@ -131,12 +154,15 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
                                             handleInputChange(field.key, e.target.value);
                                         }
                                     }}
+                                    disabled={isDisabled}
                                     style={{
                                         padding: '6px',
                                         border: '1px solid #ddd',
                                         borderRadius: '4px',
                                         fontSize: '14px',
-                                        cursor: 'pointer'
+                                        cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                        opacity: isDisabled ? 0.5 : 1,
+                                        background: isDisabled ? '#f5f5f5' : 'white'
                                     }}
                                 >
                                     {field.options.map(option => (
@@ -161,12 +187,16 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
                                         const numValue = parseNumberInput(inputValue);
                                         handleInputChange(field.key, numValue);
                                     }}
+                                    disabled={isDisabled}
                                     placeholder=""
                                     style={{
                                         padding: '6px',
                                         border: '1px solid #ddd',
                                         borderRadius: '4px',
-                                        fontSize: '14px'
+                                        fontSize: '14px',
+                                        cursor: isDisabled ? 'not-allowed' : 'text',
+                                        opacity: isDisabled ? 0.5 : 1,
+                                        background: isDisabled ? '#f5f5f5' : 'white'
                                     }}
                                 />
                             ) : (
@@ -174,11 +204,15 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
                                     type={field.type}
                                     value={row[field.key] || ''}
                                     onChange={(e) => handleInputChange(field.key, e.target.value)}
+                                    disabled={isDisabled}
                                     style={{
                                         padding: '6px',
                                         border: '1px solid #ddd',
                                         borderRadius: '4px',
-                                        fontSize: '14px'
+                                        fontSize: '14px',
+                                        cursor: isDisabled ? 'not-allowed' : 'text',
+                                        opacity: isDisabled ? 0.5 : 1,
+                                        background: isDisabled ? '#f5f5f5' : 'white'
                                     }}
                                 />
                             )}
