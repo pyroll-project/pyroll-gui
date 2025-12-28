@@ -61,13 +61,20 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
             pass_result['roll_torque'] = float(unit.roll.roll_torque),
             pass_result['power'] = float(unit.power)
             pass_result['filling_ratio'] = float(unit.out_profile.filling_ratio)
+            pass_result['nominal_radius'] = float(unit.roll.nominal_radius),
+            pass_result['working_radius'] = float(unit.roll.working_radius)
+            pass_result['gap'] = float(unit.gap)
+            pass_result['bite_angle'] = float(unit.bite_angle)
+            pass_result['reduction'] = float(unit.rel_draught)
+            pass_result['in_flow_stress'] = float(unit.in_profile.flow_stress)
+            pass_result['out_flow_stress'] = float(unit.out_profile.flow_stress)
 
 
         pass_result['in_strain'] = float(unit.in_profile.strain)
-        pass_result['in_temperature'] =  float(unit.in_profile.temperature)
-
         pass_result['out_strain'] = float(unit.out_profile.strain)
+        pass_result['in_temperature'] =  float(unit.in_profile.temperature)
         pass_result['out_temperature'] = float(unit.out_profile.temperature)
+
         pass_result['out_height'] = float(unit.out_profile.height)
         pass_result['out_width'] = float(unit.out_profile.width)
         pass_result['out_cross_section_area'] = float(unit.out_profile.cross_section.area)
