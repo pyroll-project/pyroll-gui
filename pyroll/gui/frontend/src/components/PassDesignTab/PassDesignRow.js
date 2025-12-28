@@ -22,9 +22,11 @@ export default function PassDesignRow({
                     if (newType === 'TwoRollPass') {
                         newRow.grooveType = 'BoxGroove';
                         newRow.groove = {};
+                        newRow.orientation = 'horizontal';
                     } else if (newType === 'ThreeRollPass') {
                         newRow.grooveType = 'RoundGroove';
                         newRow.groove = {};
+                        newRow.orientation = 'Y';
                     } else if (newType === 'Transport') {
                         newRow.transportDefineBy = 'length';
                     } else if (newType === 'CoolingPipe') {

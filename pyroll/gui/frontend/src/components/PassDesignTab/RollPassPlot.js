@@ -17,7 +17,7 @@ export default function RollPassPlot({row}) {
             d3.select(svgRef.current).selectAll('*').remove();
 
             const width = 500;
-            const height = 400;
+            const height = 500;  // Gleiche Höhe wie Breite für quadratischen Plot
             const margin = {top: 40, right: 40, bottom: 50, left: 60};
 
             const svg = d3.select(svgRef.current)
@@ -30,18 +30,22 @@ export default function RollPassPlot({row}) {
             const plotWidth = width - margin.left - margin.right;
             const plotHeight = height - margin.top - margin.bottom;
 
+            // Ensure square plot area
+            const plotSize = Math.min(plotWidth, plotHeight);
+
             const contourData = await getRollPassContour({
                 grooveType: row.grooveType,
                 groove: row.groove,
                 gap: row.gap || 0,
+                orientation: row.orientation,
                 label: row.label,
             });
 
             if (!contourData.success) {
                 setError(contourData.error || 'Failed to load roll pass contour');
                 g.append('text')
-                    .attr('x', plotWidth / 2)
-                    .attr('y', plotHeight / 2)
+                    .attr('x', plotSize / 2)
+                    .attr('y', plotSize / 2)
                     .attr('text-anchor', 'middle')
                     .style('fill', '#f44336')
                     .style('font-size', '14px')
@@ -52,8 +56,8 @@ export default function RollPassPlot({row}) {
 
             if (!contourData.upper || !contourData.upper.x || contourData.upper.x.length === 0) {
                 g.append('text')
-                    .attr('x', plotWidth / 2)
-                    .attr('y', plotHeight / 2)
+                    .attr('x', plotSize / 2)
+                    .attr('y', plotSize / 2)
                     .attr('text-anchor', 'middle')
                     .style('fill', '#999')
                     .text('Enter groove parameters to see roll pass');
@@ -61,60 +65,81 @@ export default function RollPassPlot({row}) {
                 return;
             }
 
+            // Calculate center of mass to shift to (0,0)
+            const allX = [...contourData.upper.x, ...contourData.lower.x];
+            const allY = [...contourData.upper.y, ...contourData.lower.y];
+
+            const xCenter = d3.mean(allX);
+            const yCenter = d3.mean(allY);
+
+            // Shift all points to center at (0,0)
             const upperPoints = contourData.upper.x.map((x, i) => ({
-                x: x,
-                y: contourData.upper.y[i]
+                x: x - xCenter,
+                y: contourData.upper.y[i] - yCenter
             }));
 
             const lowerPoints = contourData.lower.x.map((x, i) => ({
-                x: x,
-                y: contourData.lower.y[i]
+                x: x - xCenter,
+                y: contourData.lower.y[i] - yCenter
             }));
 
-            const allY = [...contourData.upper.y, ...contourData.lower.y];
-            const allX = [...contourData.upper.x];
+            // Recalculate extents after centering
+            const centeredX = upperPoints.map(p => p.x).concat(lowerPoints.map(p => p.x));
+            const centeredY = upperPoints.map(p => p.y).concat(lowerPoints.map(p => p.y));
 
-            // Scales
-            const xExtent = d3.extent(allX);
-            const yExtent = d3.extent(allY);
+            const xExtent = d3.extent(centeredX);
+            const yExtent = d3.extent(centeredY);
 
-            const xPadding = (xExtent[1] - xExtent[0]) * 0.1 || 5;
-            const yPadding = (yExtent[1] - yExtent[0]) * 0.1 || 5;
+            const dataWidth = xExtent[1] - xExtent[0];
+            const dataHeight = yExtent[1] - yExtent[0];
 
+            // Add 10% padding
+            const xPadding = dataWidth * 0.1 || 0.01;
+            const yPadding = dataHeight * 0.1 || 0.01;
+
+            // Calculate the maximum range needed (same for both axes for 1:1 aspect ratio)
+            const maxDataRange = Math.max(dataWidth + 2 * xPadding, dataHeight + 2 * yPadding);
+
+            // Use the same domain range for both axes centered at (0,0)
+            // and use plotSize for both ranges to ensure 1:1 aspect ratio
             const xScale = d3.scaleLinear()
-                .domain([xExtent[0] - xPadding, xExtent[1] + xPadding])
-                .range([0, plotWidth]);
+                .domain([-maxDataRange / 2, maxDataRange / 2])
+                .range([0, plotSize]);
 
             const yScale = d3.scaleLinear()
-                .domain([yExtent[0] - yPadding, yExtent[1] + yPadding])
-                .range([plotHeight, 0]);
+                .domain([-maxDataRange / 2, maxDataRange / 2])
+                .range([plotSize, 0]);
 
             // Grid
             g.append('g')
                 .attr('class', 'grid')
                 .attr('opacity', 0.1)
-                .call(d3.axisLeft(yScale).tickSize(-plotWidth).tickFormat(''));
+                .call(d3.axisLeft(yScale).tickSize(-plotSize).tickFormat(''));
 
             g.append('g')
                 .attr('class', 'grid')
                 .attr('opacity', 0.1)
-                .attr('transform', `translate(0,${plotHeight})`)
-                .call(d3.axisBottom(xScale).tickSize(-plotHeight).tickFormat(''));
+                .attr('transform', `translate(0,${plotSize})`)
+                .call(d3.axisBottom(xScale).tickSize(-plotSize).tickFormat(''));
 
             // Axes
             g.append('g')
-                .attr('transform', `translate(0,${plotHeight})`)
+                .attr('transform', `translate(0,${plotSize})`)
                 .call(d3.axisBottom(xScale).ticks(8))
-                .style('font-size', '12px');
+                .style('font-size', '12px')
+                .selectAll('line, path')
+                .style('stroke-width', '2px');
 
             g.append('g')
                 .call(d3.axisLeft(yScale).ticks(8))
-                .style('font-size', '12px');
+                .style('font-size', '12px')
+                .selectAll('line, path')
+                .style('stroke-width', '2px');
 
             // Axis labels
             g.append('text')
-                .attr('x', plotWidth / 2)
-                .attr('y', plotHeight + 40)
+                .attr('x', plotSize / 2)
+                .attr('y', plotSize + 40)
                 .attr('text-anchor', 'middle')
                 .style('font-size', '13px')
                 .style('font-weight', 'bold')
@@ -122,18 +147,16 @@ export default function RollPassPlot({row}) {
 
             g.append('text')
                 .attr('transform', 'rotate(-90)')
-                .attr('x', -plotHeight / 2)
+                .attr('x', -plotSize / 2)
                 .attr('y', -45)
                 .attr('text-anchor', 'middle')
                 .style('font-size', '13px')
                 .style('font-weight', 'bold')
                 .text('Height');
 
-
             const line = d3.line()
                 .x(d => xScale(d.x))
                 .y(d => yScale(d.y));
-
 
             g.append('path')
                 .datum(upperPoints)
@@ -149,19 +172,19 @@ export default function RollPassPlot({row}) {
                 .attr('stroke-width', 2.5)
                 .attr('d', line);
 
-
+            // Gap line at y=0
             const gapY = yScale(0);
             g.append('line')
                 .attr('x1', 0)
-                .attr('x2', plotWidth)
+                .attr('x2', plotSize)
                 .attr('y1', gapY)
                 .attr('y2', gapY)
                 .attr('stroke', '#f44336')
                 .attr('stroke-width', 1)
                 .attr('stroke-dasharray', '5,5');
 
-
-            const infoX = plotWidth - 5;
+            // Info text
+            const infoX = plotSize - 5;
             const infoY = 15;
 
             g.append('text')
@@ -201,7 +224,7 @@ export default function RollPassPlot({row}) {
                 .style('font-size', '15px')
                 .style('font-weight', 'bold')
                 .style('fill', '#333')
-                .text(`Roll Pass: ${contourData.label}`);
+                .text(`Roll Pass: ${contourData.label || row.label || ''}`);
 
             setLoading(false);
         };

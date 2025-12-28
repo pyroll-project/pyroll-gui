@@ -1,4 +1,5 @@
 from typing import Dict, Any
+from pyroll.core import RollPass, Roll
 
 from .helpers import create_groove
 
@@ -8,19 +9,31 @@ def get_rollpass_contour(pass_data: Dict[str, Any]) -> Dict[str, Any]:
         groove_type = pass_data.get('grooveType')
         groove_params = pass_data.get('groove', {})
         gap = pass_data.get('gap', 0)
+        orientation = pass_data.get('orientation')
 
         groove = create_groove(groove_type, groove_params)
+
+        roll_pass = RollPass(
+            orientation=orientation,
+            roll=Roll(
+                groove = groove,
+                nominal_radius = 1
+            ),
+            gap=gap,
+            velocity=1,
+            coulomb_friction_coefficient = 0.2
+        )
 
         if not hasattr(groove, 'contour_line'):
             return {"success": False, "error": "Groove has no contour_line"}
 
-        # Obere Kontur (Original)
-        upper_contour = groove.contour_line
+        upper_contour = roll_pass.technologically_orientated_contour_lines.geoms[0]
         upper_x = [p[0] for p in upper_contour.coords]
-        upper_y = [p[1] + gap / 2 for p in upper_contour.coords]
+        upper_y = [p[1] for p in upper_contour.coords]
 
-        lower_x = upper_x.copy()
-        lower_y = [-y for y in upper_y]
+        lower_contour = roll_pass.technologically_orientated_contour_lines.geoms[1]
+        lower_x = [p[0] for p in lower_contour.coords]
+        lower_y = [p[1] for p in lower_contour.coords]
 
         return {
             "success": True,

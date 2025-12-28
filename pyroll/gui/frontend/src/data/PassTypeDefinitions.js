@@ -8,6 +8,12 @@ export const getFieldsForType = (type) => {
                 {key: 'velocity', label: 'Velocity', type: 'number'},
                 {key: 'coulomb_friction_coefficient', label: 'Coulomb Friction Coefficient', type: 'number'},
                 {
+                    key: 'orientation',
+                    label: 'Orientation',
+                    type: 'select',
+                    options: ['horizontal', 'vertical']
+                },
+                {
                     key: 'grooveType', label: 'Groove Type', type: 'select', options: [
                         'BoxGroove',
                         'ConstrictedBoxGroove',
@@ -35,7 +41,12 @@ export const getFieldsForType = (type) => {
                 {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
                 {key: 'velocity', label: 'Velocity', type: 'number'},
                 {key: 'coulomb_friction_coefficient', label: 'Coulomb Friction Coefficient', type: 'number'},
-                {key: 'orientation', label: 'Orientation', type: 'string'},
+                {
+                    key: 'orientation',
+                    label: 'Orientation',
+                    type: 'select',
+                    options: ['Y', 'AntiY']
+                },
                 {
                     key: 'grooveType', label: 'Groove Type', type: 'select', options: [
                         'CircularOvalGroove',
