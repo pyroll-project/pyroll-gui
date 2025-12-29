@@ -110,7 +110,6 @@ def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
         unit.get('grooveType'),
         unit.get('groove')
     )
-
     velocity_define_by = unit.get('velocityDefineBy', 'velocity')
 
     if unit['type'] == 'TwoRollPass':
@@ -131,7 +130,7 @@ def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
                 roll=Roll(
                     groove=groove,
                     nominal_radius=unit.get('nominal_radius'),
-                    rotational_frequency=unit.get('coulomb_friction_coefficient')
+                    rotational_frequency=unit.get('velocityValue')
                 ),
                 gap=unit.get('gap'),
                 coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),
@@ -157,7 +156,7 @@ def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
                 roll=Roll(
                     groove=groove,
                     nominal_radius=unit.get('nominal_radius'),
-                    rotational_frequency = unit.get('coulomb_friction_coefficient')
+                    rotational_frequency = unit.get('velocityValue')
                 ),
                 inscribed_circle_diameter=unit.get('inscribed_circle_diameter'),
                 coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),

@@ -1,13 +1,24 @@
+import { prepareUnitsForBackend, prepareProfileForBackend } from '../helpers/DataConverter';
+
 export const runSimulation = async (inProfile, passDesignData) => {
   try {
+    // Konvertiere alle String-Werte zu Numbers
+    const preparedProfile = prepareProfileForBackend(inProfile);
+    const preparedUnits = prepareUnitsForBackend(passDesignData);
+
+    console.log('Sending to backend:', {
+      inProfile: preparedProfile,
+      passDesignData: preparedUnits
+    });
+
     const response = await fetch('http://localhost:8000/api/simulate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inProfile: inProfile,
-        passDesignData: passDesignData
+        inProfile: preparedProfile,
+        passDesignData: preparedUnits
       })
     });
 

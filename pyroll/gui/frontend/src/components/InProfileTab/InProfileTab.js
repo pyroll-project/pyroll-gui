@@ -16,11 +16,7 @@ export default function InProfileTab({inProfile, setInProfile}) {
         message: '',
         type: 'success'
     });
-
-    /**
-     * Zeigt eine Benachrichtigung an
-     */
-    const showNotification = (message, type = 'success') => {
+        const showNotification = (message, type = 'success') => {
         setNotification({
             show: true,
             message,
@@ -28,9 +24,6 @@ export default function InProfileTab({inProfile, setInProfile}) {
         });
     };
 
-    /**
-     * Schließt die Benachrichtigung
-     */
     const closeNotification = () => {
         setNotification({
             show: false,

@@ -5,8 +5,8 @@ export const getFieldsForType = (type) => {
                 {key: 'label', label: 'Label', type: 'string'},
                 {key: 'gap', label: 'Gap', type: 'number'},
                 {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
-                {key: 'velocityDefineBy', label: 'Define Velocity by', type: 'select', options: ['velocity', 'rotational_frequency']},
-                {key: 'velocityValue', label: 'Value', type: 'number', unit: ''},
+                {key: 'velocityDefineBy', label: 'Define Velocity by', type: 'select', options: ['Velocity', 'Rotational Frequency']},
+                {key: 'velocityValue', label: 'Value', type: 'number'},
                 {key: 'coulomb_friction_coefficient', label: 'Coulomb Friction Coefficient', type: 'number'},
                 {
                     key: 'orientation',
@@ -41,8 +41,8 @@ export const getFieldsForType = (type) => {
                 {key: 'label', label: 'Label', type: 'string'},
                 {key: 'inscribed_circle_diameter', label: 'Inscribed Circle Diameter (ICD)', type: 'number'},
                 {key: 'nominal_radius', label: 'Nominal Radius', type: 'number'},
-                {key: 'velocityDefineBy', label: 'Define Velocity by', type: 'select', options: ['velocity', 'rotational_frequency']},
-                {key: 'velocityValue', label: 'Value', type: 'number', unit: ''},
+                {key: 'velocityDefineBy', label: 'Define Velocity by', type: 'select', options: ['Velocity', 'Rotational Frequency']},
+                {key: 'velocityValue', label: 'Value', type: 'number'},
                 {key: 'coulomb_friction_coefficient', label: 'Coulomb Friction Coefficient', type: 'number'},
                 {
                     key: 'orientation',

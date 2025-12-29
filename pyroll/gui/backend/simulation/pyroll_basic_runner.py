@@ -1,5 +1,7 @@
+import pyroll.basic
+
 from typing import Dict, List, Any
-from pyroll.core import PassSequence
+from pyroll.basic import PassSequence
 
 from .helpers import create_roll_pass, create_transport, create_cooling_pipe, create_initial_profile
 
@@ -8,13 +10,12 @@ def run_pyroll_simulation(
         units: List[Dict[str, Any]],
         in_profile_data: Dict[str, Any]
 ) -> Dict[str, Any]:
-    import pyroll.basic
 
     try:
         sequence_list = []
         for unit in units:
             unit_type = unit.get('type')
-
+            print(unit_type)
             if unit_type == 'TwoRollPass':
                 sequence_list.append(create_roll_pass(unit))
             elif unit_type == 'ThreeRollPass':
@@ -62,6 +63,7 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
             pass_result['filling_ratio'] = float(unit.out_profile.filling_ratio)
             pass_result['nominal_radius'] = float(unit.roll.nominal_radius),
             pass_result['working_radius'] = float(unit.roll.working_radius)
+            pass_result['velocity'] = float(unit.velocity)
             pass_result['gap'] = float(unit.gap)
             pass_result['bite_angle'] = float(unit.bite_angle)
             pass_result['reduction'] = float(unit.rel_draught)

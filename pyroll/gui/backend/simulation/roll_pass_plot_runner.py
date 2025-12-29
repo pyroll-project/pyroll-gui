@@ -12,8 +12,6 @@ def get_rollpass_contour(pass_data: Dict[str, Any]) -> Dict[str, Any]:
         orientation = pass_data.get('orientation')
         pass_type = pass_data.get('type')
 
-        print(f"Debug: pass_type={pass_type}, orientation={orientation}, gap={gap}")
-
         groove = create_groove(groove_type, groove_params)
 
         if pass_type == 'ThreeRollPass':
