@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {getGrooveFields} from '../../data/GrooveDefinitions';
+import {parseNumberInput} from '../../helpers/DataConverter';
 import GrooveParametersBox from './GrooveParameterBox';
 import RollPassPlot from './RollPassPlot';
 
@@ -17,23 +18,6 @@ const isValidNumberInput = (value) => {
     return pattern.test(value);
 };
 
-const parseNumberInput = (value) => {
-    if (!value || value === '-' || value === '.' || value === '+') {
-        return 0;
-    }
-
-    if (value.endsWith('e') || value.endsWith('e-') || value.endsWith('e+') ||
-        value.endsWith('E') || value.endsWith('E-') || value.endsWith('E+')) {
-        return 0;
-    }
-
-    try {
-        const num = parseFloat(value);
-        return isNaN(num) ? 0 : num;
-    } catch (error) {
-        return 0;
-    }
-};
 
 export default function PassTypeFields({row, fields, tableData, setTableData}) {
     const [isGrooveExpanded, setIsGrooveExpanded] = useState(true);
@@ -128,7 +112,6 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
                         );
                     }
 
-                    // Prüfe ob das Feld durch ein mutuallyExclusive Feld gesperrt sein sollte
                     const isDisabled = field.mutuallyExclusive &&
                                      row[field.mutuallyExclusive] !== undefined &&
                                      row[field.mutuallyExclusive] !== null &&

@@ -1,4 +1,4 @@
-const parseNumberInput = (value) => {
+export const parseNumberInput = (value) => {
     if (!value || value === '-' || value === '.' || value === '+') {
         return 0;
     }
@@ -27,7 +27,6 @@ export const prepareUnitsForBackend = (units) => {
     const prepared = units.map(unit => {
         const preparedUnit = {...unit};
 
-        // Liste aller numerischen Felder
         const numericFields = [
             'nominal_radius', 'gap', 'velocityValue', 'inscribed_circle_diameter',
             'coulomb_friction_coefficient', 'transportValue', 'coolingValue',
@@ -35,7 +34,6 @@ export const prepareUnitsForBackend = (units) => {
             'coolant_temperature', 'coolant_volume_flux'
         ];
 
-        // Konvertiere alle numerischen Felder
         numericFields.forEach(field => {
             if (preparedUnit[field] !== undefined && preparedUnit[field] !== null && preparedUnit[field] !== '') {
                 const original = preparedUnit[field];
@@ -49,7 +47,6 @@ export const prepareUnitsForBackend = (units) => {
             }
         });
 
-        // Konvertiere Groove-Parameter
         if (preparedUnit.groove && typeof preparedUnit.groove === 'object') {
             console.log('  Converting groove parameters:');
             preparedUnit.groove = Object.fromEntries(
@@ -82,7 +79,6 @@ export const prepareProfileForBackend = (profileData) => {
 
     const prepared = {...profileData};
 
-    // Numerische Felder im Profile
     const numericFields = [
         'diameter', 'side', 'height', 'width', 'corner_radius',
         'temperature', 'strain', 'density', 'specific_heat_capacity',
@@ -102,7 +98,6 @@ export const prepareProfileForBackend = (profileData) => {
         }
     });
 
-    // Flow Stress Parameter
     if (prepared.flowStressParams && typeof prepared.flowStressParams === 'object') {
         console.log('  Converting flowStressParams:');
         prepared.flowStressParams = Object.fromEntries(

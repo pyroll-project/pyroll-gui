@@ -8,7 +8,6 @@ export default function GrooveParametersBox({row, tableData, setTableData}) {
         f => row.groove && row.groove[f.key] !== undefined
     ).length;
 
-    // Validierung basierend auf dem Rule-Text
     const getValidationStatus = () => {
         if (!grooveFields.rule || !grooveFields.optional || grooveFields.optional.length === 0) {
             return { isValid: true, message: '' };
@@ -16,28 +15,27 @@ export default function GrooveParametersBox({row, tableData, setTableData}) {
 
         const rule = grooveFields.rule.toLowerCase();
 
-        if (rule.includes('exactly 2') || rule.includes('exactly two')) {
+        if (rule.includes('exactly two')) {
             return {
                 isValid: activeOptionalCount === 2,
                 message: activeOptionalCount === 2
-                    ? '✓ Valid: Exactly 2 optional parameters selected'
-                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly 2)`
+                    ? '✓ Valid: Exactly two additional parameters selected'
+                    : `⚠ ${activeOptionalCount} additional parameter(s) selected (need exactly two)`
             };
         }
 
-        if (rule.includes('exactly 1') || rule.includes('exactly one')) {
+        if (rule.includes('exactly one')) {
             return {
                 isValid: activeOptionalCount === 1,
                 message: activeOptionalCount === 1
-                    ? '✓ Valid: Exactly 1 optional parameter selected'
-                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly 1)`
+                    ? '✓ Valid: Exactly one additional parameter selected'
+                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly one)`
             };
         }
 
-        // Für komplexe Regeln einfach die Regel anzeigen
         return {
             isValid: null,
-            message: `Selected: ${activeOptionalCount} optional parameter(s)`
+            message: `Selected: ${activeOptionalCount} additional parameter(s)`
         };
     };
 
@@ -119,7 +117,7 @@ export default function GrooveParametersBox({row, tableData, setTableData}) {
             {grooveFields.optional && grooveFields.optional.length > 0 && (
                 <>
                     <div style={{fontWeight: 'bold', marginBottom: '8px', color: '#333'}}>
-                        Optional Parameters:
+                        Additional Parameters:
                     </div>
                     <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
                         {grooveFields.optional.map(gf => {

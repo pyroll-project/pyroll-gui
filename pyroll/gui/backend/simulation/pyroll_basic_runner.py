@@ -57,6 +57,12 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
                        "type": unit_type,
                        }
         if unit_type in ("TwoRollPass", "ThreeRollPass"):
+
+            out_cross_section_area = float(unit.out_profile.cross_section.area)
+            in_cross_section_area = float(unit.in_profile.cross_section.area)
+
+            reduction = (in_cross_section_area - out_cross_section_area) / in_cross_section_area
+
             pass_result['roll_force'] = float(unit.roll_force),
             pass_result['roll_torque'] = float(unit.roll.roll_torque),
             pass_result['power'] = float(unit.power)
@@ -66,7 +72,7 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
             pass_result['velocity'] = float(unit.velocity)
             pass_result['gap'] = float(unit.gap)
             pass_result['bite_angle'] = float(unit.bite_angle)
-            pass_result['reduction'] = float(unit.rel_draught)
+            pass_result['reduction'] = reduction
             pass_result['in_flow_stress'] = float(unit.in_profile.flow_stress)
             pass_result['out_flow_stress'] = float(unit.out_profile.flow_stress)
 

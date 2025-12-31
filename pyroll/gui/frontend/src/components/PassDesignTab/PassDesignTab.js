@@ -38,16 +38,6 @@ export default function PassDesignTab({
         const newId = tableData.length > 0
             ? Math.max(...tableData.map(r => r.id)) + 1
             : 1;
-
-        setTableData([...tableData, {
-            id: newId,
-            type: 'TwoRollPass',
-            gap: 0,
-            nominal_radius: 0,
-            velocity: 0,
-            grooveType: 'BoxGroove',
-            groove: {r1: 0, r2: 0, depth: 0, pad_angle: 0}
-        }]);
     };
 
     return (
