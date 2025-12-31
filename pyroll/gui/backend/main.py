@@ -1,10 +1,27 @@
+from enum import Enum
 from fastapi import FastAPI
+from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 
 from simulation import get_rollpass_contour, get_in_profile_contour
 from simulation.pyroll_basic_runner import run_pyroll_simulation, validate_parameters
+
+
+class SolveMethod(str, Enum):
+    STANDARD = "solve"
+    FORWARD = "solve_forward"
+    BACKWARD = "solve_backward"
+
+class StandardSolveParams(BaseModel):
+    pass
+
+class ForwardSolveParams(BaseModel):
+    in_velocity: float = Field(..., description="Incoming Profile Velocity")
+
+class BackwardSolveParams(BaseModel):
+    out_cross_section: float = Field(..., description="Final Profile Area")
+    out_velocity: float = Field(..., description="Final Profile Velocity")
 
 app = FastAPI(title="PyRolL-Basic")
 
@@ -20,6 +37,10 @@ app.add_middleware(
 class SimulationRequest(BaseModel):
     inProfile: Dict[str, Any]
     passDesignData: List[Dict[str, Any]]
+    solve_method: SolveMethod = SolveMethod.STANDARD
+    solve_params: Union[StandardSolveParams, ForwardSolveParams, BackwardSolveParams] = Field(
+        default_factory=StandardSolveParams
+    )
 
 
 class SimulationResponse(BaseModel):
@@ -49,7 +70,9 @@ async def run_simulation(data: SimulationRequest):
 
         result = run_pyroll_simulation(
             units=data.passDesignData,
-            in_profile_data=data.inProfile
+            in_profile_data=data.inProfile,
+            solve_method=data.solve_method.value,  # Convert Enum to string value
+            solve_params=data.solve_params
         )
 
         return SimulationResponse(

@@ -1,21 +1,20 @@
 import pyroll.basic
-
-from typing import Dict, List, Any
 from pyroll.basic import PassSequence
 
+from typing import Dict, List, Any, Union
 from .helpers import create_roll_pass, create_transport, create_cooling_pipe, create_initial_profile
 
 
 def run_pyroll_simulation(
         units: List[Dict[str, Any]],
-        in_profile_data: Dict[str, Any]
-) -> Dict[str, Any]:
-
+        in_profile_data: Dict[str, Any],
+        solve_method: str = "solve",
+        solve_params: Union[Dict, Any] = None
+):
     try:
         sequence_list = []
         for unit in units:
             unit_type = unit.get('type')
-            print(unit_type)
             if unit_type == 'TwoRollPass':
                 sequence_list.append(create_roll_pass(unit))
             elif unit_type == 'ThreeRollPass':
@@ -27,8 +26,36 @@ def run_pyroll_simulation(
         sequence = PassSequence(sequence_list)
 
         initial_profile = create_initial_profile(in_profile_data)
+        print(solve_method)
+        if solve_method == "solve":
+            sequence.solve(in_profile=initial_profile)
 
-        sequence.solve(initial_profile)
+
+        elif solve_method == "solve_forward":
+            if not solve_params or not hasattr(solve_params, 'in_velocity'):
+                raise ValueError("Method requires incoming profile velocity.")
+
+            in_velocity = solve_params.in_velocity
+            sequence.solve_velocities_forward(in_profile=initial_profile,
+                                              initial_speed=in_velocity)
+
+        elif solve_method == "solve_backward":
+            print('Here')
+            if not solve_params or not hasattr(solve_params, 'out_cross_section') or not hasattr(solve_params,
+                                                                                                 'out_velocity'):
+                raise ValueError("Method requires final profile cross-section area and velocity.")
+
+            out_cross_section = solve_params.out_cross_section
+            out_velocity = solve_params.out_velocity
+            print(50*'=')
+            print(out_cross_section)
+            sequence.solve_velocities_backward(in_profile=initial_profile,
+                                               final_cross_section_area=out_cross_section,
+                                               final_speed=out_velocity
+                                               )
+
+        else:
+            raise ValueError(f"Unknown solve method: {solve_method}")
 
         results = extract_results(sequence)
 
@@ -57,7 +84,6 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
                        "type": unit_type,
                        }
         if unit_type in ("TwoRollPass", "ThreeRollPass"):
-
             out_cross_section_area = float(unit.out_profile.cross_section.area)
             in_cross_section_area = float(unit.in_profile.cross_section.area)
 

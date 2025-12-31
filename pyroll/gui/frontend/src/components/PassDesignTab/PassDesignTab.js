@@ -2,13 +2,16 @@ import React, {useState} from 'react';
 import PassDesignTable from './PassDesignTable';
 import PassDesignLoader from './PassDesignLoader';
 import PassDesignSaver from './PassDesignSaver';
+import SolveMethodSelector from './SolveMethodSelector';
 import Notification from '../../helpers/Notification';
 
 export default function PassDesignTab({
                                           tableData,
                                           setTableData,
                                           loading,
-                                          runSimulation
+                                          runSimulation,
+                                          solveConfig,
+                                          setSolveConfig
                                       }) {
     const [notification, setNotification] = useState({
         show: false,
@@ -38,6 +41,28 @@ export default function PassDesignTab({
         const newId = tableData.length > 0
             ? Math.max(...tableData.map(r => r.id)) + 1
             : 1;
+
+        const newRow = {
+            id: newId,
+            label: `Unit ${newId}`,
+            type: 'TwoRollPass',
+            gap: 0,
+            nominal_radius: 0,
+            velocity: 0,
+            coulomb_friction_coefficient: 0,
+            grooveType: 'BoxGroove',
+            groove: {
+                r1: 0,
+                r2: 0,
+                depth: 0,
+                pad_angle: 0,
+                ground_width: 0,
+                usable_width: 0
+            }
+        };
+
+        setTableData([...tableData, newRow]);
+        showNotification('New unit added', 'success');
     };
 
     return (
@@ -108,6 +133,19 @@ export default function PassDesignTab({
                 >
                     Add Unit
                 </button>
+
+                <div style={{
+                    width: '2px',
+                    height: '40px',
+                    background: '#ddd',
+                    margin: '0 5px'
+                }}/>
+
+                {/* Solve Method Selector */}
+                <SolveMethodSelector
+                    value={solveConfig}
+                    onChange={setSolveConfig}
+                />
 
                 <div style={{
                     width: '2px',
