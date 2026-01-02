@@ -65,69 +65,95 @@ export default function InProfileTab({inProfile, setInProfile}) {
                 </div>
             </div>
 
-            <div style={{overflowX: 'auto'}}>
-                <table style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    marginTop: '20px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                }}>
-                    <thead>
-                    <tr style={{background: '#FFDD00', color: 'black'}}>
-                        <th style={{
+            <div style={{
+                display: 'flex',
+                gap: '20px',
+                alignItems: 'flex-start',
+                flexWrap: 'wrap'
+            }}>
+                {/* Left side: Configuration table */}
+                <div style={{flex: '1 1 500px', minWidth: '400px'}}>
+                    <div style={{
+                        borderCollapse: 'collapse',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        background: 'white',
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{
+                            background: '#FFDD00',
+                            color: 'black',
                             padding: '12px',
-                            textAlign: 'left',
-                            borderBottom: '2px solid #ddd',
-                            minWidth: '150px'
-                        }}>Type
-                        </th>
-                        <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd'}}>Parameters</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr style={{background: '#f9f9f9'}}>
-                        <td style={{padding: '10px', borderBottom: '1px solid #ddd', verticalAlign: 'top'}}>
-                            <select
-                                value={inProfile.shape}
-                                onChange={(e) => setInProfile({...inProfile, shape: e.target.value})}
-                                style={{
-                                    width: '100%',
-                                    padding: '8px',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px',
-                                    fontSize: '14px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                <option value="round">Round</option>
-                                <option value="square">Square</option>
-                                <option value="box">Box</option>
-                                <option value="hexagon">Hexagon</option>
-                            </select>
-                        </td>
-                        <td style={{padding: '10px', borderBottom: '1px solid #ddd'}}>
-                            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-                                {inProfile.shape === 'round' && (
-                                    <RoundProfile inProfile={inProfile} setInProfile={setInProfile}/>
-                                )}
-                                {inProfile.shape === 'square' && (
-                                    <SquareProfile inProfile={inProfile} setInProfile={setInProfile}/>
-                                )}
-                                {inProfile.shape === 'box' && (
-                                    <BoxProfile inProfile={inProfile} setInProfile={setInProfile}/>
-                                )}
-                                {inProfile.shape === 'hexagon' && (
-                                    <HexagonProfile inProfile={inProfile} setInProfile={setInProfile}/>
-                                )}
-                                <CommonParameters inProfile={inProfile} setInProfile={setInProfile}/>
+                            fontWeight: 'bold',
+                            borderBottom: '2px solid #ddd'
+                        }}>
+                            Profile Configuration
+                        </div>
+                        <div style={{padding: '20px'}}>
+                            {/* Type dropdown section */}
+                            <div style={{marginBottom: '20px'}}>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '8px',
+                                    fontWeight: 'bold',
+                                    color: '#555'
+                                }}>
+                                    Type
+                                </label>
+                                <select
+                                    value={inProfile.shape}
+                                    onChange={(e) => setInProfile({...inProfile, shape: e.target.value})}
+                                    style={{
+                                        width: '100%',
+                                        padding: '8px',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '4px',
+                                        fontSize: '14px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <option value="round">Round</option>
+                                    <option value="square">Square</option>
+                                    <option value="box">Box</option>
+                                    <option value="hexagon">Hexagon</option>
+                                </select>
                             </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
 
-            <ProfilePlot inProfile={inProfile}/>
+                            {/* Parameters section */}
+                            <div>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '12px',
+                                    fontWeight: 'bold',
+                                    color: '#555'
+                                }}>
+                                    Parameters
+                                </label>
+                                <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                                    {inProfile.shape === 'round' && (
+                                        <RoundProfile inProfile={inProfile} setInProfile={setInProfile}/>
+                                    )}
+                                    {inProfile.shape === 'square' && (
+                                        <SquareProfile inProfile={inProfile} setInProfile={setInProfile}/>
+                                    )}
+                                    {inProfile.shape === 'box' && (
+                                        <BoxProfile inProfile={inProfile} setInProfile={setInProfile}/>
+                                    )}
+                                    {inProfile.shape === 'hexagon' && (
+                                        <HexagonProfile inProfile={inProfile} setInProfile={setInProfile}/>
+                                    )}
+                                    <CommonParameters inProfile={inProfile} setInProfile={setInProfile}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right side: Plot */}
+                <div style={{flex: '1 1 400px', minWidth: '350px'}}>
+                    <ProfilePlot inProfile={inProfile}/>
+                </div>
+            </div>
         </div>
     );
 }

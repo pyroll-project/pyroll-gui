@@ -46,13 +46,16 @@ export default function ProfilePlot({inProfile}) {
         const xCenter = (xExtent[0] + xExtent[1]) / 2;
         const yCenter = (yExtent[0] + yExtent[1]) / 2;
 
+        const availableSize = Math.min(plotWidth, plotHeight);
+        const domainSize = maxRange + 2 * padding;
+
         const xScale = d3.scaleLinear()
-            .domain([xCenter - maxRange / 2 - padding, xCenter + maxRange / 2 + padding])
-            .range([0, plotWidth]);
+            .domain([xCenter - domainSize / 2, xCenter + domainSize / 2])
+            .range([(plotWidth - availableSize) / 2, (plotWidth + availableSize) / 2]);
 
         const yScale = d3.scaleLinear()
-            .domain([yCenter - maxRange / 2 - padding, yCenter + maxRange / 2 + padding])
-            .range([plotHeight, 0]);
+            .domain([yCenter - domainSize / 2, yCenter + domainSize / 2])
+            .range([plotHeight - (plotHeight - availableSize) / 2, (plotHeight - availableSize) / 2]);
 
         const xGrid = d3.axisBottom(xScale)
             .tickSize(-plotHeight)
@@ -98,12 +101,12 @@ export default function ProfilePlot({inProfile}) {
             .attr("transform", `translate(0,${plotHeight})`)
             .call(xAxis)
             .select(".domain")
-            .attr("stroke-width", 2.5);
+            .attr("stroke-width", 1);
 
         g.append("g")
             .call(yAxis)
             .select(".domain")
-            .attr("stroke-width", 2.5);
+            .attr("stroke-width", 1);
 
         svg.append("text")
             .attr("x", width / 2)
