@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import * as d3 from 'd3';
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+
 
 const PassSequenceVisualizer = ({pass, results}) => {
     const svgRef = useRef();
@@ -238,23 +237,6 @@ const PassSequenceVisualizer = ({pass, results}) => {
 
     }, [pass, results]);
 
-    useEffect(() => {
-        if (textBoxRef.current && results) {
-            const katexElements = textBoxRef.current.querySelectorAll('.katex-formula');
-            katexElements.forEach(element => {
-                const formula = element.getAttribute('data-formula');
-                try {
-                    katex.render(formula, element, {
-                        throwOnError: false,
-                        displayMode: false
-                    });
-                } catch (e) {
-                    console.error('KaTeX rendering error:', e);
-                }
-            });
-        }
-    }, [results]);
-
     const formatNumber = (value, decimals = 2) => {
         if (value === null || value === undefined) return 'N/A';
         if (typeof value === 'number') {
@@ -263,50 +245,57 @@ const PassSequenceVisualizer = ({pass, results}) => {
         return value.toString();
     };
 
-    const generateTextBox = () => {
-        if (!results) return <div>No simulation results available</div>;
 
-        const data = [
-            {latex: 'Bite Angle \\alpha_0', value: results.bite_angle * 100, decimals: 4},
-            {latex: 'In Profile Height', value: results.in_profile_height, decimals: 4},
-            {latex: 'In Profile Width', value: results.in_profile_width, decimals: 4},
-            {latex: 'Out Profile Height', value: results.out_profile_height, decimals: 4},
-            {latex: 'Out Profile Width', value: results.out_profile_width, decimals: 4},
-            {latex: 'In Profile Area', value: results.in_profile_cross_section_area, decimals: 4},
-            {latex: 'Out Profile Area', value: results.out_profile_cross_section_area, decimals: 4},
-            {latex: 'Reduction \\varepsilon_{A}', value: results.reduction * 100, decimals: 4},
-            {latex: 'Gap', value: results.gap, decimals: 4},
-            {latex: 'In Profile Velocity', value: results.in_profile_velocity, decimals: 4},
-            {latex: 'Out Profile Velocity', value: results.out_profile_velocity, decimals: 4},
-            {latex: 'Roll Force', value: results.roll_force, decimals: 4},
-            {latex: 'Roll Torque', value: results.roll_torque, decimals: 4},
+    const generateTextBox = () => {
+        if (!results) return 'No simulation results available';
+
+        const lines = [
+            `Bite Angle =  ${formatNumber(results.bite_angle * 100, 4)}`,
+            `In Profile Height =  ${formatNumber(results.in_profile_height, 4)} `,
+            `Out Profile Height =  ${formatNumber(results.out_profile_height, 4)} `,
+            `In Profile Area =  ${formatNumber(results.in_profile_cross_section_area, 4)} `,
+            `Out Profile Area =  ${formatNumber(results.out_profile_cross_section_area, 4)} `,
+            `Reduction =  ${formatNumber(results.reduction * 100, 4)} `,
+            `Gap =  ${formatNumber(results.gap, 4)} `,
+            `In Profile Velocity =  ${formatNumber(results.in_profile_velocity, 4)} `,
+            `Out Profile Velocity =  ${formatNumber(results.out_profile_velocity, 4)} `,
+            `Roll Force =  ${formatNumber(results.roll_force, 4)} `,
+            `Roll Torque =  ${formatNumber(results.roll_torque, 4)} `,
         ];
 
-        return (
-            <div style={{fontFamily: 'monospace', fontSize: '13px', lineHeight: '1.8'}}>
-                {data.map((item, index) => (
-                    <div key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
-            <span
-                className="katex-formula"
-                data-formula={item.latex}
-                style={{minWidth: '60px', display: 'inline-block'}}
-            />
-                        <span style={{marginLeft: '8px'}}>
-              = {formatNumber(item.value, item.decimals)}
-            </span>
-                    </div>
-                ))}
-            </div>
-        );
+        return lines.join('\n');
     };
 
     return (
-        <div className="pass-sequence-visualizer">
-            <div className="visualization-container">
+        <div className="pass-sequence-visualizer" style={{display: 'flex', flexDirection: 'row', gap: '20px', flex: 1}}>
+            <div className="visualization-container" style={{
+                flex: 1,
+                backgroundColor: '#fafafa',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                padding: '20px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
                 <svg ref={svgRef}></svg>
             </div>
-            <div className="results-text-box" ref={textBoxRef}>
-                {generateTextBox()}
+            <div className="results-text-box" ref={textBoxRef} style={{
+                width: '300px',
+                minWidth: '300px',
+                backgroundColor: 'white',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                padding: '15px',
+                overflow: 'auto'
+            }}>
+                <pre style={{
+                    fontSize: '16px',
+                    lineHeight: '1.8',
+                    margin: 0,
+                    fontFamily: 'monospace'
+                }}>
+                    {generateTextBox()}</pre>
             </div>
         </div>
     );
