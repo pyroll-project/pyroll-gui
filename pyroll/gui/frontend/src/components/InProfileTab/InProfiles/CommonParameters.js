@@ -1,5 +1,5 @@
 import React from "react";
-import InputField from "./InputField";
+import InputField from "../InputField/InputField";
 
 const materialOptions = ['C20', 'C45', 'S355j2', 'B10', 'BST500', '11MnS30', 'Other'];
 

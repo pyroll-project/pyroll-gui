@@ -29,10 +29,8 @@ export default function PassTypeFields({row, fields, tableData, setTableData}) {
                 if (r.id === row.id) {
                     const newRow = {...r, [field]: value};
 
-                    // Finde das Feld-Objekt um zu prüfen ob es mutuallyExclusive ist
                     const fieldObj = fields.find(f => f.key === field);
                     if (fieldObj?.mutuallyExclusive && value !== '' && value !== 0 && value !== null) {
-                        // Lösche das andere Feld wenn ein Wert gesetzt wird
                         delete newRow[fieldObj.mutuallyExclusive];
                     }
 

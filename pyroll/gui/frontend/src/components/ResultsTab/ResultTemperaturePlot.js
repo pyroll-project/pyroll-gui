@@ -9,19 +9,19 @@ export default function ResultTemperaturePlot({results}) {
 
         const data = [];
 
-        if (results.passes[0].in_temperature !== undefined) {
+        if (results.passes[0].in_profile_temperature !== undefined) {
             data.push({
                 x: -0.5,
-                temperature: results.passes[0].in_temperature,
+                temperature: results.passes[0].in_profile_temperature,
                 label: 'Input'
             });
         }
 
         results.passes.forEach((pass, i) => {
-            if (pass.out_temperature !== undefined) {
+            if (pass.out_profile_temperature !== undefined) {
                 data.push({
                     x: i + 0.5,
-                    temperature: pass.out_temperature,
+                    temperature: pass.out_profile_temperature,
                     label: pass.label || `Pass ${pass.pass}`
                 });
             }

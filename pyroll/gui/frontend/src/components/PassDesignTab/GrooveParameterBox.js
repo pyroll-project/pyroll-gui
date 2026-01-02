@@ -4,38 +4,38 @@ import {getGrooveFields} from '../../data/GrooveDefinitions';
 export default function GrooveParametersBox({row, tableData, setTableData}) {
     const grooveFields = getGrooveFields(row.grooveType);
 
-    const activeOptionalCount = (grooveFields.optional || []).filter(
+    const activeAdditionalGrooveParameterCount = (grooveFields.optional || []).filter(
         f => row.groove && row.groove[f.key] !== undefined
     ).length;
 
     const getValidationStatus = () => {
         if (!grooveFields.rule || !grooveFields.optional || grooveFields.optional.length === 0) {
-            return { isValid: true, message: '' };
+            return {isValid: true, message: ''};
         }
 
         const rule = grooveFields.rule.toLowerCase();
 
         if (rule.includes('exactly two')) {
             return {
-                isValid: activeOptionalCount === 2,
-                message: activeOptionalCount === 2
+                isValid: activeAdditionalGrooveParameterCount === 2,
+                message: activeAdditionalGrooveParameterCount === 2
                     ? '✓ Valid: Exactly two additional parameters selected'
-                    : `⚠ ${activeOptionalCount} additional parameter(s) selected (need exactly two)`
+                    : `⚠ ${activeAdditionalGrooveParameterCount} additional parameter(s) selected (need exactly two)`
             };
         }
 
         if (rule.includes('exactly one')) {
             return {
-                isValid: activeOptionalCount === 1,
-                message: activeOptionalCount === 1
+                isValid: activeAdditionalGrooveParameterCount === 1,
+                message: activeAdditionalGrooveParameterCount === 1
                     ? '✓ Valid: Exactly one additional parameter selected'
-                    : `⚠ ${activeOptionalCount} optional parameter(s) selected (need exactly one)`
+                    : `⚠ ${activeAdditionalGrooveParameterCount} optional parameter(s) selected (need exactly one)`
             };
         }
 
         return {
             isValid: null,
-            message: `Selected: ${activeOptionalCount} additional parameter(s)`
+            message: `Selected: ${activeAdditionalGrooveParameterCount} additional parameter(s)`
         };
     };
 
@@ -159,13 +159,13 @@ export default function GrooveParametersBox({row, tableData, setTableData}) {
                             marginTop: '10px',
                             padding: '8px',
                             background: validation.isValid === true ? '#d4edda'
-                                      : validation.isValid === false ? '#f8d7da'
-                                      : '#fff3cd',
+                                : validation.isValid === false ? '#f8d7da'
+                                    : '#fff3cd',
                             borderRadius: '4px',
                             fontSize: '12px',
                             color: validation.isValid === true ? '#155724'
-                                  : validation.isValid === false ? '#721c24'
-                                  : '#856404'
+                                : validation.isValid === false ? '#721c24'
+                                    : '#856404'
                         }}>
                             {validation.message}
                         </div>

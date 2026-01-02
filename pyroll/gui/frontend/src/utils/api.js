@@ -5,13 +5,11 @@ export const runSimulation = async (inProfile, passDesignData, solveConfig = nul
     const preparedProfile = prepareProfileForBackend(inProfile);
     const preparedUnits = prepareUnitsForBackend(passDesignData);
 
-    // Build request body
     const requestBody = {
       inProfile: preparedProfile,
       passDesignData: preparedUnits
     };
 
-    // Add solve configuration if provided
     if (solveConfig) {
       requestBody.solve_method = solveConfig.solve_method || 'solve';
       requestBody.solve_params = solveConfig.solve_params || {};

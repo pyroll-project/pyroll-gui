@@ -8,11 +8,11 @@ export default function ResultCrossSectionPlot({results}) {
         if (!results || !results.passes || results.passes.length === 0) return;
 
         const data = results.passes
-            .filter(pass => pass.out_strain !== undefined)
+            .filter(pass => pass.out_profile_strain !== undefined)
             .map(pass => ({
                 pass: pass.pass,
                 label: pass.label || `Pass ${pass.pass}`,
-                strain: pass.out_strain
+                strain: pass.out_profile_strain
             }));
 
         if (data.length === 0) return;
@@ -55,7 +55,6 @@ export default function ResultCrossSectionPlot({results}) {
                 .tickFormat('')
             );
 
-        // Add X axis
         svg.append('g')
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(xScale))

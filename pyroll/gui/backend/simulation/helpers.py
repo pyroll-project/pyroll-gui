@@ -1,16 +1,15 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union
 
-from pyroll.core import Profile, Roll, RollPass, Transport, CoolingPipe, ThreeRollPass
+from pyroll.core import Profile, Roll, RollPass, Transport, CoolingPipe, ThreeRollPass, TwoRollPass, PassSequence
 from pyroll.core import grooves
 from pyroll.freiberg_flow_stress import FreibergFlowStressCoefficients
 
 
-def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
+def create_initial_profile(in_profile_data: Dict[str, Any]):
     shape = in_profile_data.get('shape')
     material_type = in_profile_data.get('materialType')
 
     if shape == 'round':
-
         in_profile = Profile.round(
             diameter=in_profile_data.get('diameter'),
             temperature=in_profile_data.get('temperature'),
@@ -25,8 +24,6 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             flow_stress_params = in_profile_data.get('flowStressParams')
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
-
-        return in_profile
 
     elif shape == 'square':
         in_profile = Profile.square(
@@ -44,8 +41,6 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             flow_stress_params = in_profile_data.get('flowStressParams')
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
-
-        return in_profile
 
     elif shape == 'box':
 
@@ -67,8 +62,6 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
-        return in_profile
-
     elif shape == 'hexagon':
 
         in_profile = Profile.hexagon(
@@ -87,7 +80,7 @@ def create_initial_profile(in_profile_data: Dict[str, Any]) -> Profile:
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
-        return in_profile
+    return in_profile
 
 
 def create_groove(groove_type: str, groove_params: Dict[str, Any]):
@@ -105,6 +98,57 @@ def create_groove(groove_type: str, groove_params: Dict[str, Any]):
         raise ValueError(f"Error creating {groove_type}: {str(e)}")
 
 
+def create_roll_pass_contour(roll_pass: Union[RollPass, ThreeRollPass]):
+    groove_type = roll_pass.roll.groove.__class__.__name__
+    contours = roll_pass.technologically_orientated_contour_lines.geoms
+
+    if isinstance(roll_pass, ThreeRollPass):
+        contour_data = []
+        for i, contour in enumerate(contours):
+            x_coords = [p[0] for p in contour.coords]
+            y_coords = [p[1] for p in contour.coords]
+            contour_data.append({
+                "x": x_coords,
+                "y": y_coords
+            })
+
+        return {
+            "success": True,
+            "pass_type": "ThreeRollPass",
+            "contours": contour_data,
+            "inscribed_circle_diameter": roll_pass.inscribed_circle_diameter,
+            "groove_type": groove_type,
+            "usable_width": float(roll_pass.usable_width) if hasattr(roll_pass, 'usable_width') else None,
+            "depth": float(roll_pass.roll.groove.depth) if hasattr(roll_pass.roll.groove, 'depth') else None
+        }
+    else:
+        upper_contour = contours[0]
+        upper_x = [p[0] for p in upper_contour.coords]
+        upper_y = [p[1] for p in upper_contour.coords]
+
+        lower_contour = contours[1]
+        lower_x = [p[0] for p in lower_contour.coords]
+        lower_y = [p[1] for p in lower_contour.coords]
+
+        return {
+            "success": True,
+            "pass_type": "TwoRollPass",
+            "upper": {
+                "x": upper_x,
+                "y": upper_y
+            },
+            "lower": {
+                "x": lower_x,
+                "y": lower_y
+            },
+            "gap": roll_pass.gap,
+            "groove_type": groove_type,
+            "usable_width": float(roll_pass.roll.groove.usable_width) if hasattr(roll_pass.roll.groove,
+                                                                                 'usable_width') else None,
+            "depth": float(roll_pass.roll.groove.depth) if hasattr(roll_pass.roll.groove, 'depth') else None
+        }
+
+
 def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
     groove = create_groove(
         unit.get('grooveType'),
@@ -114,19 +158,21 @@ def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
 
     if unit['type'] == 'TwoRollPass':
         if velocity_define_by == 'velocity':
-            roll_pass = RollPass(
+            roll_pass = TwoRollPass(
                 label=unit.get('label', ''),
+                orientation=unit.get('orientation'),
                 roll=Roll(
                     groove=groove,
-                    nominal_radius = unit.get('nominal_radius')
-                    ),
+                    nominal_radius=unit.get('nominal_radius')
+                ),
                 velocity=unit.get('velocityValue'),
                 gap=unit.get('gap'),
                 coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),
             )
         else:
-            roll_pass = RollPass(
+            roll_pass = TwoRollPass(
                 label=unit.get('label', ''),
+                orientation=unit.get('orientation'),
                 roll=Roll(
                     groove=groove,
                     nominal_radius=unit.get('nominal_radius'),
@@ -156,7 +202,7 @@ def create_roll_pass(unit: Dict[str, Any]) -> RollPass:
                 roll=Roll(
                     groove=groove,
                     nominal_radius=unit.get('nominal_radius'),
-                    rotational_frequency = unit.get('velocityValue')
+                    rotational_frequency=unit.get('velocityValue')
                 ),
                 inscribed_circle_diameter=unit.get('inscribed_circle_diameter'),
                 coulomb_friction_coefficient=unit.get('coulomb_friction_coefficient'),

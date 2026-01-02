@@ -72,7 +72,6 @@ const SolveMethodSelector = ({ value, onChange }) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
-      {/* Method Dropdown */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <label style={{ fontWeight: 'bold', color: '#555', whiteSpace: 'nowrap' }}>
           Solve Method:
@@ -97,7 +96,6 @@ const SolveMethodSelector = ({ value, onChange }) => {
         </select>
       </div>
 
-      {/* Dynamic Parameter Fields */}
       {currentMethod?.params.map(param => (
         <div key={param.key} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <label style={{ color: '#555', fontSize: '14px', whiteSpace: 'nowrap' }}>

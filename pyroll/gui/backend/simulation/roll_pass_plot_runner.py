@@ -1,38 +1,40 @@
 from typing import Dict, Any
 from pyroll.core import RollPass, Roll, ThreeRollPass
-
 from .helpers import create_groove
 
 
-def get_rollpass_contour(pass_data: Dict[str, Any]) -> Dict[str, Any]:
+def roll_pass_contour(pass_data: Dict[str, Any]) -> Dict[str, Any]:
     try:
         groove_type = pass_data.get('grooveType')
         groove_params = pass_data.get('groove', {})
-        gap = pass_data.get('gap')
         orientation = pass_data.get('orientation')
+
         pass_type = pass_data.get('type')
 
         groove = create_groove(groove_type, groove_params)
 
         if pass_type == 'ThreeRollPass':
+            inscribed_circle_diameter = pass_data.get('inscribed_circle_diameter')
             roll_pass = ThreeRollPass(
                 orientation=orientation,
                 roll=Roll(
                     groove=groove,
                     nominal_radius=1
                 ),
-                inscribed_circle_diameter=gap if gap else 0.1,
+                inscribed_circle_diameter=inscribed_circle_diameter,
                 velocity=1,
                 coulomb_friction_coefficient=0.2
             )
-        else:  # TwoRollPass
+        else:
+            gap = pass_data.get('gap')
+
             roll_pass = RollPass(
                 orientation=orientation,
                 roll=Roll(
                     groove=groove,
                     nominal_radius=1
                 ),
-                gap=gap if gap else 0.05,
+                gap=gap,
                 velocity=1,
                 coulomb_friction_coefficient=0.2
             )
@@ -56,7 +58,7 @@ def get_rollpass_contour(pass_data: Dict[str, Any]) -> Dict[str, Any]:
                 "success": True,
                 "pass_type": "ThreeRollPass",
                 "contours": contour_data,
-                "inscribed_circle_diameter": gap,
+                "inscribed_circle_diameter": inscribed_circle_diameter,
                 "groove_type": groove_type,
                 "usable_width": float(groove.usable_width) if hasattr(groove, 'usable_width') else None,
                 "depth": float(groove.depth) if hasattr(groove, 'depth') else None

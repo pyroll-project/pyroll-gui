@@ -1,16 +1,16 @@
 import React, {useState} from "react";
-import RoundProfile from "./RoundProfile";
-import SquareProfile from "./SquareProfile";
-import BoxProfile from "./BoxProfile";
-import HexagonProfile from "./HexagonProfile";
-import CommonParameters from "./CommonParameters";
+import RoundProfile from "./InProfiles/RoundProfile";
+import SquareProfile from "./InProfiles/SquareProfile";
+import BoxProfile from "./InProfiles/BoxProfile";
+import HexagonProfile from "./InProfiles/HexagonProfile";
+import CommonParameters from "./InProfiles/CommonParameters";
 import ProfilePlot from './InProfilePlot';
-import InProfileLoader from './InProfileLoader';
-import InProfileSaver from './InProfileSaver';
+import InProfileLoader from './Functionality/InProfileLoader';
+import InProfileSaver from './Functionality/InProfileSaver';
 import Notification from '../../helpers/Notification';
 
 export default function InProfileTab({inProfile, setInProfile}) {
-    // Notification State
+
     const [notification, setNotification] = useState({
         show: false,
         message: '',

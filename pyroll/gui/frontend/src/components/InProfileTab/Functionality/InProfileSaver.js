@@ -16,50 +16,41 @@ export default function InProfileSaver({ inProfile, onNotification }) {
     xml += '  <Metadata>\n';
     xml += '    <Version>1.0</Version>\n';
     xml += `    <CreatedDate>${new Date().toISOString()}</CreatedDate>\n`;
-    xml += '    <Application>PyRolL WebGUI</Application>\n';
+    xml += '    <Application>PyRolL-Basic WebGUI</Application>\n';
     xml += '  </Metadata>\n';
 
-    // Profile Type
     if (profile.profileType) {
       xml += `  <ProfileType>${escapeXML(profile.profileType)}</ProfileType>\n`;
     }
 
-    // Temperature
     if (profile.temperature !== undefined && profile.temperature !== null && profile.temperature !== '') {
       xml += `  <Temperature>${escapeXML(String(profile.temperature))}</Temperature>\n`;
     }
 
-    // Strain
     if (profile.strain !== undefined && profile.strain !== null && profile.strain !== '') {
       xml += `  <Strain>${escapeXML(String(profile.strain))}</Strain>\n`;
     }
 
-    // Material
     if (profile.material) {
       xml += `  <Material>${escapeXML(profile.material)}</Material>\n`;
     }
 
-    // Flow Stress
     if (profile.flow_stress !== undefined && profile.flow_stress !== null && profile.flow_stress !== '') {
       xml += `  <FlowStress>${escapeXML(String(profile.flow_stress))}</FlowStress>\n`;
     }
 
-    // Density
     if (profile.density !== undefined && profile.density !== null && profile.density !== '') {
       xml += `  <Density>${escapeXML(String(profile.density))}</Density>\n`;
     }
 
-    // Thermal Capacity
     if (profile.thermal_capacity !== undefined && profile.thermal_capacity !== null && profile.thermal_capacity !== '') {
       xml += `  <ThermalCapacity>${escapeXML(String(profile.thermal_capacity))}</ThermalCapacity>\n`;
     }
 
-    // Specific Heat Capacity
     if (profile.specific_heat_capacity !== undefined && profile.specific_heat_capacity !== null && profile.specific_heat_capacity !== '') {
       xml += `  <SpecificHeatCapacity>${escapeXML(String(profile.specific_heat_capacity))}</SpecificHeatCapacity>\n`;
     }
 
-    // Thermal Conductivity
     if (profile.thermal_conductivity !== undefined && profile.thermal_conductivity !== null && profile.thermal_conductivity !== '') {
       xml += `  <ThermalConductivity>${escapeXML(String(profile.thermal_conductivity))}</ThermalConductivity>\n`;
     }

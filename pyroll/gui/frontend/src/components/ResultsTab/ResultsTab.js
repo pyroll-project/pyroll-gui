@@ -89,10 +89,8 @@ export default function ResultsTab({results}) {
 
             {results ? (
                 <div>
-                    {/* Results Table */}
                     <ResultsTable results={results}/>
 
-                    {/* Charts */}
                     <div ref={crossSectionRef}>
                         <ResultCrossSectionPlot results={results}/>
                     </div>

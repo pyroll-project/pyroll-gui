@@ -4,8 +4,7 @@ from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Dict, Any, Optional, Union
 
-from simulation import get_rollpass_contour, get_in_profile_contour
-from simulation.pyroll_basic_runner import run_pyroll_simulation, validate_parameters
+from simulation import roll_pass_contour, get_in_profile_contour, run_pyroll_simulation, create_roll_pass
 
 
 class SolveMethod(str, Enum):
@@ -55,7 +54,7 @@ def read_root():
     return {
         "status": "API running",
         "version": "1.0",
-        "endpoints": ["/api/simulate", "/api/rollpass-contour", "/api/inprofile-contour"]
+        "endpoints": ["/api/simulate", "/api/rollpass-contour", "/api/inprofile-contour", "/api/pass-with-profiles"]
     }
 
 
@@ -92,7 +91,7 @@ async def run_simulation(data: SimulationRequest):
 @app.post("/api/rollpass-contour")
 async def rollpass_contour(data: dict):
     try:
-        contour = get_rollpass_contour(data)
+        contour = roll_pass_contour(data)
         return contour
 
     except Exception as e:

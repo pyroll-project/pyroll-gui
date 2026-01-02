@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import * as d3 from 'd3';
 
-export default function ResultRollForcePlot({results}) {
+export default function ResultRollTorquePlot({results}) {
     const svgRef = useRef();
 
     useEffect(() => {
@@ -11,17 +11,15 @@ export default function ResultRollForcePlot({results}) {
             .filter(pass => pass.roll_torque !== undefined)
             .map(pass => ({
                 label: pass.label || `Pass ${pass.pass}`,
-                force: Array.isArray(pass.roll_torque) ? pass.roll_torque[0] : pass.roll_torque
+                roll_torque: Array.isArray(pass.roll_torque) ? pass.roll_torque[0] : pass.roll_torque
             }));
 
         if (data.length === 0) return;
 
-        // SVG Setup
         const margin = {top: 40, right: 30, bottom: 70, left: 80};
         const width = 800 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
 
-        // Clear previous chart
         d3.select(svgRef.current).selectAll('*').remove();
 
         const svg = d3.select(svgRef.current)
@@ -30,17 +28,15 @@ export default function ResultRollForcePlot({results}) {
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        // Scales
         const xScale = d3.scaleBand()
             .domain(data.map(d => d.label))
             .range([0, width])
             .padding(0.3);
 
         const yScale = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.force) * 1.1])
+            .domain([0, d3.max(data, d => d.roll_torque) * 1.1])
             .range([height, 0]);
 
-        // Add grid lines
         svg.append('g')
             .attr('class', 'grid')
             .attr('opacity', 0.2)
@@ -49,7 +45,6 @@ export default function ResultRollForcePlot({results}) {
                 .tickFormat('')
             );
 
-        // Add X axis
         svg.append('g')
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(xScale))
@@ -59,7 +54,6 @@ export default function ResultRollForcePlot({results}) {
             .attr('dx', '-0.8em')
             .attr('dy', '0.15em');
 
-        // X axis label
         svg.append('text')
             .attr('x', width / 2)
             .attr('y', height + margin.bottom - 5)
@@ -68,7 +62,6 @@ export default function ResultRollForcePlot({results}) {
             .attr('text-anchor', 'middle')
             .text('Pass');
 
-        // Add Y axis
         svg.append('g')
             .call(d3.axisLeft(yScale).tickFormat(d => (d).toFixed(1)))
             .append('text')
@@ -80,16 +73,15 @@ export default function ResultRollForcePlot({results}) {
             .attr('text-anchor', 'middle')
             .text('Roll Torque');
 
-        // Add bars
         svg.selectAll('.bar')
             .data(data)
             .enter()
             .append('rect')
             .attr('class', 'bar')
             .attr('x', d => xScale(d.label))
-            .attr('y', d => yScale(d.force))
+            .attr('y', d => yScale(d.roll_torque))
             .attr('width', xScale.bandwidth())
-            .attr('height', d => height - yScale(d.force))
+            .attr('height', d => height - yScale(d.roll_torque))
             .attr('fill', '#FFDD00')
             .attr('opacity', 0.8)
             .on('mouseover', function (event, d) {
@@ -97,16 +89,15 @@ export default function ResultRollForcePlot({results}) {
                     .attr('opacity', 1)
                     .attr('fill', '#FFDD00');
 
-                // Tooltip
                 svg.append('text')
                     .attr('class', 'tooltip')
                     .attr('x', xScale(d.label) + xScale.bandwidth() / 2)
-                    .attr('y', yScale(d.force) - 10)
+                    .attr('y', yScale(d.roll_torque) - 10)
                     .attr('text-anchor', 'middle')
                     .attr('fill', '#333')
                     .attr('font-size', '12px')
                     .attr('font-weight', 'bold')
-                    .text(`${(d.force).toFixed(2)}`);
+                    .text(`${(d.roll_torque).toFixed(2)}`);
             })
             .on('mouseout', function () {
                 d3.select(this)

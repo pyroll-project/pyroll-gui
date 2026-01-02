@@ -1,16 +1,8 @@
 import React, {useRef} from 'react';
+import {parseNumericValue} from '../../../helpers/DataParser';
 
 export default function InProfileLoader({setInProfile, onNotification}) {
     const fileInputRef = useRef(null);
-
-    const parseNumericValue = (value) => {
-        if (value === undefined || value === null || value === '') {
-            return '';
-        }
-
-        const numValue = Number(value);
-        return !isNaN(numValue) ? numValue : value;
-    };
 
 
     const getElementText = (parent, tagName) => {

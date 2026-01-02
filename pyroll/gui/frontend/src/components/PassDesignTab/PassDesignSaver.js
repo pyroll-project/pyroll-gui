@@ -32,7 +32,7 @@ export default function PassDesignSaver({tableData, onNotification}) {
         xml += '  <Metadata>\n';
         xml += '    <Version>1.0</Version>\n';
         xml += `    <CreatedDate>${new Date().toISOString()}</CreatedDate>\n`;
-        xml += '    <Application>PyRolL WebGUI</Application>\n';
+        xml += '    <Application>PyRolL-Basic WebGUI</Application>\n';
         xml += '  </Metadata>\n';
         xml += '  <Units>\n';
 

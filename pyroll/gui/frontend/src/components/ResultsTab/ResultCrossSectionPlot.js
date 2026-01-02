@@ -7,12 +7,15 @@ export default function ResultCrossSectionPlot({results}) {
     useEffect(() => {
         if (!results || !results.passes || results.passes.length === 0) return;
 
-        const data = results.passes
-            .filter(pass => pass.out_cross_section_area !== undefined)
+    const rollPasses = results.passes.filter(pass =>
+        pass.type === 'TwoRollPass' || pass.type === 'ThreeRollPass'
+    );
+
+        const data = rollPasses
+            .filter(pass => pass.out_profile_cross_section_area !== undefined)
             .map(pass => ({
-                pass: pass.pass,
                 label: pass.label || `Pass ${pass.pass}`,
-                area: pass.out_cross_section_area
+                area: Array.isArray(pass.out_profile_cross_section_area) ? pass.out_profile_cross_section_area[0] : pass.out_profile_cross_section_area
             }));
 
         if (data.length === 0) return;
@@ -55,7 +58,7 @@ export default function ResultCrossSectionPlot({results}) {
                 .tickFormat('')
             );
 
-        // Add X axis
+
         svg.append('g')
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(xScale))

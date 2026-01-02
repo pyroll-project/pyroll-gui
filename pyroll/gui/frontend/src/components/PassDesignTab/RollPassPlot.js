@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import * as d3 from 'd3';
 import {getRollPassContour} from '../../utils/GrooveApi';
 
-export default function RollPassPlot({row}) {
+export default function RollPassPlot({row, inProfile, outProfile}) {
     const svgRef = useRef();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -43,7 +43,7 @@ export default function RollPassPlot({row}) {
             console.log('Contour data received:', contourData);
 
             if (!contourData.success) {
-                setError(contourData.error || 'Failed to load roll pass contour');
+                setError(contourData.error || 'Failed to load RollPass contour');
                 g.append('text')
                     .attr('x', plotSize / 2)
                     .attr('y', plotSize / 2)
@@ -57,7 +57,6 @@ export default function RollPassPlot({row}) {
 
             let allPoints = [];
 
-            // Handle ThreeRollPass with multiple contours
             if (contourData.pass_type === 'ThreeRollPass' && contourData.contours) {
                 console.log('Processing ThreeRollPass with', contourData.contours.length, 'contours');
                 contourData.contours.forEach(contour => {
@@ -65,9 +64,7 @@ export default function RollPassPlot({row}) {
                         allPoints.push({x: x, y: contour.y[i]});
                     });
                 });
-            }
-            // Handle TwoRollPass with upper/lower
-            else if (contourData.upper && contourData.lower) {
+            } else if (contourData.upper && contourData.lower) {
                 console.log('Processing TwoRollPass');
                 contourData.upper.x.forEach((x, i) => {
                     allPoints.push({x: x, y: contourData.upper.y[i]});
@@ -98,17 +95,25 @@ export default function RollPassPlot({row}) {
                 return;
             }
 
-            // Calculate center of mass to shift to (0,0)
+            if (inProfile && inProfile.x && inProfile.y) {
+                inProfile.x.forEach((x, i) => {
+                    allPoints.push({x: x, y: inProfile.y[i]});
+                });
+            }
+            if (outProfile && outProfile.x && outProfile.y) {
+                outProfile.x.forEach((x, i) => {
+                    allPoints.push({x: x, y: outProfile.y[i]});
+                });
+            }
+
             const xCenter = d3.mean(allPoints.map(p => p.x));
             const yCenter = d3.mean(allPoints.map(p => p.y));
 
-            // Shift all points to center at (0,0)
             allPoints = allPoints.map(p => ({
                 x: p.x - xCenter,
                 y: p.y - yCenter
             }));
 
-            // Recalculate extents after centering
             const centeredX = allPoints.map(p => p.x);
             const centeredY = allPoints.map(p => p.y);
 
@@ -118,14 +123,11 @@ export default function RollPassPlot({row}) {
             const dataWidth = xExtent[1] - xExtent[0];
             const dataHeight = yExtent[1] - yExtent[0];
 
-            // Add 10% padding
             const xPadding = dataWidth * 0.1 || 0.01;
             const yPadding = dataHeight * 0.1 || 0.01;
 
-            // Calculate the maximum range needed (same for both axes for 1:1 aspect ratio)
             const maxDataRange = Math.max(dataWidth + 2 * xPadding, dataHeight + 2 * yPadding);
 
-            // Use the same domain range for both axes centered at (0,0)
             const xScale = d3.scaleLinear()
                 .domain([-maxDataRange / 2, maxDataRange / 2])
                 .range([0, plotSize]);
@@ -134,7 +136,6 @@ export default function RollPassPlot({row}) {
                 .domain([-maxDataRange / 2, maxDataRange / 2])
                 .range([plotSize, 0]);
 
-            // Grid
             g.append('g')
                 .attr('class', 'grid')
                 .attr('opacity', 0.1)
@@ -146,7 +147,6 @@ export default function RollPassPlot({row}) {
                 .attr('transform', `translate(0,${plotSize})`)
                 .call(d3.axisBottom(xScale).tickSize(-plotSize).tickFormat(''));
 
-            // Axes
             g.append('g')
                 .attr('transform', `translate(0,${plotSize})`)
                 .call(d3.axisBottom(xScale).ticks(8))
@@ -160,7 +160,6 @@ export default function RollPassPlot({row}) {
                 .selectAll('line, path')
                 .style('stroke-width', '2px');
 
-            // Axis labels
             g.append('text')
                 .attr('x', plotSize / 2)
                 .attr('y', plotSize + 40)
@@ -182,9 +181,35 @@ export default function RollPassPlot({row}) {
                 .x(d => xScale(d.x))
                 .y(d => yScale(d.y));
 
-            // Plot contours
+            if (inProfile && inProfile.x && inProfile.y) {
+                const inletPoints = inProfile.x.map((x, i) => ({
+                    x: x - xCenter,
+                    y: inProfile.y[i] - yCenter
+                }));
+
+                g.append('path')
+                    .datum(inletPoints)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#ff0000')  // Red
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+            }
+
+            if (outProfile && outProfile.x && outProfile.y) {
+                const outletPoints = outProfile.x.map((x, i) => ({
+                    x: x - xCenter,
+                    y: outProfile.y[i] - yCenter
+                }));
+
+                g.append('path')
+                    .datum(outletPoints)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#1f77b4')
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+            }
+
             if (contourData.pass_type === 'ThreeRollPass' && contourData.contours) {
-                // Plot all three contours
                 contourData.contours.forEach((contour) => {
                     const shiftedPoints = contour.x.map((x, i) => ({
                         x: x - xCenter,
@@ -199,7 +224,6 @@ export default function RollPassPlot({row}) {
                         .attr('d', line);
                 });
             } else {
-                // Plot upper and lower contours for TwoRollPass
                 const upperPoints = contourData.upper.x.map((x, i) => ({
                     x: x - xCenter,
                     y: contourData.upper.y[i] - yCenter
@@ -224,7 +248,6 @@ export default function RollPassPlot({row}) {
                     .attr('stroke-width', 2.5)
                     .attr('d', line);
 
-                // Gap line at y=0 only for TwoRollPass
                 const gapY = yScale(0);
                 g.append('line')
                     .attr('x1', 0)
@@ -236,7 +259,6 @@ export default function RollPassPlot({row}) {
                     .attr('stroke-dasharray', '5,5');
             }
 
-            // Info text
             const infoX = plotSize - 5;
             const infoY = 15;
 
@@ -280,7 +302,6 @@ export default function RollPassPlot({row}) {
                     .text(`Depth: ${contourData.depth.toFixed(4)}`);
             }
 
-            // Title
             svg.append('text')
                 .attr('x', width / 2)
                 .attr('y', 20)
@@ -294,7 +315,7 @@ export default function RollPassPlot({row}) {
         };
 
         fetchAndPlot();
-    }, [row]);
+    }, [row, inProfile, outProfile]);
 
     return (
         <div style={{

@@ -48,7 +48,7 @@ export const prepareUnitsForBackend = (units) => {
         });
 
         if (preparedUnit.groove && typeof preparedUnit.groove === 'object') {
-            console.log('  Converting groove parameters:');
+            console.log('Converting groove parameters:');
             preparedUnit.groove = Object.fromEntries(
                 Object.entries(preparedUnit.groove).map(([key, value]) => {
                     if (value !== undefined && value !== null && value !== '') {

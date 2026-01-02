@@ -1,3 +1,3 @@
-from .pyroll_basic_runner import run_pyroll_simulation
-from .roll_pass_plot_runner import get_rollpass_contour
+from .pyroll_basic_runner import run_pyroll_simulation, create_roll_pass
+from .roll_pass_plot_runner import roll_pass_contour
 from .in_profile_plot_runner import get_in_profile_contour

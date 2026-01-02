@@ -8,7 +8,6 @@ export default function ResultsTable({results}) {
         return null;
     }
 
-    // Filter only RollPass units (TwoRollPass and ThreeRollPass)
     const rollPasses = results.passes.filter(pass =>
         pass.type === 'TwoRollPass' || pass.type === 'ThreeRollPass'
     );
@@ -61,25 +60,25 @@ export default function ResultsTable({results}) {
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Bar Height</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_height)}</td>
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_height)}</td>
                     ))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Bar Width</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_width)}</td>
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_width)}</td>
                     ))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Bar Area</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_cross_section_area)}</td>
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_cross_section_area)}</td>
                     ))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Reduction</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.reduction * -1 * 100)}</td>
+                        <td key={index} style={cellStyle}>{formatNumber(pass.reduction * 100)}</td>
                     ))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
@@ -97,7 +96,7 @@ export default function ResultsTable({results}) {
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Entry Temperature</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.in_temperature)}</td>
+                        <td key={index} style={cellStyle}>{formatNumber(pass.in_profile_temperature)}</td>
                     ))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
@@ -127,7 +126,7 @@ export default function ResultsTable({results}) {
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Flow Stress</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_flow_stress)}</td>
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_flow_stress)}</td>
                     ))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
