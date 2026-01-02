@@ -253,3 +253,12 @@ def create_cooling_pipe(unit: Dict[str, Any]) -> CoolingPipe:
         )
 
     return cooling
+
+
+def extract_profile_contour(cross_section):
+    x_coords, y_coords = cross_section.boundary.xy
+
+    return {
+        'x': [float(x) for x in x_coords],
+        'y': [float(y) for y in y_coords]
+    }

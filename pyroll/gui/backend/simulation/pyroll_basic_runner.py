@@ -3,15 +3,7 @@ from pyroll.basic import PassSequence, ThreeRollPass, RollPass
 
 from typing import Dict, List, Any, Union
 from .helpers import create_roll_pass, create_transport, create_cooling_pipe, create_initial_profile, \
-    create_roll_pass_contour
-
-def extract_profile_contour(cross_section):
-    x_coords, y_coords = cross_section.boundary.xy
-
-    return {
-        'x': [float(x) for x in x_coords],
-        'y': [float(y) for y in y_coords]
-    }
+    create_roll_pass_contour, extract_profile_contour
 
 
 def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
