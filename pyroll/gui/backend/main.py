@@ -90,6 +90,7 @@ async def run_simulation(data: SimulationRequest):
 
 @app.post("/api/rollpass-contour")
 async def rollpass_contour(data: dict):
+    print(data)
     try:
         contour = roll_pass_contour(data)
         return contour

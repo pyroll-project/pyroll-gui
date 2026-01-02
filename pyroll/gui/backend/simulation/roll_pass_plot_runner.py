@@ -15,6 +15,7 @@ def roll_pass_contour(pass_data: Dict[str, Any]) -> Dict[str, Any]:
 
         if pass_type == 'ThreeRollPass':
             inscribed_circle_diameter = pass_data.get('inscribed_circle_diameter')
+            print(pass_data)
             roll_pass = ThreeRollPass(
                 orientation=orientation,
                 roll=Roll(

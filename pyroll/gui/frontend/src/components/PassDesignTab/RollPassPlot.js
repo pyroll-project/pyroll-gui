@@ -35,6 +35,7 @@ export default function RollPassPlot({row, inProfile, outProfile}) {
                 grooveType: row.grooveType,
                 groove: row.groove,
                 gap: row.gap || 0,
+                inscribed_circle_diameter: row.inscribed_circle_diameter,
                 orientation: row.orientation,
                 type: row.type,
                 label: row.label,
