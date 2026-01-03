@@ -66,7 +66,7 @@ export default function InProfileLoader({setInProfile, onNotification}) {
         const profile = {};
 
         const profileType = getElementText(xmlDoc, 'ProfileType');
-        if (profileType) profile.profileType = profileType;
+        if (profileType) profile.shape = profileType;  // ← 'shape' nicht 'profileType'
 
         const temperature = getElementText(xmlDoc, 'Temperature');
         if (temperature) profile.temperature = parseNumericValue(temperature);
@@ -101,7 +101,6 @@ export default function InProfileLoader({setInProfile, onNotification}) {
         return profile;
     };
 
-
     const validateXML = (xmlDoc) => {
         if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
             throw new Error("Invalid XML format");
@@ -127,10 +126,11 @@ export default function InProfileLoader({setInProfile, onNotification}) {
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
-
                 validateXML(xmlDoc);
 
                 const importedProfile = parseXML(xmlDoc);
+
+                console.log('Imported Profile:', importedProfile);  // ← HIER
 
                 if (Object.keys(importedProfile).length === 0) {
                     throw new Error("No profile data found in XML");
@@ -200,3 +200,4 @@ export default function InProfileLoader({setInProfile, onNotification}) {
         </>
     );
 }
+
