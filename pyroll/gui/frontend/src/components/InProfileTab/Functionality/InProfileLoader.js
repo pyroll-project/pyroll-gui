@@ -31,42 +31,70 @@ export default function InProfileLoader({setInProfile, onNotification}) {
         return geometry;
     };
 
+    const parseFlowStressParamsFromXML = (xmlDoc) => {
+        const flowStressParamsElement = xmlDoc.getElementsByTagName('FlowStressParameters')[0];
+        if (!flowStressParamsElement) return null;
+
+        const params = {};
+        const children = flowStressParamsElement.children;
+
+        for (let i = 0; i < children.length; i++) {
+            const child = children[i];
+            const tagName = child.tagName;
+            const value = parseNumericValue(child.textContent);
+
+            if (value !== '' && value !== null && value !== undefined) {
+                if (tagName === 'A') params.a = value;
+                else if (tagName === 'M1') params.m1 = value;
+                else if (tagName === 'M2') params.m2 = value;
+                else if (tagName === 'M3') params.m3 = value;
+                else if (tagName === 'M4') params.m4 = value;
+                else if (tagName === 'M5') params.m5 = value;
+                else if (tagName === 'M6') params.m6 = value;
+                else if (tagName === 'M7') params.m7 = value;
+                else if (tagName === 'M8') params.m8 = value;
+                else if (tagName === 'M9') params.m9 = value;
+                else if (tagName === 'BaseStrain') params.baseStrain = value;
+                else if (tagName === 'BaseStrainRate') params.baseStrainRate = value;
+            }
+        }
+
+        return Object.keys(params).length > 0 ? params : null;
+    };
+
     const parseXML = (xmlDoc) => {
         const profile = {};
 
-        // Profile Type
         const profileType = getElementText(xmlDoc, 'ProfileType');
         if (profileType) profile.profileType = profileType;
 
-        // Temperature
         const temperature = getElementText(xmlDoc, 'Temperature');
         if (temperature) profile.temperature = parseNumericValue(temperature);
 
-        // Strain
         const strain = getElementText(xmlDoc, 'Strain');
         if (strain) profile.strain = parseNumericValue(strain);
 
-        // Material
         const material = getElementText(xmlDoc, 'Material');
         if (material) profile.material = material;
 
-        // Flow Stress
+        const materialType = getElementText(xmlDoc, 'MaterialType');
+        if (materialType) profile.materialType = materialType;
+
         const flowStress = getElementText(xmlDoc, 'FlowStress');
         if (flowStress) profile.flow_stress = parseNumericValue(flowStress);
 
-        // Density
+        const flowStressParams = parseFlowStressParamsFromXML(xmlDoc);
+        if (flowStressParams) profile.flowStressParams = flowStressParams;
+
         const density = getElementText(xmlDoc, 'Density');
         if (density) profile.density = parseNumericValue(density);
 
-        // Specific Heat Capacity
         const specificHeatCapacity = getElementText(xmlDoc, 'SpecificHeatCapacity');
         if (specificHeatCapacity) profile.specific_heat_capacity = parseNumericValue(specificHeatCapacity);
 
-        // Thermal Conductivity
         const thermalConductivity = getElementText(xmlDoc, 'ThermalConductivity');
         if (thermalConductivity) profile.thermal_conductivity = parseNumericValue(thermalConductivity);
 
-        // Geometry
         const geometry = parseGeometryFromXML(xmlDoc);
         Object.assign(profile, geometry);
 

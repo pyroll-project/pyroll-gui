@@ -71,7 +71,6 @@ export default function InProfileTab({inProfile, setInProfile}) {
                 alignItems: 'flex-start',
                 flexWrap: 'wrap'
             }}>
-                {/* Left side: Configuration table */}
                 <div style={{flex: '1 1 500px', minWidth: '400px'}}>
                     <div style={{
                         borderCollapse: 'collapse',
@@ -119,7 +118,6 @@ export default function InProfileTab({inProfile, setInProfile}) {
                                 </select>
                             </div>
 
-                            {/* Parameters section */}
                             <div>
                                 <label style={{
                                     display: 'block',
@@ -149,7 +147,6 @@ export default function InProfileTab({inProfile, setInProfile}) {
                     </div>
                 </div>
 
-                {/* Right side: Plot */}
                 <div style={{flex: '1 1 400px', minWidth: '350px'}}>
                     <ProfilePlot inProfile={inProfile}/>
                 </div>
