@@ -249,14 +249,19 @@ const PassSequenceVisualizer = ({pass, results}) => {
     const generateTextBox = () => {
         if (!results) return 'No simulation results available';
 
+        const gapLabel = results.type === 'ThreeRollPass' ? 'Inscribed Circle Diameter' : 'Gap';
+        const gapValue = results.type === 'ThreeRollPass' ? results.inscribed_circle_diameter : results.gap;
+
         const lines = [
             `Bite Angle =  ${formatNumber(results.bite_angle * 100, 4)}`,
             `In Profile Height =  ${formatNumber(results.in_profile_height, 4)} `,
             `Out Profile Height =  ${formatNumber(results.out_profile_height, 4)} `,
+            `In Profile Width =  ${formatNumber(results.in_profile_width, 4)} `,
+            `Out Profile Width =  ${formatNumber(results.out_profile_width, 4)} `,
             `In Profile Area =  ${formatNumber(results.in_profile_cross_section_area, 4)} `,
             `Out Profile Area =  ${formatNumber(results.out_profile_cross_section_area, 4)} `,
             `Reduction =  ${formatNumber(results.reduction * 100, 4)} `,
-            `Gap =  ${formatNumber(results.gap, 4)} `,
+            `${gapLabel} =  ${formatNumber(gapValue, 4)} `,
             `In Profile Velocity =  ${formatNumber(results.in_profile_velocity, 4)} `,
             `Out Profile Velocity =  ${formatNumber(results.out_profile_velocity, 4)} `,
             `Roll Force =  ${formatNumber(results.roll_force, 4)} `,

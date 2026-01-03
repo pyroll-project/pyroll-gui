@@ -2,6 +2,9 @@ import pyroll.basic
 from pyroll.basic import PassSequence, ThreeRollPass, RollPass
 
 from typing import Dict, List, Any, Union
+
+from pyroll.core import TwoRollPass
+
 from .helpers import create_roll_pass, create_transport, create_cooling_pipe, create_initial_profile, \
     create_roll_pass_contour, extract_profile_contour
 
@@ -46,7 +49,6 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
             pass_result['nominal_radius'] = unit.roll.nominal_radius
             pass_result['working_radius'] = unit.roll.working_radius
             pass_result['velocity'] = unit.velocity
-            pass_result['gap'] = unit.gap
             pass_result['bite_angle'] = unit.bite_angle
             pass_result['reduction'] = reduction
             pass_result['in_profile_flow_stress'] = unit.in_profile.flow_stress
@@ -54,9 +56,13 @@ def extract_results(pass_sequence: PassSequence) -> Dict[str, Any]:
             pass_result['in_profile_contour'] = extract_profile_contour(unit.in_profile.technologically_orientated_cross_section)
             pass_result['out_profile_contour'] = extract_profile_contour(unit.out_profile.technologically_orientated_cross_section)
 
-
             roll_contour_data = create_roll_pass_contour(unit)
             pass_result['roll_contour'] = roll_contour_data
+
+        if isinstance(unit, ThreeRollPass):
+            pass_result['inscribed_circle_diameter'] = unit.inscribed_circle_diameter
+        elif isinstance(unit, TwoRollPass):
+            pass_result['gap'] = unit.gap
 
 
         results['passes'].append(pass_result)

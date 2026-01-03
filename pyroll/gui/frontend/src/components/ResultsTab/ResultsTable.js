@@ -8,9 +8,7 @@ export default function ResultsTable({results}) {
         return null;
     }
 
-    const rollPasses = results.passes.filter(pass =>
-        pass.type === 'TwoRollPass' || pass.type === 'ThreeRollPass'
-    );
+    const rollPasses = results.passes.filter(pass => pass.type === 'TwoRollPass' || pass.type === 'ThreeRollPass');
 
     console.log('Roll passes found:', rollPasses.length, rollPasses);
 
@@ -32,8 +30,7 @@ export default function ResultsTable({results}) {
         return value;
     };
 
-    return (
-        <div style={{marginBottom: '30px', overflowX: 'auto'}}>
+    return (<div style={{marginBottom: '30px', overflowX: 'auto'}}>
             <h3 style={{marginBottom: '15px'}}>Roll Pass Results</h3>
             <table style={{
                 width: '100%',
@@ -46,99 +43,86 @@ export default function ResultsTable({results}) {
                 <tr style={{backgroundColor: '#FFDD00'}}>
                     <th style={headerStyleYellow}>Parameter</th>
                     {rollPasses.map((pass, index) => (
-                        <th key={index} style={headerStyleYellow}>{pass.label || `Pass ${pass.pass}`}</th>
-                    ))}
+                        <th key={index} style={headerStyleYellow}>{pass.label || `Pass ${pass.pass}`}</th>))}
                 </tr>
                 </thead>
                 <tbody>
                 <tr style={{backgroundColor: 'white'}}>
-                    <td style={labelStyleYellow}>Gap</td>
-                    {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.gap)}</td>
-                    ))}
+                    <td style={labelStyleYellow}>
+                        {rollPasses.some(pass => pass.type === 'ThreeRollPass') ? 'Gap / Inscribed Circle Diameter' : 'Gap'}
+                    </td>
+                    {rollPasses.map((pass, index) => (<td key={index} style={cellStyle}>
+                            {formatNumber(pass.type === 'ThreeRollPass' ? pass.inscribed_circle_diameter : pass.gap)}
+                        </td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Bar Height</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_height)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_height)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Bar Width</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_width)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_width)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Bar Area</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_cross_section_area)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_cross_section_area)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Reduction</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.reduction * 100)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.reduction * 100)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Roll Diameter</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.nominal_radius))}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.nominal_radius))}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Working Diameter</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.working_radius)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.working_radius)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Entry Temperature</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.in_profile_temperature)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.in_profile_temperature)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Bite Angle</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.bite_angle * 100)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.bite_angle * 100)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Roll Force</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.roll_force))}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.roll_force))}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Roll Torque</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.roll_torque))}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.roll_torque))}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Power</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.power)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.power)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
                     <td style={labelStyleYellow}>Flow Stress</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_flow_stress)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.out_profile_flow_stress)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
                     <td style={labelStyleYellow}>Filling Ratio</td>
                     {rollPasses.map((pass, index) => (
-                        <td key={index} style={cellStyle}>{formatNumber(pass.filling_ratio)}</td>
-                    ))}
+                        <td key={index} style={cellStyle}>{formatNumber(pass.filling_ratio)}</td>))}
                 </tr>
                 </tbody>
             </table>
-        </div>
-    );
+        </div>);
 }
 
 const headerStyleYellow = {
@@ -159,7 +143,5 @@ const labelStyleYellow = {
 };
 
 const cellStyle = {
-    padding: '10px 8px',
-    borderBottom: '1px solid #eee',
-    textAlign: 'center'
+    padding: '10px 8px', borderBottom: '1px solid #eee', textAlign: 'center'
 };
