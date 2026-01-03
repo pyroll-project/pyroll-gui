@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import RoundProfile from "./InProfiles/RoundProfile";
 import SquareProfile from "./InProfiles/SquareProfile";
 import BoxProfile from "./InProfiles/BoxProfile";
@@ -11,11 +11,7 @@ import Notification from '../../helpers/Notification';
 
 export default function InProfileTab({inProfile, setInProfile}) {
 
-    useEffect(() => {
-        console.log('InProfile updated:', inProfile);
-    }, [inProfile]);
-
-    const [notification, setNotification] = useState({
+       const [notification, setNotification] = useState({
         show: false,
         message: '',
         type: 'success'

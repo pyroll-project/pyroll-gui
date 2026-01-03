@@ -66,7 +66,7 @@ export default function InProfileLoader({setInProfile, onNotification}) {
         const profile = {};
 
         const profileType = getElementText(xmlDoc, 'ProfileType');
-        if (profileType) profile.shape = profileType;  // ← 'shape' nicht 'profileType'
+        if (profileType) profile.shape = profileType;
 
         const temperature = getElementText(xmlDoc, 'Temperature');
         if (temperature) profile.temperature = parseNumericValue(temperature);
@@ -129,8 +129,6 @@ export default function InProfileLoader({setInProfile, onNotification}) {
                 validateXML(xmlDoc);
 
                 const importedProfile = parseXML(xmlDoc);
-
-                console.log('Imported Profile:', importedProfile);  // ← HIER
 
                 if (Object.keys(importedProfile).length === 0) {
                     throw new Error("No profile data found in XML");
