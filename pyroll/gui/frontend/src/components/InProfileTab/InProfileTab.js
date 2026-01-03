@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import RoundProfile from "./InProfiles/RoundProfile";
 import SquareProfile from "./InProfiles/SquareProfile";
 import BoxProfile from "./InProfiles/BoxProfile";
@@ -11,11 +11,28 @@ import Notification from '../../helpers/Notification';
 
 export default function InProfileTab({inProfile, setInProfile}) {
 
-       const [notification, setNotification] = useState({
+    const [notification, setNotification] = useState({
         show: false,
         message: '',
         type: 'success'
     });
+
+    // Initialize with defaults if null
+    useEffect(() => {
+        if (!inProfile) {
+            setInProfile({
+                shape: 'round',
+                diameter: 0,
+                temperature: 1200,
+                strain: 0,
+                material: 'C45',
+                density: 0,
+                specific_heat_capacity: 0,
+                thermal_conductivity: 0
+            });
+        }
+    }, [inProfile, setInProfile]);
+
     const showNotification = (message, type = 'success') => {
         setNotification({
             show: true,
@@ -31,6 +48,15 @@ export default function InProfileTab({inProfile, setInProfile}) {
             type: 'success'
         });
     };
+
+    // Early return wenn inProfile noch null ist - VOR dem JSX!
+    if (!inProfile) {
+        return (
+            <div style={{padding: '20px', textAlign: 'center', color: '#666'}}>
+                Loading profile...
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -89,7 +115,6 @@ export default function InProfileTab({inProfile, setInProfile}) {
                             Profile Configuration
                         </div>
                         <div style={{padding: '20px'}}>
-                            {/* Type dropdown section */}
                             <div style={{marginBottom: '20px'}}>
                                 <label style={{
                                     display: 'block',

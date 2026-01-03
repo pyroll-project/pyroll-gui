@@ -72,7 +72,7 @@ export default function InProfileLoader({setInProfile, onNotification}) {
         if (temperature) profile.temperature = parseNumericValue(temperature);
 
         const strain = getElementText(xmlDoc, 'Strain');
-        if (strain) profile.strain = parseNumericValue(strain);
+        profile.strain = strain ? parseNumericValue(strain) : 0;
 
         const material = getElementText(xmlDoc, 'Material');
         if (material) profile.material = material;

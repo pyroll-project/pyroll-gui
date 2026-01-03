@@ -19,7 +19,7 @@ export default function InProfileSaver({inProfile, onNotification}) {
         xml += '    <Application>PyRolL-Basic WebGUI</Application>\n';
         xml += '  </Metadata>\n';
 
-        if (profile.shape) {  // ← Ändern von 'profileType' zu 'shape'
+        if (profile.shape) {
             xml += `  <ProfileType>${escapeXML(profile.shape)}</ProfileType>\n`;
         }
 

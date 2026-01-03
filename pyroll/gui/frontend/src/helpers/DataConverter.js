@@ -76,6 +76,16 @@ export const prepareUnitsForBackend = (units) => {
 export const prepareProfileForBackend = (profileData) => {
     console.log('=== PREPARING PROFILE FOR BACKEND ===');
     console.log('Original profile:', profileData);
+    console.log('Original profile.shape:', profileData?.shape);  // ← NEU
+
+    if (!profileData) {
+        console.error('ERROR: profileData is null or undefined!');
+        return {};
+    }
+
+    if (!profileData.shape) {
+        console.error('ERROR: profileData.shape is missing!');
+    }
 
     const prepared = {...profileData};
 
@@ -115,6 +125,8 @@ export const prepareProfileForBackend = (profileData) => {
         );
     }
 
+
+    console.log('shape field:', prepared.shape);  // ← NEU
     console.log('Prepared profile:', prepared);
     console.log('=== END PREPARATION ===');
 

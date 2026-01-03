@@ -84,6 +84,7 @@ def run_pyroll_simulation(
                 sequence_list.append(create_cooling_pipe(unit))
         sequence = PassSequence(sequence_list)
 
+        print("in_profile_data:", in_profile_data)  # ← Hier
         initial_profile = create_initial_profile(in_profile_data)
 
         if solve_method == "solve":

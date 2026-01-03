@@ -15,34 +15,8 @@ function App() {
         solve_params: {}
     });
 
-    // Initial Profile State
-    const [inProfile, setInProfile] = useState({
-        shape: 'round',
-        diameter: 0,
-        temperature: 1200,
-        density: 0,
-        specific_heat_capacity: 0,
-        thermal_conductivity: 0,
-        pre_strain: 0,
-        material: 'C45',
-        materialType: '',
-        flowStressParams: {
-            a: 0,
-            m1: 0,
-            m2: 0,
-            m3: 0,
-            m4: 0,
-            m5: 0,
-            m6: 0,
-            m7: 0,
-            m8: 0,
-            m9: 0,
-            baseStrain: 0.1,
-            baseStrainRate: 0.1
-        }
-    });
+    const [inProfile, setInProfile] = useState(null);
 
-    // Pass Design State
     const [tableData, setTableData] = useState([
         {
             id: 1,
@@ -68,6 +42,12 @@ function App() {
 
 
     const handleRunSimulation = async () => {
+        console.log('=== START SIMULATION DEBUG ===');
+        console.log('inProfile:', inProfile);
+        console.log('inProfile.shape:', inProfile.shape);
+        console.log('typeof inProfile:', typeof inProfile);
+        console.log('=== END DEBUG ===');
+
         setLoading(true);
 
         const result = await runSimulation(inProfile, tableData, solveConfig);

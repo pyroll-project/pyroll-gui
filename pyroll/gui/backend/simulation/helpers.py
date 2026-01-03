@@ -4,10 +4,12 @@ from pyroll.core import Profile, Roll, RollPass, Transport, CoolingPipe, ThreeRo
 from pyroll.core import grooves
 from pyroll.freiberg_flow_stress import FreibergFlowStressCoefficients
 
-
 def create_initial_profile(in_profile_data: Dict[str, Any]):
     shape = in_profile_data.get('shape')
     material_type = in_profile_data.get('materialType')
+
+    if not shape:
+        raise ValueError("Profile shape is required but was not provided")
 
     if shape == 'round':
         in_profile = Profile.round(
@@ -19,11 +21,6 @@ def create_initial_profile(in_profile_data: Dict[str, Any]):
             specific_heat_capacity=in_profile_data.get('specific_heat_capacity'),
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
-
-        if material_type:
-            flow_stress_params = in_profile_data.get('flowStressParams')
-            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
-            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
     elif shape == 'square':
         in_profile = Profile.square(
@@ -37,13 +34,7 @@ def create_initial_profile(in_profile_data: Dict[str, Any]):
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type:
-            flow_stress_params = in_profile_data.get('flowStressParams')
-            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
-            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
-
     elif shape == 'box':
-
         in_profile = Profile.box(
             height=in_profile_data.get('height'),
             width=in_profile_data.get('width'),
@@ -56,14 +47,7 @@ def create_initial_profile(in_profile_data: Dict[str, Any]):
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type:
-            print('Here')
-            flow_stress_params = in_profile_data.get('flowStressParams')
-            flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
-            in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
-
     elif shape == 'hexagon':
-
         in_profile = Profile.hexagon(
             side=in_profile_data.get('side'),
             corner_radius=in_profile_data.get('corner_radius'),
@@ -75,8 +59,12 @@ def create_initial_profile(in_profile_data: Dict[str, Any]):
             thermal_conductivity=in_profile_data.get('thermal_conductivity'),
         )
 
-        if material_type:
-            flow_stress_params = in_profile_data.get('flowStressParams')
+    else:
+        raise ValueError(f"Unknown profile shape: '{shape}'. Must be one of: round, square, box, hexagon")
+
+    if material_type:
+        flow_stress_params = in_profile_data.get('flowStressParams')
+        if flow_stress_params:
             flow_stress_coefficients = FreibergFlowStressCoefficients(**flow_stress_params)
             in_profile.freiberg_flow_stress_coefficients = flow_stress_coefficients
 
