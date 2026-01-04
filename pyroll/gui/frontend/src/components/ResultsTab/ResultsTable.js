@@ -76,12 +76,12 @@ export default function ResultsTable({results}) {
                         <td key={index} style={cellStyle}>{formatNumber(pass.reduction * 100)}</td>))}
                 </tr>
                 <tr style={{backgroundColor: '#f9f9f9'}}>
-                    <td style={labelStyleYellow}>Roll Diameter</td>
+                    <td style={labelStyleYellow}>Roll Radius</td>
                     {rollPasses.map((pass, index) => (
                         <td key={index} style={cellStyle}>{formatNumber(getArrayValue(pass.nominal_radius))}</td>))}
                 </tr>
                 <tr style={{backgroundColor: 'white'}}>
-                    <td style={labelStyleYellow}>Working Diameter</td>
+                    <td style={labelStyleYellow}>Working Radius</td>
                     {rollPasses.map((pass, index) => (
                         <td key={index} style={cellStyle}>{formatNumber(pass.working_radius)}</td>))}
                 </tr>
