@@ -11,24 +11,29 @@ export const exportResultsTableAsCSV = (results, filename) => {
     );
 
     if (rollPasses.length === 0) {
-        console.error('No roll passes to export');
+        console.error('No RollPasses to export');
         return;
     }
 
     const headers = ['Parameter', ...rollPasses.map(pass => pass.label || `Pass ${pass.pass}`)];
 
     const rows = [
-        ['Gap', ...rollPasses.map(pass => pass.gap?.toFixed(4) || '')],
-        ['Bar Height', ...rollPasses.map(pass => pass.out_height?.toFixed(4) || '')],
-        ['Bar Width', ...rollPasses.map(pass => pass.out_width?.toFixed(4) || '')],
-        ['Bar Area', ...rollPasses.map(pass => pass.out_cross_section_area?.toFixed(4) || '')],
+        ['Gap', ...rollPasses.map(pass =>
+            pass.type === 'TwoRollPass' ? (pass.gap?.toFixed(4) || '') : '-'
+        )],
+        ['Inscribed Circle Diameter', ...rollPasses.map(pass =>
+            pass.type === 'ThreeRollPass' ? (pass.inscribed_circle_diameter?.toFixed(4) || '') : '-'
+        )],
+        ['Bar Height', ...rollPasses.map(pass => pass.out_profile_height?.toFixed(4) || '')],
+        ['Bar Width', ...rollPasses.map(pass => pass.out_profile_width?.toFixed(4) || '')],
+        ['Bar Area', ...rollPasses.map(pass => pass.out_profile_cross_section_area?.toFixed(4) || '')],
         ['Reduction', ...rollPasses.map(pass => pass.reduction?.toFixed(4) || '')],
-        ['Roll Diameter', ...rollPasses.map(pass => {
+        ['Roll Radius', ...rollPasses.map(pass => {
             const radius = Array.isArray(pass.nominal_radius) ? pass.nominal_radius[0] : pass.nominal_radius;
             return radius?.toFixed(4) || '';
         })],
-        ['Working Diameter', ...rollPasses.map(pass => pass.working_radius?.toFixed(4) || '')],
-        ['Entry Temperature', ...rollPasses.map(pass => pass.in_temperature?.toFixed(4) || '')],
+        ['Working Radius', ...rollPasses.map(pass => pass.working_radius?.toFixed(4) || '')],
+        ['Entry Temperature', ...rollPasses.map(pass => pass.in_profile_temperature?.toFixed(4) || '')],
         ['Roll Force', ...rollPasses.map(pass => {
             const force = Array.isArray(pass.roll_force) ? pass.roll_force[0] : pass.roll_force;
             return force?.toFixed(4) || '';
@@ -38,7 +43,7 @@ export const exportResultsTableAsCSV = (results, filename) => {
             return torque?.toFixed(4) || '';
         })],
         ['Power', ...rollPasses.map(pass => pass.power?.toFixed(4) || '')],
-        ['Flow Stress', ...rollPasses.map(pass => pass.out_flow_stress?.toFixed(4) || '')],
+        ['Flow Stress', ...rollPasses.map(pass => pass.out_profile_flow_stress?.toFixed(4) || '')],
         ['Filling Ratio', ...rollPasses.map(pass => pass.filling_ratio?.toFixed(4) || '')]
     ];
 
@@ -67,7 +72,7 @@ export const exportPlotAsPNG = async (plotElement, plotTitle, baseFilename) => {
     try {
         const canvas = await html2canvas(plotElement, {
             backgroundColor: '#ffffff',
-            scale: 2 // Higher quality
+            scale: 2
         });
 
         canvas.toBlob((blob) => {
