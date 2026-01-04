@@ -237,7 +237,9 @@ export const getGrooveFields = (grooveType) => {
                     {key: 'flank_width', label: 'Flank Width', tooltip: 'Horizontal extent of the flanks'},
                     {key: 'flank_height', label: 'Flank Height', tooltip: 'Vertical extent of the flanks'},
                     {key: 'flank_length', label: 'Flank Length', tooltip: 'Length of the flanks'},
-                ]
+                ],
+                rule: 'Exactly one of the additional parameters must be set.'
+
             };
         case 'SwedishOvalGroove':
             return {
@@ -258,7 +260,7 @@ export const getGrooveFields = (grooveType) => {
                     {key: 'usable_width', label: 'Usable Width', tooltip: 'Usable width of the groove'},
                     {key: 'flank_angle', label: 'Flank Angle', tooltip: 'Inclination angle of the flanks'},
                 ],
-                rule: 'Exactly one of the additional parameters must be set. (not Ground Width and Even Ground Width together)'
+                rule: 'Exactly two of the additional parameters must be set. (not Ground Width and Even Ground Width together)'
             };
         case 'UpsetOvalGroove':
             return {
